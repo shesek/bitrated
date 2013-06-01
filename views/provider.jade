@@ -1,0 +1,63 @@
+extend layout
+
+append title
+  | Become a service provider
+
+append scripts
+  script(src='provider.js')
+
+block content
+  h2 Become an escrow service provider
+  .row-fluid
+    .span6
+      :markdown
+        To become an escrow, you'll need to a a pair of private and public keys. To use your service, 
+        the buyer will pay to a multisig address that contains your public key <strong class="muted">(*)</strong>.
+        The private key allows you to control the money in case of dispute (with the agreement of one
+        of the parties), and should be kept secret.
+
+        If you don't have keys yet, they'll be created for you. You can locally create new keys
+        with bitcoind ([see how](generating-keys)), or
+        use the keys created by other websites, like [brainwallet](http://brainwallet.org/)
+        or [bitaddress](https://www.bitaddress.org).
+
+        If you provide us with an externally-created public key, you'll be prompted to sign it
+        locally whenever a transaction requires your confirmation.
+
+        ### Your terms of service
+
+        Your terms of service describes your handling of disputes. This should include the fees
+        you're charging, information regarding your dispute resolution process, contact information
+        and identifying information. You can reference external files by mentioning their hash.
+
+        Those terms will with signed by your public key in the next page. You should publish
+        your terms along with the signature, to prove you're the public key owner.
+        
+        The terms you enter here will be considered in force for any transaction sent to a multisig
+        address containing your public key. If you wish to change your terms or offer multiple terms
+        (different fees, insurance, etc), use a separate public key.
+
+        Remember: failure to commit to those terms will lose you the trust of the Bitcoin community.
+
+        <p class="muted">(*) Due to current limitations in Bitcoin, but also with the side-effect of improved privacy,
+        your public key isn't used directly in the multisig, but rather a key derived from it using
+        the hash of the customer's terms. See our [technical page](technical) for more information.</p>
+    form.span6
+      fieldset
+        legend Fill this form to continue
+        label Your terms of service:
+        textarea.span12(name='agreement', rows=8, cols=90)
+
+        label Your key:
+        input.input-xlarge(type='text', name='trent', placeholder='Public key (hex) or private key (base58)')
+        span.help-block <strong>Optional.</strong> If left empty, a pair of keys will be created for you.
+      button.btn.btn-primary.btn-large Continue 
+      .muted.form-terms
+        :markdown
+          This form is processed on your browser, using client-side code.
+          **Nothing is never stored on, uploaded to or processed by our servers**.
+          See our [secuity policy](security.html) for more information.
+        
+          Your use of the service is on an AS-IS and AS-AVAILABLE basis, with no express or implied warranty.
+          See our [terms of service](terms.html) for more information.
+

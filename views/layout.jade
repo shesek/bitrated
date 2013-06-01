@@ -1,0 +1,34 @@
+doctype 5
+html
+  head
+    title: block title
+      | Bitscrow - 
+    meta(charset='utf-8')
+    block css
+      link(rel='stylesheet', href='lib/bootstrap/css/bootstrap.min.css')
+      link(rel='stylesheet', href='lib/bootstrap/css/bootstrap-responsive.min.css')
+      link(rel='stylesheet', href='style.css')
+  body
+    .navbar.navbar-fixed-top: .navbar-inner: .container
+      a.brand(href='.') Bitscrow
+      ul.nav
+        li: a(href='.') Start escrow 
+        li: a(href='browse') Browse providers
+        li: a(href='provider') Signup as a provider
+      ul.nav.pull-right
+        li: a(href='mailto:'+contact) Contact 
+        li: a(href='https://github.com/shesek/') Source on GitHub <i class="icon-share-alt icon-white"></i>
+    .container
+      .content: block content
+      footer.muted
+        .pull-right
+          :markdown
+            Tips: [1ARAWK8etGddPr3Rb5RgfFD66CpXbkcXf7](bitcoin:1ARAWK8etGddPr3Rb5RgfFD66CpXbkcXf7)
+        :markdown
+          Website content licensed under [CC-BY 3.0](http://creativecommons.org/licenses/by/3.0/),
+          and [source code](https://github.com/shesek/btproof/) under the
+          [MIT License](https://github.com/shesek/btproof/blob/master/LICENSE).
+
+    block scripts
+      script(src='lib/jquery.min.js')
+      script(src='lib/bootstrap/bootstrap.min.js')

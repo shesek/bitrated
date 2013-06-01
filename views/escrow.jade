@@ -1,0 +1,42 @@
+extend layout
+
+append scripts
+  script(src='lib/bitcoinjs-min.js')
+  script(src='lib/qr.js')
+  script(src='escrow.js')
+
+block content
+  #create-esdrow.row-fluid
+    form.span6
+      fieldset
+        legend Create new escrow
+        .row-fluid
+          .span6
+            label Escrow public key
+            input.input-xlarge(type='text', name='trent', placeholder='ECDSA pubkey in hex format')
+            span.help-block.
+              You can browse the list of available escrow providers <a href="browse">here</a>.
+          .span6
+            label Your key
+            input.input-xlarge(type='text', name='pub', placeholder='Public key (hex) or private key (base58)')
+            span.help-block <strong>Optional.</strong> If left empty, it will be created for you.
+              | Insutructions for locally generating keys can be found <a href="generate-keys">here</a>.
+        label Agreement
+        textarea.span12(name='agreement', rows=8, cols=90)
+        .help-block
+          p.
+            Write the full details of the transaction. This should include identifying information for
+            the buyer and the seller, the conditions upon which the transaction is valid, and any other
+            agreed upon terms. You can reference relevant files by mentioning their hash.
+          p This will be used for the dispute resolution process.
+      button.btn.btn-large.btn-primary Start escrow 
+      .muted
+        :markdown
+          **Private keys are never stored on, uploaded to or processed by our servers.**
+
+          Except for sharing your *public* key with the other party, and sending locally
+          signed transactions, everything is handled client-side and is never uploaded to the server.
+          See our [security policy](security) for more information.
+
+          Your use of the service is on an AS-IS and AS-AVAILABLE basis, with no express or implied warranty.
+          See our [terms of service](terms) for more information.

@@ -1,0 +1,17 @@
+.modal.hide.fade
+  .modal-header
+    button.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
+    h3 Authorize transaction
+  .modal-body
+    p Are you sure you want to allow the transfer of #{total} BTC to the following:
+    ul
+      for address, amount of targets
+        li #{amount} BTC to #{address}
+      li #{fees} BTC paid as fees
+  .modal-footer
+    a.btn(href='#', data-dismiss='modal') Cancel
+    a.btn.btn-primary.continue(href='#', data-dismiss='modal') Continue
+
+
+  if has_priv
+

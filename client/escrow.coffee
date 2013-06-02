@@ -14,22 +14,24 @@ handle = do (view=require '../views/escrow-content.jade') ->  (query) ->
   query[k] = base64ToBytes query[k] for k in [ 'bob', 'alice', 'trent', 'priv', 'terms' ] when query[k]?
   { bob, alice, trent, terms, priv } = query
 
+  # Determine public key from private key
+  if priv? then bob = get_pub priv
+
+  # Generate a random private key
+  unless bob?
+    return document.location.hash = qs.stringify format { alice, trent, terms, priv: randomBytes 32 }
+
+  # TODO trim hash
   terms_hash = SHA256 terms, asBytes: true
   terms_pub = get_pub terms_hash
   terms_text = UTF8.bytesToString terms
 
-  # validate pub,agent,other are valid pubkeys
-  
-  # Determine public key from private key
-  if priv? then bob = get_pub priv
-  # Generate a random private key
-  else if not bob?
-    priv = randomBytes 32
-    return document.location.hash = qs.stringify format { alice, trent, terms, priv }
-
+  # If we have the other party public key, create the multisig
   if alice?
     multisig_pubkeys = [ bob, alice, (derive_key trent, terms_hash).pub ]
     multisig = create_multisig 2, multisig_pubkeys
+    document.title = "Escrow for #{multisig} | Bitscrow"
+  else document.title = "Awaiting other party... | Bitscrow"
 
   render el = $ view {
     # Public keys, private key, and the terms

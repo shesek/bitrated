@@ -42,7 +42,7 @@ handle = do (view=require '../views/escrow-content.jade') ->  (query) ->
     # Multisig information
     multisig
     multisig_pubkeys: (multisig? and multisig_pubkeys.map bytesToHex)
-    multisig_qr: (multisig? and QRCode.generatePNG multisig)
+    multisig_qr: (multisig? and QRCode.generatePNG 'bitcoin:'+multisig)
 
     # URLs
     alice_url: BASE + qs.stringify format { alice: bob, trent, terms } unless alice?

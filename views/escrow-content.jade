@@ -28,7 +28,7 @@
     if priv
       label Your private key:
       pre= priv
-      p.muted The private key allows you to control the funds. It should be kept secret.
+      p.muted The private key allows you to control the funds. <strong>It should be kept secret.</strong>
 
     if multisig && priv
       label Import multisig address and private key to bitcoin-qt/bitcoind wallet:
@@ -48,19 +48,18 @@
     if !alice
       h3 Awaiting other party...
       p.
-        Give this URL to the other party. Once he'll connect and provide his public key, the multisig
-        address will be created.
+        Give this URL to the other party. The interface will be updated automatically once he
+        connects and setup his keys.
       pre.long= alice_url 
       p.muted This URL includes the terms of agreement, your public key and the escrow's public key.
         | It does not include your private key.
-      p You can <a href="mailto:?subject=New+Escrow&body=#{alice_url}">click here</a> to submit the url with your email client.
     else
       .clearfix
-        img.pull-right.qr(src=multisig_qr)
         h3 Pay to multisig
+        img.pull-right.qr(src=multisig_qr)
         p The multisig address is <code>#{multisig}</code>. Any money submitted to that address can only be released
           | with the agreement of two parties.
-        p <a href="bitcoin:#{multisig}">Click here</a> to pay with your Bitcoin client, or scan the QR code.
+        p <a href="bitcoin:#{multisig}">Click here</a> to pay with your Bitcoin client, or scan the QR code to the right.
         p <strong>Important:</strong> Before making payments to this address, ensure the public keys are correct,
           | that you agree with the terms, that the escrow provider is acceptable and that you have a safe backup
           | (see Heads Up below).
@@ -105,6 +104,8 @@
         any evidence you might have, and anything else that you find relevant. You'll also need to give him
         the public keys, the terms and a proof you're the public key owner, all of which are embdeded in the following URL:
       pre.long= trent_url
+      p.muted This URL includes the terms of agreement, your public key and the escrow's public key.
+        | It does not include your private key, nor you should ever provide it to the escrow.
 
       //p Your escrow is a registered Bitscrow user. You can contact him using the form below, and we'll forward him
         | the public keys and terms of agreement. Make sure to provide him with an explaination of what happened,

@@ -6,36 +6,98 @@ append scripts
   script(src='escrow.js')
 
 block content
+  header.subhead
+    h1 Bitscrow
+    .lead Bitcoin escrow, simplified.
   #create-esdrow.row-fluid
+    .span6
+      dl
+        dt What is an escrow service?
+        dd: p.
+          An escrow service is an independent trusted third that resolves disputes
+          between two transacting parties. For example, the buyer of a product can pay the
+          seller via an escrow, and in case the product isn't sent or isn't as promised, the
+          buyer can start a dispute process and get his money back.
+        dt How does escrow on the Bitcoin network work?
+        dd
+          :markdown
+            The Bitcoin scriping language allows to send [m-of-n transactions](https://en.bitcoin.it/wiki/BIP_0011),
+            which lets you send money to n public keys, that can only be redeemed with the signature of m keys.
+
+            For the purpose of escrow, an 2-of-3 multisig address is created using your public key, the other party
+            public key and the escrow provider public key<strong class="muted">*</strong>.
+            You can send money to it like any other Bitcoin address, but the money cannot be moved out of the
+            multisig address without permission from at least two parties.
+
+            The escrow provider never has full control over the funds, and can't do anything without the consent of
+            one other party.
+
+            See our [technical page](technical) for more information.</p>
+
+        dt How much does it cost?
+        dd: p The cost vary between different escrow service provider. The provider should have his fees and
+           | terms published and signed - make sure you read it and fully agree with it.
+        dt Where can I find an escrow provider?
+        dd
+          :markdown
+            We have a list of escrow providers registered to this website <a href="providers">here</a>, but you can
+            use anyone that provides you with his public key. This website provides the technical aspects of managing
+            multisig addresses, but is not an escrow service itself.
+            
+            It is up to you and the other party to find an escrow provider you both trust and agree upon.
+            Check his reputation and read his terms of service to ensure he handles disputes in an acceptable manner.
+        
+        dt Can I be an escrow provider?
+        dd
+          :markdown
+            Anyone can be an escrow provider. All you need to do is to publish your public key and your
+            terms of service signed with that key. You can use this website to to [create your
+            keys and sign the terms](provider).
+
+        dt How do I start?
+        dd Fill the form to the right. The only required field is the terms. You'll be given more instructions on the
+          | next page.
+
+      :markdown
+        <p class="muted">(*) The escrow public key isn't used directly in the multisig, but rather a key derived from it using
+        the hash of the transaction terms. See our [technical page](technical) for more information.</p>
     form.span6
       fieldset
-        legend Create new escrow
+        legend Start new escrow
+
+        label Escrow public key
+        input.span12(type='text', name='trent', placeholder='Public key (hex)')
+        span.help-block.
+          You can browse the list of available escrow providers <a href="browse">here</a>.
+          You can use any public key; it doesn't have to be a registered user.
+
         .row-fluid
           .span6
-            label Escrow public key
-            input.input-xlarge(type='text', name='trent', placeholder='ECDSA pubkey in hex format')
-            span.help-block.
-              You can browse the list of available escrow providers <a href="browse">here</a>.
-          .span6
-            label Your key
-            input.input-xlarge(type='text', name='pub', placeholder='Public key (hex) or private key (base58)')
+            label Your public/private key
+            input.input-xlarge(type='text', name='bob', placeholder='Public key (hex) or private key (base58)')
             span.help-block <strong>Optional.</strong> If left empty, it will be created for you.
-              | Insutructions for locally generating keys can be found <a href="generate-keys">here</a>.
-        label Agreement
+              | Instructions for setting up keys locally can be found <a href="generate-keys">here</a>.
+          .span6
+            label Other party key
+            input.input-xlarge(type='text', name='alice', placeholder='Public key (hex)')
+            span.help-block <strong>Optional.</strong> If left empty, you'll be given a link to submit the other
+                          | party, where he can setup his keys.
+        label Terms 
         textarea.span12(name='agreement', rows=8, cols=90)
         .help-block
-          p.
+          :markdown
             Write the full details of the transaction. This should include identifying information for
             the buyer and the seller, the conditions upon which the transaction is valid, and any other
-            agreed upon terms. You can reference relevant files by mentioning their hash.
-          p This will be used for the dispute resolution process.
+            agreed upon terms. You can reference relevant files by mentioning their hash. See an example
+            [here](escrowexample).
+
+            The terms are hashed and embeded as part of the multisig address, to prove both sides agreed to the
+            same terms. Any change to the terms results in a new address. In case of a dispute, the escrow provider
+            will refer to those terms to for the dispute resolution.
       button.btn.btn-large.btn-primary Start escrow 
-      .muted
+      .muted.form-terms
         :markdown
           **Private keys are never stored on, uploaded to or processed by our servers.**
-
-          Except for sharing your *public* key with the other party, and sending locally
-          signed transactions, everything is handled client-side and is never uploaded to the server.
           See our [security policy](security) for more information.
 
           Your use of the service is on an AS-IS and AS-AVAILABLE basis, with no express or implied warranty.

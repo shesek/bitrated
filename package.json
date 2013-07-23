@@ -19,6 +19,8 @@
     "socket.io-client": "~0.9.16",
     "bitcoinjs-lib": "git://github.com/bitcoinjs/bitcoinjs-lib.git",
     "qruri": "~0.0.1",
-    "connect-jade-html": "~0.0.1"
+    "connect-jade-html": "~0.0.1",
+    "marked": "~0.2.9",
+    "browserify-middleware": "~1.14.1"
   }
 }

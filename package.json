@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Source code for Bitrator.com - bitcoin arbitration platform",
   "scripts": {
-    "start": "coffee app.coffee",
+    "start": "./start.sh",
     "build-static": "./build-static.sh"
   },
   "author": "Nadav Ivgi",

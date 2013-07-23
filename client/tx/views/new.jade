@@ -1,0 +1,86 @@
+.container-page
+  form
+    fieldset
+      legend Start new arbitrated transaction 
+
+      label Arbitrator public key
+      .help-block
+        :markdown
+          **Required.** You can browse the list of available arbitrators [here](/arbitrator).
+          You can use any public key; it doesn't have to be a registered user.
+      input.fullwidth(type='text', name='trent', placeholder='Public key (hex)', value=trent,
+                      required, pattern='^[a-f0-9]{130}$')
+
+      label Your public/private key
+      .help-block
+        :markdown
+          This random private key was created for you and **should be kept secret**.
+          You can replace it with a [locally generated public key](keys),
+          or use keys from sites like [brainwallet](http://brainwallet.org/)
+          or [bitaddress](https://www.bitaddress.org/).
+        input.fullwidth(type='text', name='bob', value=bob_priv, placeholder='Public key (hex) or private key (base58)',
+                        required, pattern='^([a-f0-9]{130}|[59][123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{50})$',
+                        autocomplete='off')
+      //.row-fluid
+        .span6
+          label Other party public key
+          .help-block
+            :markdown
+              **Optional.** If left empty, you'll be given a link to submit the other
+              party, where he can setup his keys.
+          input.input-xlarge(type='text', name='alice', placeholder='Public key (hex)')
+            
+      label Terms of agreement
+      .help-block
+        :markdown
+          **Required.** The terms should include contact information for both parties,
+          Bitcoin addresses, description of the transaction, the conditions upon which
+          the transaction is valid and any other agreed upon terms.
+
+          The terms are signed with both parties private key, and the signatures
+          are exchanged. In case of dispute, this allows you to prove the other
+          party agreed to those terms.
+      ul.nav.nav-tabs
+        li.active: a(href='#text', data-toggle='tab') Text
+        li: a(href='#file', data-toggle='tab') File
+        li: a(href='#hash', data-toggle='tab') Hash
+      div.tab-content
+        .tab-pane.active#text
+          p.help-block The terms will be embeded into the page URL, to make it easy to store and share them.
+          textarea.fullwidth(name='terms', rows=8, cols=90).
+            Example (replace with your own):
+             
+            Bob - the seller
+              Email: bob@gmail.com
+              Phone: 573-265-3743 (GMT +6)
+              Payment address: 18K25Djgv58gKFgxBd9sbjXuh3yamf1mUh
+
+            Alice - the buyer
+              Email: alice@gmail.com
+              Bitmessage: BM-orkCbppXWSqPpAxnz6jnfTZ2djb5pJKDb
+              Refund address: 1Nn8QKSG75zj2jyCKRc9LkYofToFNUwQms
+            
+            Bob is selling a used iPhone 4 to Alice for 10 BTC. Alice is aware that it has a small scratch on the back panel.
+
+            After Alice deposits 10 BTC to the multisig address, the device will be sent via registered mail to 233 Five Points, Easton, MD 21601.
+
+            Once Alice gets it, she'll release the 10 BTC (minus transaction fees) to Bob.
+
+            If one of the parties isn't responsive for over 2 weeks, the funds shall be transfered to the other party.
+        .tab-pane#file
+          .help-block
+            p Both parties should have a safe local copy of this file.
+            p Select file: 
+              input(type='file')
+        .tab-pane#hash
+          p.help-block You can hash the terms locally and input it here.
+          input.fullwidth(type='text')
+    button.btn.btn-large.btn-primary(type='submit') Start transaction 
+  .muted.disclaimer
+    :markdown
+      <i class="icon-lock"></i>
+      **Private keys are never stored on, uploaded to or processed by our servers.**
+      See our [security policy](security) for more information.
+
+      Your use of the service is on an AS-IS and AS-AVAILABLE basis, with no express or implied warranty.
+      See our [terms of service](terms) for more information.

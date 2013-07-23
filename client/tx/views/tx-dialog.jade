@@ -1,0 +1,61 @@
+form.tx-dialog.modal.hide.fade
+  .modal-header
+    button.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
+    h3 Confirm transaction 
+  .modal-body
+    table.table
+      thead: tr
+        th Pay to
+        th Amount
+      tbody
+        each out in outs
+          tr
+            td= out.address
+            td #{out.value} BTC
+      tfoot
+        tr
+          td(style='text-align:right;font-weight: bold') Fees:
+          td #{fees} BTC
+        tr
+          td(style='text-align:right;font-weight: bold') Total:
+          td #{total_in} BTC
+    
+    if final
+      p This transaction was sent for approval by another party.
+      p Authorizing this transaction will sign the transaction with your private key and 
+       | broadcast it to the Bitcoin network using blockchain.info's txpush service.
+    else
+      p Authorizing this transaction will sign the transaction with your private key and 
+       | send it to the other parties for final approval.
+
+    if !has_priv
+      p Please provide the private key for <em>#{pub_address}</em>,
+        | or sign the transaction locally.
+      ul.nav.nav-tabs
+        li.active: a(href='#provide-private', data-toggle='tab') Private key 
+        li: a(href='#sign-locally', data-toggle='tab') Sign locally with bitcoind
+      div.tab-content
+        .tab-pane.active#provide-private
+          input.fullwidth(type='text', name='priv', placeholder='Base58-check encoded private key')
+        .tab-pane#sign-locally
+          p Verify the transaction (optional):
+          pre bitcoind decoderawtransaction #{rawtx}
+          p Sign the transaction:
+          pre bitcoind signrawtransaction #{rawtx}
+          p And paste the output here:
+          textarea.signedtx.fullwidth(name='signedtx', placeholder='Input signed raw transaction in hex format')
+    
+    .errors
+  .modal-footer
+    .authorize
+      p Do you want to authorize this transaction?
+      button.btn(data-dismiss='modal') Cancel
+      button.btn.btn-primary.ok(type='button') Yes, authorize
+
+    //- hidden until the first confirmation button is clicked
+    .confirm
+      p Are you sure? please confirm again.
+      button.btn(data-dismiss='modal') Cancel
+      button.btn.btn-danger.ok(type='button') Confirm
+
+

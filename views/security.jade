@@ -1,0 +1,156 @@
+extend ./template/layout
+
+append title
+  | - Security policy
+
+block content
+  .container-page
+    :markdown
+      ## Security policy
+      We take security very seriously, and believe that the security model we
+      offer provides a good balance of simplicity, ease of use and high security.
+
+      Those are the security measures we take:
+      
+      #### SSL encryption
+      To prevent MITM attacks, all data communitation is encrypted with 256-bit SSL.
+      This is the industry standard for encrypting communication.
+
+      #### Client-side app
+      The arbitration process is managed in your browser using client-side technology,
+      to minimize the data that has to be shared with the server.
+      **Private keys are never handled by the servers**.
+
+      The data that is shared with the server is kept to the absolute required minimum,
+      and is not of sensitive nature. This includes:
+
+      - During the initial keys/signature exhchange, the party that joins the arbitration
+        sends his ***public* key**, his **signature** and the **triple-SHA256 of the multisig
+        script** (to verify both parties ended up with the same script).
+        The data is sent immediately to the other party, and *no permenent copy is ever saved*.
+      - When a transaction is created, the partially signed **transaction** is sent and
+        stored on the server for 24 hours, and can be read by both parties and the arbitrator.
+        This is the same transaction that later becomes part of the blockchain, and thus
+        *mostly considered public information*.
+      - To check if the abitrator is a registered user and display additional information,
+        we send the **triple-SHA256 of his public key** to our servers. This allows us to check
+        if it exists on our index, *without revealing the actual public key*.
+
+      In addition to that, some data is shared with third parties:
+
+      - To load the multisig balance and unspent inputs, the **multisig address** is sent to
+        [blockchain.info api](https://blockchain.info/api/blockchain_api) (over SSL).
+      - The final **transactions** is broadcasted to the Bitcoin network using the
+        [blockchain.info pushtx service](https://blockchain.info/pushtx) (over SSL).
+
+      Except for those cases, nothing else is sent to the server.
+      The arbitration data is stored in the hash portion of the URL, which is *not*
+      sent to the server during http requests and is only accessible to you and
+      people you choose to share URLs with.
+      Whenever we display URLs, we clearly state who it should be shared with and what
+      data it contains.
+      URLs that contain your private key are always marked with "DO-NOT-SHARE".
+      
+      **You are responsible for keeping a safe and secure backup of your URL.
+      The data contained in the URL is cryptographically required for releasing
+      the funds, and cannot be recovered by any means.**
+
+      #### Browser extension
+      Our browser extension provides improved security by verifying the intergrity
+      of the files served by the server. The verification is done using two factors:
+
+      - **Cold storage signature verification:**
+        In addition to SSL, static files (html/css/javascript)
+        are signed using standard Bitcoin message signatures on an offline machine
+        (the private key was created on that machine, and has no other copies)
+        and appended to the response body as a comment.
+
+      - **Comparing against the code on GitHub repository:**
+        The source code from the GitHub repository is built on Travis-CI,
+        and the resulting hashes are published publicly on Travis's job page.
+        The extension compares the web server response against those hashes.
+
+      If a potential attacker gains control over the web server, he still only has
+      access to information the web server already has (which is very little).
+      To get sensitive information, he would have to modify the client-side code
+      to send back more data to the server.
+
+      For an attacker to succesfully mount such an attack against someone with the
+      browser extension, he would have to:
+
+      1. Gain access to the web server
+      1. Gain access to the personal computer of a developer with commit access
+         to the Github repository
+      1. Gain **pyshical access** to the offline machine with the private key
+      1. Commit his changes to the public GitHub repository, where they
+         can be seen by anyone
+
+      For users without the extension, he would only have to do the first step.
+      It is highly recommended to install the extension.
+
+      <a class="btn btn-primary" href="TODO">Install extension</a>
+
+      #### Public key verification
+      To prevent an attacker from modifying our published Bitcoin public key,
+      its permenently embeded into Bitcoin blockchain in a way that is
+      [nearly impossible](https://en.bitcoin.it/wiki/Weaknesses#Attacker_has_a_lot_of_computing_power)
+      to modify (and becomes exponentially more difficult as time goes by).
+      The public key can be verified by taking the following procedure:
+
+      1. Take the SHA256 of the domain name ("bitrator.com")
+      2. Create a Bitcoin address using that hash as the private key
+      3. Find the first transaction with that address as its *input address*
+      4. The *output address* of that transaction is our public key
+
+      If its ever required to change the public key, the announcment
+      will be signed with the old public key.
+
+
+      #### Local private keys support
+      We fully support using local private keys instead of using the ones we
+      generate for you. You can create a pair of keys locally and input your
+      *public* key to our interface.
+      
+      When your signature is required, you'll be given instructions for signing
+      locally using the bitcoind/bitcoin-qt api and be asked to provide the
+      signature.
+
+      #### No external scripts
+      Everything is loaded from the web server over SSL.
+      We don't use any CDNs, never load data with JSONP (which allows executing
+      arbitrary code), or even use an analytics service.
+
+      This prevents third party domains from serving mailicious code
+      and have it executed under the context of the domain, possibly
+      giving them access to sensitive information.
+
+      #### Open source
+      This website is [open sourced](TODO) under the MIT license, and can be audited
+      by anyone with technical background.
+
+      #### Bug bounty
+      We welcome security audits and offer a bounty of 1 BTC for responsibly disclosing
+      security issues or breaches in our client-server model.
+      If you found a bug, please contact us at [security@bitrator.com](mailto:security@bitrator.com).
+
+      At the time of writing, the BTC/USD exchange rate is ~$110.
+      If this drastically changes (to either side) we'll pay the
+      equivalent BTC in that rate instead.
+
+    // #### Cold storage signature 
+    // In addition to SSL, static files (html/css/javascript)
+    // are signed using standard Bitcoin message signatures on an offline machine
+    //(the private key was created on that machine, and has no other copies).
+    // The signature is embeded as an HTML comment in the end of each page, and can be
+    // verified with our [browser extension](extension).
+
+    //This ensures that even if an attacker gains full access to the web server,
+    //he still can't tamper with client-side code and provide valid signatures.
+
+    
+    //#### Open Source
+    //The [browser extension](extension) (also [open sourced](TODO))
+    //verifies the files served by the server matches the code on the GitHub
+    //repository by comparing against sha256sums from
+    //[Travis-CI](https://travis-ci.org/) builds.
+

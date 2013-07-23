@@ -1,14 +1,12 @@
 {
-  "name": "bitcoin-escrow",
-  "version": "0.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "bitrator",
+  "version": "0.1.0",
+  "description": "Source code for Bitrator.com - bitcoin arbitration platform",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "coffee app.coffee"
   },
-  "repository": "",
-  "author": "",
-  "license": "BSD",
+  "author": "Nadav Ivgi",
+  "license": "MIT",
   "dependencies": {
     "coffee-script": "~1.6.2",
     "express": "~3.2.5",
@@ -16,6 +14,13 @@
     "jade": "~0.31.0",
     "jadeify2": "git://github.com/shesek/node-jadeify2.git#patch-1",
     "browserify": "~2.17.2",
-    "coffeeify": "~0.4.1"
+    "coffeeify": "~0.4.1",
+    "socket.io": "~0.9.16",
+    "socket.io-client": "~0.9.16",
+    "bitcoinjs-lib": "git://github.com/bitcoinjs/bitcoinjs-lib.git",
+    "qruri": "0.0.1"
+  },
+  "devDependencies": {
+    "connect-jade-html": "0.0.1"
   }
 }

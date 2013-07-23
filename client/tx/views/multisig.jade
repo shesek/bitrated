@@ -1,0 +1,146 @@
+include ../../views/mixin/copy.jade
+
+- proof_popover =  '<div class="proof-popover">'
+- proof_popover += '<p>This digital signature proves the other party accepted the terms:</p>'
+- proof_popover += '<pre>'+proof+'</pre>'
+- proof_popover += '</div>'
+
+.row-fluid
+  .span5.tx-details
+    //h3 Transaction details
+
+    label Terms of agreement:
+    pre.terms= terms
+    .clearfix
+      if is_dispute
+        p.badge.badge-info.pull-left Dispute by Party A
+      p.badge.badge-success.pull-right.signed(data-toggle='popover', data-html, data-content=proof_popover)
+        | <i class="icon-ok-sign icon-white"></i> Signed by #{is_dispute ? 'Party B' : 'other party'}
+
+    .pubkeys
+      mixin pubkey(key, address)
+        pre= key
+        p.help-block Address: #{address}
+      ul.nav.nav-tabs
+        li: label Public keys:
+        li.active: a(href='#pubkey-bob', data-toggle='tab')= is_dispute ? 'Party A' : 'Yours'
+        li: a(href='#pubkey-alice', data-toggle='tab')= is_dispute ? 'Party B' : 'Other party'
+        li: a(href='#pubkey-trent', data-toggle='tab') Arbitrator
+      div.tab-content
+        .tab-pane.active#pubkey-bob: +pubkey(bob, bob_address)
+        .tab-pane#pubkey-alice: +pubkey(alice, alice_address)
+        .tab-pane#pubkey-trent: +pubkey(trent, trent_address)
+
+    label Multisig bitcoin address:
+    pre= multisig
+
+    if bob_priv
+      label Your private key:
+      pre.nosurf= bob_priv
+      p.muted The private key allows you to control the funds, and <strong>should be kept secret</strong>.
+
+    if bob_priv
+      label Import multisig address and private key to bitcoin-qt/bitcoind wallet:
+      pre bitcoind importprivkey <span class="nosurf">#{bob_priv}</span> && bitcoind addmultisigaddress 2 '#{JSON.stringify(pubkeys)}'
+    else 
+      label Import multisig address to bitcoind wallet:
+      pre bitcoind addmultisigaddress 2 '#{JSON.stringify(pubkeys)}'
+      if !is_dispute
+        p You're using a private key that was not generated with the website. Make sure you have a
+          | safe copy of it. When you'll want to release the funds, you'll be requested to provide it
+          | or to sign the transaction locally.
+
+  .span7
+    if display_warning
+      .alert
+        button.close(type='button', data-dismiss='alert') &times;
+        h3 Heads up!
+        p.
+          Make sure to keep a safe copy of all three public keys, your private key,
+          the terms and the signature. They're required for releasing the funds or
+          starting a dispute, and <strong>cannot be recovered by any means</strong>.
+        p All this information
+          if !bob_priv
+            | , <strong>except the private key which you should have saved elsewhere</strong>,
+          |  is embeded in the page URL. You can bookmark the page, or copy the URL below:
+        pre.url= bob_url 
+        if bob_priv
+          p: strong This URL includes your private key and should be kept secret.
+
+        p If this website ever becomes unavailable, all the relevant information can be
+         | extracted from the URL alone and be used to release the funds using the standard
+         | Bitcoin client.
+
+    if !is_dispute
+      .pay.clearfix
+        h3 Pay to multisig
+        img.pull-right.qr(src=multisig_qr)
+        p Any payments made to the multisig address can only be released
+          | with the agreement of two parties. The multisig address is:
+        p.multisig-address= multisig + ' '
+          +copy(multisig)
+        .pay-link
+          a.btn.btn-primary(href="bitcoin:#{multisig}") Pay with Bitcoin
+          p.help-block (or scan the QR code to the right)
+        p.muted Multisig transactions are still new, and not supported by all miners. It might take awhile
+              | for the payment to be confirmed.
+
+    h3 Release funds
+    p.
+      To release the funds, create the transaction below and authorize it. This will sign the transaction with
+      your private key and request approval from the other key holders.
+    p Once its approved and signed by one of them, the transaction will be broadcasted to the Bitcoin network.
+    .tx-builder
+      p
+        | <strong>Balance:</strong> <span class="balance">unknown</span> 
+        button.btn.btn-mini.update-balance: i.icon-refresh
+        = ' '
+        span.muted.
+          (loaded from <a href="https://blockchain.info/">blockchain.info</a>, see
+          <a href="https://blockchain.info/address/#{multisig}/"><span class="icon-share"></span> full transaction history</a>)
+      .addresses
+        .address.form-inline
+          button.btn.add-address(tabindex=-1): i.icon-plus
+          = ' '
+          .input-append
+            input.input-xlarge(type='text', name='address', placeholder='Destination address')
+            .btn-group
+              .btn.dropdown-toggle(data-toggle='dropdown'): span.caret
+              ul.dropdown-menu
+                li: a(data-address=bob_address)= is_dispute ? 'Party A' : 'You'
+                li: a(data-address=alice_address)= is_dispute ? 'Party B': 'Other party'
+                li: a(data-address=trent_address) Arbitrator
+                li: a(data-address=multisig) Multisig (change)
+          = ' '
+          .input-append
+            input.input-small(type='text', name='value', placeholder='BTC amount')
+            .btn-group
+              .btn.dropdown-toggle(data-toggle='dropdown'): span.caret
+              ul.dropdown-menu
+                li: a.pay-remaining(title="Minus #{default_fee} BTC in fees") Pay remaining
+                li: a.pay-some Pay % of total
+      .btn-group
+        button.btn.btn-primary.release Release 
+        button.btn.btn-primary.dropdown-toggle(data-toggle='dropdown'): span.caret
+        ul.dropdown-menu
+          li: a.enter-raw-tx Input hex transaction
+          li: a.get-raw-tx Get hex transaction
+
+    if !is_dispute
+      h3 File dispute
+      :markdown
+        To file a dispute, contact the arbitrator and provide him with an explaination
+        of what happened, relevant correspondence between you and the other party,
+        any evidence you might have and the following URL:
+      pre.url= trent_url
+      :markdown
+        This URL contains all three *public* keys, the terms and the other party's signature.
+
+      //p The arbitrator is a registered Bitscrow user. You can contact him using the form below, and we'll forward him
+        | the public keys and terms of agreement. Make sure to provide him with an explaination of what happened,
+        | any evidence you might have, and anything else that you find relevant.
+      //form.dispute
+        label Message body:
+        textarea
+        button.btn Submit dispute
+

@@ -1,0 +1,82 @@
+extend ./template/layout
+
+append css
+  link(rel='stylesheet', href='home.css')
+
+block content
+  .container-home
+    .jumbotron
+      h1 Bitrator
+      p.lead Bitcoin arbitration platform
+
+      a.btn.btn-primary.btn-large(href='/tx.html') Start transaction 
+      = ' '
+      a.btn.btn-large(href='/arbitrate.html') Offer arbitration
+
+    .row-fluid.home-text
+      .span6.features
+        :markdown
+          - ### Anyone can offer arbitration services
+            Anyone can offer arbitration services and compete for
+            customers by oferring quality services and competitive fees.
+
+            As a customer, you can choose an arbitrator with acceptable
+            dispute resolution process, fair fees and reputable history.
+
+          - ### The arbitrator never has full control over the funds
+            The arbitrator can only move the funds with the permission of either
+            the buyer or the seller. He never has full control over the funds.
+
+          - ### Arbitrator is not required for releasing the funds 
+            If the transaction ends well, the parties can release the funds without
+            any intervention from the arbitrator.
+  
+          - ### Private keys are never handled by the server
+            Keys are created and processed in your browser, using client-side code.
+            See our [security policy](security.html) for more information.
+        
+        //- ### Secured with Bitcoin's m-of-n transactions
+          The arbitration process is secured using Bitcoin's m-of-n transactions.
+
+        //- ### Use an arbitrator you trust
+          Pick an arbitrator based on his reputation, his dispute resolution process
+          and the fees you're willing to pay.
+
+      .span6
+        :markdown
+          ### What is an arbitration service?
+          Arbitration is a dispute resolution mechanism where the arbitrator,
+          an independent trusted third party, resolves disputes between two transacting parties,
+          typically a buyer and a seller.
+
+          ### How does Bitcoin arbitration works?
+          The payments are made to an 2-of-3 multisig address, composed of 
+          your public key, the other party public key and the arbitrator public key.
+
+          The payments are locked in that address, and can only be released
+          with the agreement of at least two parties. If the buyer and the seller agree,
+          they can release the funds themselves. In case of a dispute, one of the parties
+          can get the arbitrator approval and release the funds. [Learn more...](how)
+
+          ### What is this website?
+          This is an open platform for Bitcoin arbitration services. We help manage the technical
+          aspects of using m-of-n transactions, signing the terms, and has an
+          [directory of available arbitrators](arbitrator).
+          We do not offer arbitration services directly.
+
+    //.row-fluid
+      .span4
+        h2 Buyers
+        :markdown
+          Protect yourself against online fraud.
+        a.btn.btn-primary(href='/tx.html') Get started
+      .span4
+        h2 Sellers 
+        :markdown
+          Give your customers a peace of mind.
+        a.btn(href='/tx.html') Get started
+      .span4
+        h2 Escrow providers
+        :markdown
+          Provide an dispute resolution service for a fee.
+        a.btn(href='/arbitrate.html') Get started

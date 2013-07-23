@@ -1,0 +1,68 @@
+pre
+  &.terms
+    max-height 15em
+    word-break normal
+  &.url
+    color #025D8C
+    text-decoration underline
+
+.tx-details
+  label
+    font-weight normal
+  .pubkeys
+    pre
+      margin-bottom 5px
+    .help-block
+      text-align right
+      font-size 0.8em
+      margin 0
+      line-height 1em
+      color #7B8A8B    
+    .nav
+      margin-bottom -1px
+      label
+        margin 9px 1em 0 2px
+    .tab-content
+      overflow visible
+    .nav-tabs>.active>a, .nav-tabs>.active>a:hover, .nav-tabs>.active>a:focus
+      background-color whiteSmoke
+      
+.pay
+  .multisig-address
+    text-align center
+    font-size 1.1em
+    //font-weight bold
+  .pay-link
+    text-align center
+
+.tx-builder
+  .addresses
+    margin 0 0 21px
+    //.dropdown-menu
+    //  left -132px
+  .address
+    margin-bottom 0.5em
+    input[name=address]
+      width 21em
+    .add-address, .del-address
+      padding 9px 13px
+      margin-right 7px
+    .btn-group
+      margin-top 1px // Bugfix
+      .dropdown-toggle
+        padding 9px 10px
+.tx-dialog
+  textarea
+    height 5em
+  .confirm
+    display none
+
+.signed
+  cursor pointer
+.proof-popover
+  pre
+    max-height 10em
+    background transparent
+    color #fff
+    border 0
+  

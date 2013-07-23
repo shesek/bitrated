@@ -1,0 +1,44 @@
+doctype 5
+html
+  head
+    meta(charset='utf-8')
+    title: block title
+      | Bitrator 
+    block css
+      link(rel='stylesheet', href='/lib/bootstrap/css/flatly.min.css')
+      link(rel='stylesheet', href='/lib/bootstrap/css/bootstrap-responsive.min.css')
+      link(rel='stylesheet', href='/common.css')
+  body
+    .navbar.navbar-fixed-top: .navbar-inner: .container
+      a.brand(href='/') Bitrator
+      ul.nav
+        li: a(href='/tx.html') Start transaction
+        li: a(href='/arbitrate.html') Become an arbitrator
+        li: a(href='/arbitrators.html') Browse artbitrators
+      ul.nav.pull-right
+        li: a(href='https://github.com/shesek/bitrator/issues/new') Report bug
+        li: a(href='https://github.com/shesek/bitrator') <i class="icon-share icon-white"></i> Source Code 
+
+    .container.content: block content
+
+    block scripts
+      script(src='/lib/jquery.min.js')
+      script(src='/lib/bootstrap/bootstrap.min.js')
+
+    footer.muted.container
+      .pull-right
+        :markdown
+          [<i span class="icon-lock"></i> Security](/security.html) &middot;
+          [Privacy](/privacy.html) &middot;
+          [Terms](/terms.html) &middot;
+          [About](/about.html) &middot;
+          [Contact](mailto:hey@[replace-with-domain].com)
+
+          [#{tip_address}](bitcoin:#{tip_address})
+        script $('body > footer a[href^="mailto:"]').attr('href', 'mailto:hey@'+document.location.hostname.replace(/^www\./,''))
+      :markdown
+        This website is [open sourced](https://github.com/shesek/bitrator/) under the
+        [MIT License](https://github.com/shesek/bitrator/blob/master/LICENSE).
+        Contributions are welcome.
+
+        &copy; 2013 Bitrator. [Some rights reserved](TODO). 

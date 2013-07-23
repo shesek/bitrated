@@ -1,22 +1,13 @@
-express = require 'express'
-stylus = require 'stylus'
-browserify = require 'browserify-middleware'
+{ createServer } = require 'http'
+{ NODE_ENV, PORT } = process.env
+PORT or= 8070
 
-express().configure ->
-  @set 'view engine', 'jade'
-  @set 'views', __dirname + '/views'
-  @set 'port', process.env.PORT or 8070
+# On production, nginx is used to serve static files
+# In development, web.coffee compiles files on-the-fly and serves them
+server = if NODE_ENV is 'production' then createServer() \
+         else createServer require './web.coffee'
 
-  @use express.favicon()
-  @use express.logger 'dev'
-  @use @router
-  if @settings.env is 'development'
-    @get '/escrow.js', browserify 'client/escrow.coffee', transform: ['coffeeify', 'jadeify2']
-    @use stylus.middleware __dirname + '/public'
-  @use express.static __dirname + '/public'
+require('./websocket')(server)
 
-  @get '/', (req, res) -> res.render 'home'
-  @get '/escrow', (req, res) -> res.render 'escrow'
-  @get '/provider', (req, res) -> res.render 'provider'
+server.listen PORT, -> console.log "Listening on #{PORT}"
 
-  @listen (@get 'port'), => console.log "Running on port #{@get 'port'}"

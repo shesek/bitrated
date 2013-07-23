@@ -12,7 +12,7 @@ module.exports = express().configure ->
   @set 'views', join __dirname, 'views'
   @set 'public', join __dirname, 'public'
 
-  @locals.tip_address = '1D9LYFxYK5ktANk2xRhtBV41koL4YDYsRS'
+  @locals.pubkey_address = process.env.PUBKEY_ADDRESS
 
   @use express.favicon()
   @use express.logger 'dev'

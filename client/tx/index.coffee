@@ -157,6 +157,9 @@ action_multisig = do (view = require './views/multisig.jade') ->
     }
     render el
 
+    if display_warning
+      $('.headsup').removeClass('hide').modal()
+
     # Initialize transaction builder
     teardown.push tx_builder el.find('.tx-builder'), {
       multisig, script, channel

@@ -51,26 +51,6 @@ include ../../views/mixin/copy.jade
           | or to sign the transaction locally.
 
   .span7
-    if display_warning
-      .alert
-        button.close(type='button', data-dismiss='alert') &times;
-        h3 Heads up!
-        p.
-          Make sure to keep a safe copy of all three public keys, your private key,
-          the terms and the signature. They're required for releasing the funds or
-          starting a dispute, and <strong>cannot be recovered by any means</strong>.
-        p All this information
-          if !bob_priv
-            | , <strong>except the private key which you should have saved elsewhere</strong>,
-          |  is embeded in the page URL. You can bookmark the page, or copy the URL below:
-        pre.url= bob_url 
-        if bob_priv
-          p: strong This URL includes your private key and should be kept secret.
-
-        p If this website ever becomes unavailable, all the relevant information can be
-         | extracted from the URL alone and be used to release the funds using the standard
-         | Bitcoin client.
-
     if !is_dispute
       .pay.clearfix
         h3 Pay to multisig
@@ -135,6 +115,30 @@ include ../../views/mixin/copy.jade
       pre.url= trent_url
       :markdown
         This URL contains all three *public* keys, the terms and the other party's signature.
+
+if display_warning
+  .headsup.clearfix.hide.modal
+    .modal-header
+      button.close(type='button', data-dismiss='modal') &times;
+      h3 Heads up!
+    .modal-body
+      p.
+        Make sure to keep a safe copy of all three public keys, your private key,
+        the terms and the signature. They're required for releasing the funds or
+        starting a dispute, and <strong>cannot be recovered by any means</strong>.
+      p All this information
+        if !bob_priv
+          | , <strong>except the private key which you should have saved elsewhere</strong>,
+        |  is embeded in the page URL. You can bookmark the page, or copy the URL below:
+      pre.url= bob_url 
+      if bob_priv
+        p: strong This URL includes your private key and should be kept secret.
+
+      p If this website ever becomes unavailable, all the relevant information can be
+       | extracted from the URL alone and be used to release the funds using the standard
+       | Bitcoin client.  
+    .modal-footer
+      button.btn.btn-primary.pull-right(type='button', data-dismiss='modal') Okay, I have a safe copy
 
       //p The arbitrator is a registered Bitscrow user. You can contact him using the form below, and we'll forward him
         | the public keys and terms of agreement. Make sure to provide him with an explaination of what happened,

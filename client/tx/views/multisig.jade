@@ -117,7 +117,7 @@ include ../../views/mixin/copy.jade
         This URL contains all three *public* keys, the terms and the other party's signature.
 
 if display_warning
-  .headsup.clearfix.hide.modal
+  .headsup.hide.modal
     .modal-header
       button.close(type='button', data-dismiss='modal') &times;
       h3 Heads up!
@@ -138,7 +138,7 @@ if display_warning
        | extracted from the URL alone and be used to release the funds using the standard
        | Bitcoin client.  
     .modal-footer
-      button.btn.btn-primary.pull-right(type='button', data-dismiss='modal') Okay, I have a safe copy
+      button.btn.btn-primary(type='button', data-dismiss='modal') Okay, I have a safe copy
 
       //p The arbitrator is a registered Bitscrow user. You can contact him using the form below, and we'll forward him
         | the public keys and terms of agreement. Make sure to provide him with an explaination of what happened,

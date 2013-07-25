@@ -1,5 +1,6 @@
 #!/bin/bash
 [ -f .env ]  && source .env
+[ ! -z "$1" ] && BUILD="$1"
 [ -z "$BUILD" ] && echo "Usage: BUILD=build_target npm run build-static, or set BUILD in .env" && exit 1
 
 rm -r "$BUILD"

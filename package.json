@@ -18,7 +18,8 @@
     "qruri": "~0.0.1",
     "marked": "~0.2.9",
     "mongoose-time": "~0.1.0",
-    "mongoose-pagination": "~1.0.0"
+    "mongoose-pagination": "~1.0.0",
+    "connect-ext-type": "0.0.1"
   },
   "devDependencies": {
     "stylus": "~0.34.1",

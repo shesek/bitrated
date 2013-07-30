@@ -1,18 +1,35 @@
 socketio = require 'socket.io'
-RedisStore = require 'socket.io/lib/stores/redis'
 
 module.exports = (server) ->
+  { Message } = @models
+
   io = socketio.listen server, log: !!process.env.SOCKETIO_LOG
   io.set 'transports', ['xhr-polling'] if process.env.NO_WEBSOCKET
 
   io.on 'connection', (socket) ->
-    # allow clients to join and leave rooms
-    socket.on 'join', (room) -> socket.join room
+    # Join rooms
+    socket.on 'join', (room, cb) ->
+      socket.join room
+
+    # Leave rooms
     socket.on 'part', (room) -> socket.leave room
 
-    # Forward messages between users
-    socket.on 'msg', (room, msg) -> socket.broadcast.to(room).emit(room, msg)
+    # Forward handshake replies
+    socket.on 'handshake', (room, msg) -> socket.broadcast.to(room).emit(room, msg)
+    
+    # Forward and store messages
+    socket.on 'msg', (room, tx) ->
+      socket.broadcast.to(room).emit(room, tx)
+      #msg = new Message { room, tx }
+      #msg.save (err) ->
+      #  socket.emit 'error', iferr if err?
   io
+
+# load stored messages
+#Message.find { room }, iferr cb, (msgs) ->
+#  socket.emit room, msg for msg in msgs
+#  cb null
+
 
 # TODO
 # - Encrypt messages end-to-end (using Bitcoin key pair?)

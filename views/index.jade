@@ -5,9 +5,9 @@ append css
 
 block content
   .container-home
-    .jumbotron
-      h1 Bitrator
-      p.lead Bitcoin arbitration platform
+    .hero-unit
+      h1 Bitrated
+      p.lead Bitcoin arbitration marketplace
 
       a.btn.btn-primary.btn-large(href='/tx.html') Start transaction 
       = ' '
@@ -50,18 +50,20 @@ block content
           typically a buyer and a seller.
 
           ### How does Bitcoin arbitration works?
-          The payments are made to an 2-of-3 multisig address, composed of 
-          your public key, the other party public key and the arbitrator public key.
 
-          The payments are locked in that address, and can only be released
-          with the agreement of at least two parties. If the buyer and the seller agree,
-          they can release the funds themselves. In case of a dispute, one of the parties
-          can get the arbitrator approval and release the funds. [Learn more...](how)
+          The payments are made to an 2-of-3 multisig address, composed of 
+          your's, the other party's and the arbitrator's public keys.
+          Releasing the payments payments from the multisig address requires the
+          agreement of two parties.
+
+          If the buyer and the seller agree, they can release the funds themselves.
+          In case of a dispute, one of the parties can get the arbitrator approval and release the funds.
+          [Learn more...](how)
 
           ### What is this website?
-          This is an open platform for Bitcoin arbitration services. We help manage the technical
-          aspects of using m-of-n transactions, signing the terms, and has an
-          [directory of available arbitrators](arbitrator).
+          This is an open marketplace for Bitcoin arbitration services. We help manage the technical
+          aspects of using m-of-n transactions, signing the terms, and have a
+          [directory of available arbitrators](/u).
           We do not offer arbitration services directly.
 
     //-.row-fluid

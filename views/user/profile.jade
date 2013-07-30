@@ -1,0 +1,30 @@
+extend ../template/layout
+
+prepend title
+  | #{user.username} | 
+
+
+block content
+  .container
+    h2 #{user.username}'s profile
+
+    dl
+      dt Public key:
+      dd.break #{user.pubkey}
+
+    .clearfix
+      .well
+        != marked(user.content)
+      a.btn.btn-primary.btn-large(href=user.tx_url) Start transaction
+      proof_popover = '<div class="proof-popover"><pre>'+user.sig+'</pre></div>'
+      p.badge.badge-success.pull-right.signed(data-toggle='popover', data-html='data-html', data-placement='left', data-content=proof_popover)
+        | <i class="icon-ok-sign icon-white"></i> Signed by #{user.username}
+
+
+    .muted(style='margin-top: 4em')
+      :markdown
+        **Alt formats:**
+        [json](#{user.username}.json) &middot; [text](#{user.username}.txt)
+
+append scripts
+  script $('[data-toggle=popover]').popover()

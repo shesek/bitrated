@@ -1,0 +1,17 @@
+extend ../template/layout
+
+prepend title
+  | Arbitrators directory |
+
+append css
+  link(rel='stylesheet', type='text/css', href='/user.css')
+
+block content
+  .page-header: h2 Bitrated arbitrators directory
+  for user in users
+    .user
+      h4: a(href=user.profile_url)= user.username
+      .well!= marked(user.content.substr(0, 100))
+      a.btn.btn-primary(href=user.profile_url) Profile
+      | 
+      a.btn(href=user.tx_url) Start transaction

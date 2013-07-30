@@ -1,7 +1,7 @@
 { Bitcoin, Crypto, BigInteger } = require '../../lib/bitcoinjs-lib.js'
 { iferr, error_displayer } = require '../util.coffee'
-{ get_address, parse_address, parse_key_bytes, decode_raw_tx, get_pub, ADDR_PUB, ADDR_PRIV } = require '../bitcoin.coffee'
-{ sign_tx, calc_total_in, sum_inputs } = require './lib.coffee'
+{ get_address, parse_address, parse_key_bytes, get_pub, ADDR_PUB, ADDR_PRIV } = require '../bitcoin.coffee'
+{ sign_tx, calc_total_in, sum_inputs, decode_raw_tx } = require './lib.coffee'
 { tx_listen, load_unspent } = require './networking.coffee'
 { bytesToHex } = Crypto.util
 { Transaction, Util: BitUtil } = Bitcoin
@@ -47,31 +47,41 @@ tx_builder = do (addr_tmpl=null) -> (el, { key, trent, multisig, script, channel
       balance = sum_inputs unspent
       $('.balance').text (BitUtil.formatValue balance)+' BTC'
   do update_balance
+  
+  show_dialog = (tx, initiator) ->
+    tx.total_in ?= calc_total_in tx, unspent
+    tx_dialog { pub, priv, script, tx, el, initiator },
+              iferr display_error, cb_success
 
   cb_success = cb.bind null, null
 
   # Release button - open dialog for confirmation
   el.find('.release').click ->
-    tx_dialog {
-      pub, priv, script
-      tx: build_tx unspent, el
-      initiator: 'self'
-    }, iferr display_error, cb_success
-    
+    try show_dialog (build_tx unspent, el), 'self'
+    catch e then display_error e
+
+  # Input raw transaction
+  el.find('.input-rawtx').click ->
+    input_rawtx_dialog (tx) ->
+      try show_dialog tx, 'self'
+      catch e then display_error e
+
+  # Get raw transaction
+  el.find('.show-rawtx').click ->
+    try
+      rawtx = bytesToHex build_tx(unspent, el).serialize()
+      show_rawtx_dialog { rawtx }
+    catch e then display_error e
+
   # Subscribe to transaction requests
   tx_unlisten = tx_listen channel, (tx) ->
-    # TODO ignore requests made by the viewing user
+    # TODO ignore requests made by the current user
     # TODO validate tx
     # TODO validate signature
-    try
-      tx.total_in = calc_total_in tx, unspent
-      tx_dialog {
-        pub, priv, tx, script
-        initiator: 'other'
-      }, iferr display_error, cb_success
+    try show_dialog tx,' other'
+    catch e then display_error e
 
-
-# Build transaction with the given inputs and form outputs
+# Build transaction with the given inputs and parse outputs from <form>
 build_tx = (inputs, $form) ->
   tx = new Transaction
 
@@ -97,6 +107,9 @@ tx_dialog = do (view=require './views/tx-dialog.jade') ->
       return cb new Error 'Insufficient funds. If the payment was sent recently,
                            it might not be confirmed yet.
                            You can refresh the balance to check for new payments.'
+    unless tx.outs.length
+      return cb new Error 'No outputs provided'
+
     dialog = $ view {
       outs: for { script: out_script, value } in tx.outs
         address: get_address out_script.simpleOutHash(), ADDR_PUB
@@ -132,7 +145,7 @@ tx_dialog = do (view=require './views/tx-dialog.jade') ->
     dialog.find('.authorize .ok').click sure_cb = ->
       dialog
         .find('.authorize').hide().end()
-        .find('.confirm').show()
+        .find('.confirm').show().end()
 
     dialog.find('.confirm .ok').click authorize = ->
       try

@@ -1,5 +1,6 @@
 { sha256b } = require '../util.coffee'
-{ verify_sig, create_multisig, decode_raw_tx } = require '../bitcoin.coffee'
+{ verify_sig, create_multisig } = require '../bitcoin.coffee'
+{ decode_raw_tx } = require './lib.coffee'
 { hexToBytes, bytesToHex, bytesToBase64, base64ToBytes } = Crypto.util
 { Transaction, Util: BitUtil } = Bitcoin
 
@@ -35,12 +36,12 @@ handshake_listen = (channel, { bob, trent, terms }, cb) ->
       cb null, { alice, proof }
   unlisten = ->
     socket.emit 'part', channel
-    socket.removeListener 'hs:'+channel, hs_cb
+    socket.removeListener channel, hs_cb
 
 # Send handshake reply
 handshake_reply = (channel, { pub, proof, script }) ->
   channel = bytesToBase64 channel
-  get_socket().emit 'msg', channel, {
+  get_socket().emit 'handshake', channel, {
     pub: bytesToBase64 pub
     proof: bytesToBase64 proof
     script_hash: bytesToBase64 triple_sha256 script.buffer

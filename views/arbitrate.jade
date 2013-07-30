@@ -1,7 +1,7 @@
 extend ./template/layout
 
-append title
-  | Become a service provider
+prepend title
+  | Become an arbitrator | 
 
 append scripts
   script(src='arbitrate.js')
@@ -55,8 +55,12 @@ block content
         (with the agreement of one of the parties).
   .container-page
     form.arbitrate: fieldset
-      legend Become an arbitrator service provider
+      legend Register to our arbitrators directory
       
+      label Username
+      input.input-xlarge(type='text', name='username', placeholder='3-15 alphanumeric characters',
+                         required, pattern='^[a-zA-Z0-9]{3,15}$')
+
       label Your public/private key
       .help-block
         :markdown
@@ -64,7 +68,14 @@ block content
           You can replace it with a [locally generated public key](keys),
           or use keys from sites like [brainwallet](http://brainwallet.org/)
           or [bitaddress](https://www.bitaddress.org/).
-      input.fullwidth(type='text', name='trent', placeholder='Public key (hex) or private key (base58)', required)
+      input.fullwidth(type='text', name='key', placeholder='Public key (hex) or private key (base58)',
+                      required, pattern='^([a-f0-9]{130}|[59][123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{50})$',
+                      autocomplete='off')
+      .muted
+        :markdown
+          <i class="icon-lock"></i>
+          **Private keys are never processed by our servers.**
+          See our [secuity policy](/security.html) for more information.
         
       label Your terms of service
       .help-block
@@ -76,39 +87,34 @@ block content
           The terms will be signed with your private key in the next page. You should publish
           your terms along with the signature, to show you're the public key owner.
           
-          The terms you enter here will be considered in force for any transaction sent to a multisig
-          address with this public key. If you wish to change your terms or offer multiple terms,
-          use a separate public key.
-      textarea.input-block-level(name='agreement', rows=8, cols=90, required).
+      textarea.input-block-level(name='terms', rows=8, required).
         Example (replace with your own):
 
-        Name: Trent
-        Fees: 1%, minimum of 0.05 BTC
-        Contact: trent@gmail.com or 412-326-0965 (9AM to 6PM, GMT +7)
-        Response time: up to 3 business days
+        - Name: Trent Arbitr
+        - Fees: 2%, minimum of 0.05 BTC. Should be paid for every transaction, along with the initial payment
+          to the multisig address.
+        - Contact:
+          - Email: trent@gmail.com
+          - Phone: 412-123-4567 (9AM to 6PM, GMT +7)
+          - Bitmessage: BM-orkCbppXWSqPpAxnz6jnfTZ2djb5pJKDb
+        - Response times: up to 3 business days.
+
+        #### Dispute resolution process
+        I will try to contact both parties to gather information and evidence, and do
+        my best to make rightful judgement.
 
         Unless specified otherwise in the transaction details, if one of the parties
         isn't responsive for 1 month, I will transfer all the funds to the other party.
 
+        #### Identity verification
         To verify my identity, my public key will be posted on:
+
         - Twitter: https://twitter.com/trent
         - Facebook: http://www.facebook.com/trent
         - Reddit: http://www.reddit.com/user/trent
 
-      label(for='register').checkbox
-        input#register(name='register', type='checkbox')
-        | Register to our arbitrators directory
-      .register-fields
-        label Pick a username:
-        input.input-xlarge(type='text', name='username')
-
       button.btn.btn-primary.btn-large(type='submit') Continue 
-    .muted.form-notes
+    .muted
       :markdown
-        <i class="icon-lock"></i>
-        **Private keys are never stored on, uploaded to or processed by our servers.**
-        See our [secuity policy](/security.html) for more information.
-      
-        Your use of the service is on an AS-IS and AS-AVAILABLE basis, with no express or implied warranty.
-        See our [terms of service](/terms.html) for more information.
+        By using this service, you agree to [Bitrated terms of services](/terms.html).
 

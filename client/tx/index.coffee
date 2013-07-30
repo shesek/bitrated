@@ -1,15 +1,15 @@
 qs = require 'querystring'
 qr = require 'qruri'
+tx_builder = require './tx-builder.coffee'
 { Bitcoin, Crypto } = require '../../lib/bitcoinjs-lib.js'
 { util: { bytesToBase64, base64ToBytes, bytesToHex, hexToBytes, randomBytes }, charenc: { UTF8 } } = Crypto
 BitUtil = Bitcoin.Util
 { get_channel, tx_request, tx_broadcast, handshake_listen, handshake_reply } = require './networking.coffee'
-{ is_final_tx } = require './lib.coffee'
-tx_builder = require './tx-builder.coffee'
-{ iferr, error_displayer } = require '../util.coffee'
+{ is_final_tx, format_locals } = require './lib.coffee'
+{ iferr, error_displayer, success, format_url, render } = require '../util.coffee'
 { get_address, parse_pubkey, create_multisig, random_privkey
   parse_key_string, parse_key_bytes, sign_message, verify_sig
-  ADDR_PUB, ADDR_PRIV, PRIVKEY_LEN, PUBKEY_LEN } = require '../bitcoin.coffee'
+  ADDR_PUB, PRIVKEY_LEN, PUBKEY_LEN } = require '../bitcoin.coffee'
 
 
 DEBUG = !!~document.location.hash.indexOf('DEBUG')
@@ -21,7 +21,6 @@ DEFAULT_FEE = BitUtil.parseValue '0.0001'
 # and Trent is the arbitrator.
 #
 # The bob, alice and trent variables represent the respective public keys.
-
 
 $root = $ '.content'
 display_error = error_displayer $root
@@ -60,21 +59,17 @@ route = (query, ctx) ->
     if DEBUG then throw e
     else display_error e.message
 
-render = (el) ->
-  $root.empty().append(el)
-  el.find('[data-toggle=tooltip]').tooltip()
-  el.find('[data-toggle=popover]').popover()
 
 # New transaction page
 action_new = do (view = require './views/new.jade') ->
   ({ trent }) ->
-    document.title = 'Start new transaction | Bitrator'
+    document.title = 'Start new transaction | Bitrated'
     el = $ view format_locals { bob_priv: random_privkey(), trent }
     el.find('form').submit (e) ->
       e.preventDefault()
       try
         { pub, priv } = parse_key_string el.find('input[name=bob]').val()
-        trent = hexToBytes el.find('input[name=trent]').val()
+        trent = parse_pubkey el.find('input[name=trent]').val()
         terms = UTF8.stringToBytes el.find('textarea[name=terms]').val().trim()
         # Create a random token as the channel name
         channel = randomBytes 15
@@ -85,7 +80,7 @@ action_new = do (view = require './views/new.jade') ->
 # Awaiting page
 action_awaiting = do (view = require './views/awaiting.jade') ->
   ({ bob, bob_main, trent, terms, channel }) ->
-    document.title = "Awaiting other party... | Bitrator"
+    document.title = "Awaiting other party... | Bitrated"
     
     $(window).on 'beforeunload', beforeunload_cb = -> 'To continue, you must wait for the other party to connect.'
     teardown.push -> $(window).off 'beforeunload', beforeunload_cb
@@ -107,7 +102,7 @@ action_join = do (view = require './views/join.jade') ->
     unless proof?
       throw new Error 'Invalid signature provided by other party'
 
-    document.title = 'Join transaction | Bitrator'
+    document.title = 'Join transaction | Bitrated'
     el = $ view format_locals {
       alice, trent, terms, proof
       bob_priv: random_privkey()
@@ -136,7 +131,7 @@ action_multisig = do (view = require './views/multisig.jade') ->
     { address: multisig, pubkeys, script } = create_multisig [ bob, alice, trent ]
     channel = get_channel { bob, alice, trent, terms }
 
-    document.title = "#{multisig} | Bitrator"
+    document.title = "#{multisig} | Bitrated"
     el = $ view format_locals {
       bob, alice, trent
       bob_priv, terms, proof
@@ -150,7 +145,7 @@ action_multisig = do (view = require './views/multisig.jade') ->
       alice_address: get_address alice, ADDR_PUB
       trent_address: get_address trent, ADDR_PUB
 
-      bob_url:   BASE + format_url { alice, trent, terms, proof, bob: bob_main }
+      bob_url:   BASE + format_url { bob: bob_main, alice, trent, terms, proof }
       trent_url: BASE + format_url { dispute: true, bob, alice, trent, terms, proof }
 
       default_fee: BitUtil.formatValue DEFAULT_FEE
@@ -166,38 +161,18 @@ action_multisig = do (view = require './views/multisig.jade') ->
       key: if is_dispute then trent else bob_main
       fees: DEFAULT_FEE
     }, iferr display_error, (signed_tx) ->
+      # If its a final transaction (with two signatures), broadcast it to the
+      # Bitcoin network
       if is_final_tx signed_tx
         tx_broadcast signed_tx, iferr display_error,
-                                success '''Transaction broadcasted to Bitcoin network.
-                                           It might take awhile to be included in a block.'''
+                                success '''Transaction succesfully broadcasted to Bitcoin network.
+                                           Since multisig transaction are new and not supports by all
+                                           miners, it might take some time to confirm.'''
+      # Otherwise, submit an approval request
       else tx_request channel, signed_tx, iferr display_error,
                                           success '''Transaction approval request was sent to the other
                                                      parties.'''
 
-# Transform data to human readable format
-format_locals = (data) ->
-  data[k] = bytesToHex data[k] for k in ['bob', 'alice', 'trent'] when data[k]?
-  data.bob_priv = get_address data.bob_priv, ADDR_PRIV if data.bob_priv?
-  data.terms = UTF8.bytesToString data.terms if data.terms?
-  data.proof = bytesToBase64 data.proof if data.proof?
-  data
-
-# Create query string for the given data, with base64 encoding
-format_url = (data) ->
-  is_sensitive = data.bob?.length is PRIVKEY_LEN
-  query = {}
-  for name, val of data when val?
-    query[name] = if Array.isArray val then bytesToBase64 val \
-                  else val
-  (if is_sensitive then 'DO-NOT-SHARE&' else '') + \
-  (if TESTNET      then 'TESTNET&'      else '') + \
-  qs.stringify query
-
-# success(message) returns a function that dispalys a success message
-success = do (view = require '../views/dialog-success.jade') -> (message) -> ->
-  dialog = $ view { message }
-  dialog.on 'hidden', -> do dialog.remove
-  dialog.modal()
 
 # Sign terms
 #

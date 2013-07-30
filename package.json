@@ -1,27 +1,30 @@
 {
-  "name": "bitrator",
-  "version": "0.1.0",
-  "description": "Source code for Bitrator.com - bitcoin arbitration platform",
+  "name": "bitrated",
+  "version": "0.2.0",
+  "description": "Source code for Bitrated.com - bitcoin arbitration marketplace",
   "scripts": {
-    "start": "./start.sh",
-    "build-static": "./build-static.sh"
+    "start": "./bin/start.sh"
   },
   "author": "Nadav Ivgi",
   "license": "MIT",
   "dependencies": {
-    "coffee-script": "~1.6.3",
     "express": "~3.3.4",
-    "stylus": "~0.34.1",
+    "mongoose": "~3.6.15",
+    "coffee-script": "~1.6.3",
     "jade": "~0.33.0",
-    "jadeify2": "git://github.com/shesek/node-jadeify2.git#patch-1",
-    "browserify": "~2.25.0",
-    "coffeeify": "~0.5.1",
     "socket.io": "~0.9.16",
     "socket.io-client": "~0.9.16",
     "bitcoinjs-lib": "git://github.com/bitcoinjs/bitcoinjs-lib.git",
     "qruri": "~0.0.1",
-    "connect-jade-html": "~0.0.1",
     "marked": "~0.2.9",
-    "browserify-middleware": "~1.14.1"
+    "mongoose-time": "~0.1.0",
+    "mongoose-pagination": "~1.0.0"
+  },
+  "devDependencies": {
+    "stylus": "~0.34.1",
+    "browserify": "~2.25.0",
+    "browserify-middleware": "~1.14.1",
+    "coffeeify": "~0.5.1",
+    "jadeify2": "git://github.com/shesek/node-jadeify2.git#patch-1"
   }
 }

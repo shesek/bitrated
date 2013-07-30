@@ -16,7 +16,7 @@ PUBKEY_LEN = 65
 ADDR_LEN = 20
 #PUBKEY_COMPRESS_LEN = 33 # not supported yet
 
-# Turn a sequence of bytes to a bitcoin address
+# Turn a byte array to a bitcoin address
 get_address = (hash, version=ADDR_PUB) ->
   hash = sha256ripe160 hash if version in [ ADDR_PUB, ADDR_P2SH ] and hash.length isnt ADDR_LEN
   Address::toString.call { version, hash }
@@ -99,67 +99,10 @@ parse_key_bytes = (bytes) -> switch bytes.length
   when PRIVKEY_LEN then pub: (get_pub bytes), priv: bytes
   else throw new Error 'Invalid public/private key'
 
-# Decode raw transaction into a Transaction instance
-decode_raw_tx = do ->
-  { Transaction, TransactionIn, TransactionOut } = Bitcoin
-
-  # Parse an little-endian bytearray of length `size` as an integer
-  # Works for numbers up to 32-bit only
-  parse_int = (size) -> (bytes) ->
-    n = 0
-    n += (bytes.shift() & 0xff) << (8 * i) for i in [0...size]
-    n
-  u8  = (bytes) -> bytes.shift()
-  u16 = parse_int 2
-  u32 = parse_int 4
-  # 64 bit numbers are kept as bytes
-  # (bitcoinjs-lib expects them that way)
-  u64 = (bytes) -> bytes.splice 0, 8
-
-  # https://en.bitcoin.it/wiki/Protocol_specification#Variable_length_integer
-  varint = (bytes) ->
-    switch n = u8 bytes
-      when 0xfd then u16 bytes
-      when 0xfe then u32 bytes
-      when 0xff then u64 bytes
-      else n
-
-  # https://en.bitcoin.it/wiki/Protocol_specification#Variable_length_string
-  varchar = (bytes) -> bytes.splice 0, varint bytes
-
-  (bytes) ->
-    bytes = bytes.slice() # clone
-    ver = u32 bytes
-    throw new Error 'Unsupported version' unless ver is 0x01
-
-    tx = new Transaction
-
-    # Parse inputs
-    in_count = varint bytes
-    for [0...in_count]
-      tx.addInput new TransactionIn
-        outpoint:
-          hash: bytesToBase64 bytes.splice 0, 32
-          index: u32 bytes
-        script: varchar bytes
-        seq: u32 bytes
-
-    # Parse outputs
-    out_count = varint bytes
-    for [0...out_count]
-      tx.addOutput new TransactionOut
-        value: u64 bytes
-        script: varchar bytes
-
-    tx.lock_time = u32 bytes
-
-    tx
-
 module.exports = {
   ADDR_P2SH, ADDR_PUB, ADDR_PRIV, PRIVKEY_LEN, PUBKEY_LEN, ADDR_LEN
   get_address, get_pub, parse_address, parse_pubkey
   create_multisig, random_privkey
   sign_message, verify_sig
   parse_key_string, parse_key_bytes
-  decode_raw_tx
 }

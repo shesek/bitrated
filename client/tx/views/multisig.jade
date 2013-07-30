@@ -7,9 +7,8 @@ include ../../views/mixin/copy.jade
 
 .row-fluid
   .span5.tx-details
-    //h3 Transaction details
-
-    label Terms of agreement:
+    h3 Transaction details
+    //label Terms of agreement:
     pre.terms= terms
     .clearfix
       if is_dispute
@@ -36,12 +35,12 @@ include ../../views/mixin/copy.jade
 
     if bob_priv
       label Your private key:
-      pre.nosurf= bob_priv
+      pre.blurry= bob_priv
       p.muted The private key allows you to control the funds, and <strong>should be kept secret</strong>.
 
     if bob_priv
       label Import multisig address and private key to bitcoin-qt/bitcoind wallet:
-      pre bitcoind importprivkey <span class="nosurf">#{bob_priv}</span> && bitcoind addmultisigaddress 2 '#{JSON.stringify(pubkeys)}'
+      pre bitcoind importprivkey <span class="blurry">#{bob_priv}</span> && bitcoind addmultisigaddress 2 '#{JSON.stringify(pubkeys)}'
     else 
       label Import multisig address to bitcoind wallet:
       pre bitcoind addmultisigaddress 2 '#{JSON.stringify(pubkeys)}'

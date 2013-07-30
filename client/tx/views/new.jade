@@ -6,9 +6,9 @@
       label Arbitrator public key
       .help-block
         :markdown
-          **Required.** You can browse the list of available arbitrators [here](/arbitrator).
-          You can use any public key; it doesn't have to be a registered user.
-      input.fullwidth(type='text', name='trent', placeholder='Public key (hex)', value=trent,
+          **Required.** You can browse the list of available arbitrators [here](/u),
+          or use any other public key.
+        input.fullwidth(type='text', name='trent', placeholder='Public key (hex)', value=trent,
                       required, pattern='^[a-f0-9]{130}$')
 
       label Your public/private key
@@ -21,15 +21,12 @@
         input.fullwidth(type='text', name='bob', value=bob_priv, placeholder='Public key (hex) or private key (base58)',
                         required, pattern='^([a-f0-9]{130}|[59][123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{50})$',
                         autocomplete='off')
-      //.row-fluid
-        .span6
-          label Other party public key
-          .help-block
-            :markdown
-              **Optional.** If left empty, you'll be given a link to submit the other
-              party, where he can setup his keys.
-          input.input-xlarge(type='text', name='alice', placeholder='Public key (hex)')
-            
+        .muted
+          :markdown
+            <i class="icon-lock"></i>
+            **Private keys are never processed by our servers.**
+            See our [secuity policy](/security.html) for more information.
+
       label Terms of agreement
       .help-block
         :markdown
@@ -46,8 +43,9 @@
         li: a(href='#hash', data-toggle='tab') Hash
       div.tab-content
         .tab-pane.active#text
-          p.help-block The terms will be embeded into the page URL, to make it easy to store and share them.
-          textarea.fullwidth(name='terms', rows=8, cols=90).
+          p.help-block The terms will be embeded into the page URL, to make it easy to store and share them. 
+                     | Limited to 5,000 characters.
+          textarea.input-block-level(name='terms', rows=8, cols=90, maxlength=5000).
             Example (replace with your own):
              
             Bob - the seller
@@ -75,12 +73,8 @@
         .tab-pane#hash
           p.help-block You can hash the terms locally and input it here.
           input.fullwidth(type='text')
-    button.btn.btn-large.btn-primary(type='submit') Start transaction 
-  .muted.disclaimer
-    :markdown
-      <i class="icon-lock"></i>
-      **Private keys are never stored on, uploaded to or processed by our servers.**
-      See our [security policy](/security.html) for more information.
 
-      Your use of the service is on an AS-IS and AS-AVAILABLE basis, with no express or implied warranty.
-      See our [terms of service](/terms.html) for more information.
+    button.btn.btn-large.btn-primary(type='submit') Start transaction 
+  .muted
+    :markdown
+      By using this service, you agree to [Bitrated terms of services](/terms.html).

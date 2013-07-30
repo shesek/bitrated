@@ -1,21 +1,17 @@
 body
-  padding-top 100px
-  //@media (min-width: 1500px)
-  //  zoom 1.25
+  padding-top 60px
 
-
+  @media (max-width: 979px)
+    padding-top 0
+    
 .container-page
   max-width 750px
-  //margin 0 auto
 
-  .well
-    padding 2em 4em
-
-.navbar .nav>li:last-child>a
-  border-right none
+.navbar .btn
+  margin-top 13px
 
 footer
-  margin-top 5em
+  margin-top 2em
 
   .pull-right
     text-align right
@@ -38,7 +34,19 @@ pre
 
 // Blur sensitive information to protect
 // against shoulder surfing
-.nosurf
+.blurry
   color transparent
   text-shadow 0 0 3px #7B8A8B
+.break
+  word-break break-all
 
+.signed
+  cursor pointer
+  
+.proof-popover
+  pre
+    max-height 10em
+    background transparent
+    color #fff
+    border 0
+  

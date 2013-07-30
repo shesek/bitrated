@@ -17,24 +17,30 @@
         First time here? [Click here](learn) to learn more about how this works.
 
       label Arbitrator public key
-      :markdown
-         The arbitrator was choosen by the other party.
-         Make sure his choice is acceptable,
-         and verify the public key against a reliable source.
+      .help-block
+        :markdown
+           The arbitrator was choosen by the other party.
+           Make sure his choice is acceptable,
+           and verify the public key against a reliable source.
       pre= trent
 
       label Your public/private key
-      .helxp-block
+      .help-block
         :markdown
           This random private key was created for you and **should be kept secret**.
           You can replace it with a [locally generated public key](keys),
           or use keys from sites like [brainwallet](http://brainwallet.org/)
           or [bitaddress](https://www.bitaddress.org/).
-        input.fullwidth(type='text', name='bob', value=bob_priv, placeholder='Public key (hex) or private key (base58)',
-                        required, pattern='^([a-f0-9]{130}|[59][123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{50})$',
-                        autocomplete='off')
+      input.fullwidth(type='text', name='bob', value=bob_priv, placeholder='Public key (hex) or private key (base58)',
+                      required, pattern='^([a-f0-9]{130}|[59][123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{50})$',
+                      autocomplete='off')
+      .muted
+        :markdown
+          <i class="icon-lock"></i>
+          **Private keys are never processed by our servers.**
+          See our [security policy](/security.html) for more information.
       label Terms of agreement
-      .hxelp-block
+      .help-block
         :markdown
           Those are the terms provided by the other party. Please read them and make
           sure you fully agree with them.
@@ -47,11 +53,6 @@
       | <i class="icon-ok-sign icon-white"></i> Signed by other party 
 
     button.btn.btn-large.btn-primary(type='submit') I accept
-  .muted.disclaimer
+  .muted
     :markdown
-      <i class="icon-lock"></i>
-      **Private keys are never stored on, uploaded to or processed by our servers.**
-      See our [security policy](/security.html) for more information.
-
-      Your use of the service is on an AS-IS and AS-AVAILABLE basis, with no express or implied warranty.
-      See our [terms of service](/terms.html) for more information.
+      By using this service, you agree to [Bitrated terms of services](/terms.html).

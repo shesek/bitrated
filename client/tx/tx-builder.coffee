@@ -5,7 +5,7 @@
   ADDR_PUB, ADDR_PRIV, ADDR_P2SH } = require '../bitcoin.coffee'
 { sign_tx, calc_total_in, sum_inputs, decode_raw_tx } = require './lib.coffee'
 { tx_listen, load_unspent } = require './networking.coffee'
-{ bytesToHex } = Crypto.util
+{ bytesToHex, hexToBytes } = Crypto.util
 { Transaction, TransactionOut, Util: BitUtil } = Bitcoin
 
 # Initialize the transaction builder interface,
@@ -64,15 +64,13 @@ tx_builder = do (addr_tmpl=null) -> (el, { key, trent, multisig, script, channel
 
   # Input raw transaction
   el.find('.input-rawtx').click ->
-    input_rawtx_dialog (tx) ->
+    input_rawtx_dialog iferr display_error, (tx) ->
       try show_dialog tx, 'self'
       catch e then display_error e
 
   # Get raw transaction
   el.find('.show-rawtx').click ->
-    try
-      rawtx = bytesToHex build_tx(unspent, el).serialize()
-      show_rawtx_dialog { rawtx }
+    try show_rawtx_dialog build_tx unspent, el
     catch e then display_error e
 
   # Subscribe to transaction requests
@@ -155,5 +153,25 @@ tx_dialog = do (view=require './views/tx-dialog.jade') ->
 
     dialog.on 'hidden', -> do dialog.remove
     dialog.modal()
+
+show_rawtx_dialog = do (view = require './views/show-rawtx-dialog.jade') -> (tx) ->
+  rawtx = bytesToHex tx.serialize()
+  dialog = $ view { rawtx }
+  dialog.on 'hidden', -> do dialog.remove
+  dialog.modal()
+
+input_rawtx_dialog = do (view = require './views/input-rawtx-dialog.jade') -> (cb) ->
+  dialog = $ view()
+  display_error = error_displayer dialog.find('.errors')
+
+  dialog.find('form').on 'submit', (e) ->
+    e.preventDefault()
+    try
+      cb null, decode_raw_tx hexToBytes dialog.find('[name=rawtx]').val()
+      dialog.modal 'hide'
+    catch e then display_error e
+
+  dialog.on 'hidden', -> do dialog.remove
+  dialog.modal()
 
 module.exports = tx_builder

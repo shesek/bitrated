@@ -8,6 +8,9 @@ module.exports = express().configure ->
   @set 'port', process.env.PORT or 8070
   @set 'view engine', 'jade'
   @set 'views', join __dirname, 'views'
+  @locals
+    url: process.env.URL or "http://localhost:#{@settings.port}/"
+    pubkey_address: process.env.PUBKEY_ADDRESS
 
   @db = mongoose.connect process.env.MONGO_URI or 'mongodb://localhost/'
   @models = require('./models')(@db)

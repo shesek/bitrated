@@ -14,7 +14,7 @@ BitUtil = Bitcoin.Util
 
 DEBUG = !!~document.location.hash.indexOf('DEBUG')
 TESTNET = !!~document.location.hash.indexOf('TESTNET')
-BASE = 'http://localhost:8070/tx.html#'
+BASE = $('base').attr('href') + 'tx.html#'
 DEFAULT_FEE = BitUtil.parseValue '0.0001'
 
 # Bob is always the current user, Alice is the other party,

@@ -25,7 +25,7 @@ html
           +menu_item('/', 'Home')
           +menu_item('/tx.html', 'Start transaction')
           +menu_item('/arbitrate.html', 'Offer Arbitration')
-          +menu_item('/u', 'Browser arbitrators')
+          +menu_item('/u', 'Browse arbitrators')
         ul.nav.pull-right
           li: a(href='https://github.com/shesek/bitrated') <i class="icon-share icon-white"></i> Source Code 
 
@@ -36,7 +36,7 @@ html
       script(src='/lib/bootstrap/bootstrap.min.js')
 
     footer.muted.container
-      .pull-right
+      .menu
         :markdown
           [<i span class="icon-lock"></i> Security](/security.html) &middot;
           [Terms](/terms.html) &middot;
@@ -45,7 +45,7 @@ html
           [Contact](mailto:hey@[replace-with-domain].com)
 
           [#{pubkey_address}](bitcoin:#{pubkey_address})
-        script $('body > footer a[href^="mailto:"]').attr('href', 'mailto:hey@'+document.location.hostname.replace(/^www\./,''))
+        script $('body > footer a[href^="mailto:"]').attr('href','mailto:hey@'+document.location.hostname.replace(/^www\./,''))
       :markdown
         This website is [open sourced](https://github.com/shesek/bitrated/) under the
         [MIT License](https://github.com/shesek/bitrated/blob/master/LICENSE).

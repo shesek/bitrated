@@ -5,6 +5,7 @@
 { randomBytes, bytesToHex, hexToBytes, bytesToBase64, base64ToBytes } = Crypto.util
 { UTF8 } = Crypto.charenc
 { getSECCurveByName } = BigInteger.sec
+{ OP_HASH160, OP_EQUAL } = Bitcoin.Opcode.map
 
 TESTNET = !!~document.location.hash.indexOf('TESTNET')
 
@@ -17,7 +18,8 @@ ADDR_LEN = 20
 #PUBKEY_COMPRESS_LEN = 33 # not supported yet
 
 # Turn a byte array to a bitcoin address
-get_address = (hash, version=ADDR_PUB) ->
+get_address = (hash, version) ->
+  [ version, hash... ] = hash unless version?
   hash = sha256ripe160 hash if version in [ ADDR_PUB, ADDR_P2SH ] and hash.length isnt ADDR_LEN
   Address::toString.call { version, hash }
 
@@ -37,6 +39,27 @@ create_multisig = (pubkeys) ->
   address = get_address script.buffer, ADDR_P2SH
   { pubkeys, script, address }
 
+# Create an output script for the given pubkey/script address
+create_out_script = (address) ->
+  address = parse_address address unless Array.isArray address
+  [ version, hash... ] = address
+  switch version
+    when ADDR_PUB then Script.createOutputScript { hash }
+    when ADDR_P2SH
+      script = new Script
+      script.writeOp OP_HASH160
+      script.writeBytes hash
+      script.writeOp OP_EQUAL
+      script
+    else throw new Error 'Invalid payment address version'
+
+get_script_address = do(
+  is_p2sh = ({ chunks }) -> chunks.length is 3 and chunks[0] is OP_HASH160 and chunks[2] is OP_EQUAL
+) -> (script) ->
+  if is_p2sh script
+    get_address script.chunks[1], ADDR_P2SH
+  else get_address script.simpleOutHash(), ADDR_PUB
+
 # Parse and validate base58 Bitcoin addresses
 # Validates and strips the checksum, and optionally the expected version byte
 parse_address = (address, version) ->
@@ -54,7 +77,7 @@ parse_address = (address, version) ->
   else bytes[0...-4]
 
 
-# Parse and validate public key bytes or hex representation
+# Parse and validate public key bytes or hex string
 parse_pubkey = (bytes) ->
   bytes = hexToBytes bytes unless Array.isArray bytes
   throw new Error 'Invalid public key length' unless bytes.length is PUBKEY_LEN
@@ -101,8 +124,8 @@ parse_key_bytes = (bytes) -> switch bytes.length
 
 module.exports = {
   ADDR_P2SH, ADDR_PUB, ADDR_PRIV, PRIVKEY_LEN, PUBKEY_LEN, ADDR_LEN
-  get_address, get_pub, parse_address, parse_pubkey
-  create_multisig, random_privkey
+  get_address, get_pub, parse_address, parse_pubkey, get_script_address
+  create_multisig, create_out_script, random_privkey
   sign_message, verify_sig
   parse_key_string, parse_key_bytes
 }

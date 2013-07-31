@@ -43,7 +43,7 @@
         li: a(href='#hash', data-toggle='tab') Hash
       div.tab-content
         .tab-pane.active#text
-          p.help-block The terms will be embeded into the page URL, to make it easy to store and share them. 
+          p.help-block The terms will be embedded into the page URL, to make it easy to store and share them. 
                      | Limited to 5,000 characters.
           textarea.input-block-level(name='terms', rows=8, cols=90, maxlength=5000).
             Example (replace with your own):
@@ -65,13 +65,16 @@
             Once Alice gets it, she'll release the 10 BTC (minus transaction fees) to Bob.
 
             If one of the parties isn't responsive for over 2 weeks, the funds shall be transfered to the other party.
+          p.muted The terms are private and are never uploaded to the server. They're stored in the hash portion of the URL,
+                | and only available to you and people you share URLs with.
         .tab-pane#file
           .help-block
-            p Both parties should have a safe local copy of this file.
+            p Only the file's hash will be embedded to the URL. Both parties should have a safe local copy of the file.
             p Select file: 
               input(type='file')
+            p.muted The file is hashed and signed locally, and is never uploaded to the server.
         .tab-pane#hash
-          p.help-block You can hash the terms locally and input it here.
+          p.help-block You can hash the terms locally and input the hash here:
           input.fullwidth(type='text')
 
     button.btn.btn-large.btn-primary(type='submit') Start transaction 

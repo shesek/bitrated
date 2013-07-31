@@ -69,7 +69,6 @@ module.exports = ({ models }) -> express().configure ->
   @get '/page/:page', user_list
 
   format_user = ({ _id, pubkey, content, sig }, is_html) ->
-    console.log { _id, pubkey }
     user =
       username: _id
       pubkey: pubkey.toString 'hex'
@@ -87,10 +86,10 @@ module.exports = ({ models }) -> express().configure ->
     rating = new Rating
       _user: req.user._id, _rater: req.auth._id
       rating: req.body.rating, content: req.body.content
-    rating.save iferr next, -> req.redirect 201, "#{req.user._id}/rating/#{rating._id}"
+    rating.save iferr next, -> req.redirect 303, "#{req.user._id}/rating/#{rating._id}"
 
   # Rating
-  @get '/rating/:rating_id', (req, res, next) ->
+  @get '/:user/rating/:rating_id', (req, res, next) ->
     Rating.find(req.params.rating_id).populate('_user _rater').exec iferr next, (rating) ->
       return res.send 404 unless rating? and rating.user is req.user._id
       res.format

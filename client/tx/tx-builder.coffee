@@ -1,10 +1,12 @@
 { Bitcoin, Crypto, BigInteger } = require '../../lib/bitcoinjs-lib.js'
 { iferr, error_displayer } = require '../util.coffee'
-{ get_address, parse_address, parse_key_bytes, get_pub, ADDR_PUB, ADDR_PRIV } = require '../bitcoin.coffee'
+{ get_address, parse_address, parse_key_bytes, get_pub
+  create_out_script, get_script_address
+  ADDR_PUB, ADDR_PRIV, ADDR_P2SH } = require '../bitcoin.coffee'
 { sign_tx, calc_total_in, sum_inputs, decode_raw_tx } = require './lib.coffee'
 { tx_listen, load_unspent } = require './networking.coffee'
 { bytesToHex } = Crypto.util
-{ Transaction, Util: BitUtil } = Bitcoin
+{ Transaction, TransactionOut, Util: BitUtil } = Bitcoin
 
 # Initialize the transaction builder interface,
 # and return a teardown function
@@ -92,11 +94,9 @@ build_tx = (inputs, $form) ->
   # Read outputs from DOM
   $form.find('.address').each ->
     $this = $ this
-    try tx.addOutput
-      hash: parse_address $this.find('[name=address]').val(), ADDR_PUB
-      BitUtil.parseValue $this.find('[name=value]').val()
-    # just ignore invalid addresses/amount, the user still have to
-    # confirm the transaction after that and should see it missing
+    tx.addOutput new TransactionOut
+      script: create_out_script $this.find('[name=address]').val()
+      value: BitUtil.parseValue($this.find('[name=value]').val()).toByteArrayUnsigned().reverse()
   tx
 
 # Display the transaction dialog
@@ -112,7 +112,7 @@ tx_dialog = do (view=require './views/tx-dialog.jade') ->
 
     dialog = $ view {
       outs: for { script: out_script, value } in tx.outs
-        address: get_address out_script.simpleOutHash(), ADDR_PUB
+        address: get_script_address out_script
         value: BitUtil.formatValue value.slice().reverse()
       has_priv: priv?
       pub_address: get_address pub, ADDR_PUB

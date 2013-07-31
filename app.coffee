@@ -11,6 +11,7 @@ module.exports = express().configure ->
   @locals
     url: process.env.URL or "http://localhost:#{@settings.port}/"
     pubkey_address: process.env.PUBKEY_ADDRESS
+    pretty: @settings.env is 'development'
 
   @db = mongoose.connect process.env.MONGO_URI or 'mongodb://localhost/'
   @models = require('./models')(@db)

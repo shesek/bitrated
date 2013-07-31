@@ -32,7 +32,10 @@ route = (query, ctx) ->
 
   try new -> # new `this` context used for initializing request data
 
-    @[k] = base64ToBytes v for k, v of query when v.length
+    # Firefox decodes the hash, making the qs.parse() call decode it twice,
+    # making "%2B" render as a space. Replacing this back to a plus sign
+    # makes it work on Firefox.
+    @[k] = base64ToBytes v.replace(/( )/g, '+') for k, v of query when v.length
     @is_dispute = true if query.dispute?
     
     for k in ['alice', 'trent'] when @[k]? and not @[k] = parse_pubkey @[k]

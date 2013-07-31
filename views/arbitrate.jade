@@ -57,7 +57,8 @@ block content
         your public key. Your private key allows you to control the money in case of dispute
         (with the agreement of one of the parties).
   .container-page
-    form.arbitrate: fieldset
+    //- form is processed client-side, should never be submitted anywhere
+    form.arbitrate(action='http://'): fieldset
       legend Register to our arbitrators directory
       
       label Username

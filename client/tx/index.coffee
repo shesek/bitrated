@@ -76,7 +76,7 @@ action_new = do (view = require './views/new.jade') ->
         terms = UTF8.stringToBytes el.find('textarea[name=terms]').val().trim()
         # Create a random token as the channel name
         channel = randomBytes 15
-        navto { bob: (priv ? pub), trent, terms, channel }
+        navto { trent, channel, bob: (priv ? pub), terms }
       catch e then display_error e
     render el
 
@@ -91,7 +91,7 @@ action_awaiting = do (view = require './views/awaiting.jade') ->
     sign_terms bob_main, terms, iferr display_error, (signature) ->
       # Start listening for handshake replies on the random channel
       handshake_unlisten = handshake_listen channel, { bob, trent, terms }, iferr display_error, ({ alice, proof }) ->
-        navto { bob: bob_main, alice, trent, terms, proof },
+        navto { alice, trent, bob: bob_main, terms, proof },
               { proof_validated: true, display_warning: true }
       render $ view
         alice_url: BASE + format_url { alice: bob, trent, terms, proof: signature, channel }
@@ -121,7 +121,7 @@ action_join = do (view = require './views/join.jade') ->
       sign_terms (bob_priv ? bob), terms, iferr display_error, (signature) ->
         { script } = create_multisig [ bob, alice, trent ]
         handshake_reply channel, { pub: bob, proof: signature, script }
-        navto { bob: (bob_priv ? bob), alice, trent, terms, proof },
+        navto { alice, trent, bob: (bob_priv ? bob), terms, proof },
               { proof_validated: true, display_warning: true }
     render el
 
@@ -148,7 +148,7 @@ action_multisig = do (view = require './views/multisig.jade') ->
       alice_address: get_address alice, ADDR_PUB
       trent_address: get_address trent, ADDR_PUB
 
-      bob_url:   BASE + format_url { bob: bob_main, alice, trent, terms, proof }
+      bob_url:   BASE + format_url { alice, trent, bob: bob_main,  terms, proof }
       trent_url: BASE + format_url { dispute: true, bob, alice, trent, terms, proof }
 
       default_fee: BitUtil.formatValue DEFAULT_FEE

@@ -1,3 +1,8 @@
+block template-vars
+
+mixin menu_item(path, anchor)
+  li(class=(active_page == path ? 'active': '')): a(href=path)= anchor
+
 doctype 5
 html
   head
@@ -17,10 +22,10 @@ html
       a.brand(href='/') Bitrated
       .nav-collapse.collapse
         ul.nav
-          li.active: a(href='/') Home
-          li: a(href='/tx.html') Start transaction
-          li: a(href='/arbitrate.html') Become an arbitrator
-          li: a(href='/u/') Browse artbitrators
+          +menu_item('/', 'Home')
+          +menu_item('/tx.html', 'Start transaction')
+          +menu_item('/arbitrate.html', 'Offer Arbitration')
+          +menu_item('/u', 'Browser arbitrators')
         ul.nav.pull-right
           li: a(href='https://github.com/shesek/bitrated') <i class="icon-share icon-white"></i> Source Code 
 

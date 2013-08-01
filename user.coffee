@@ -1,6 +1,10 @@
 express = require 'express'
 marked = require 'marked'
 ValidationError = require 'mongoose/lib/errors/validation'
+{ PUBKEY_LEN } = require './client/bitcoin.coffee'
+HASH_LEN = 32
+#{ Bitcoin, Crypto } = require '../lib/bitcoinjs-lib.js'
+
 
 { iferr, only } = require './util'
 { join } = require 'path'
@@ -15,9 +19,14 @@ module.exports = ({ models }) -> express().configure ->
   { User, Rating } = models
 
   @param 'user', (req, res, next, id) ->
-    # treat strings with less than 30 characters as usernames (they're limited
-    # to 25 characters), and more as pubkey (32 bytes, or 64 characters)
-    search = if id.length < 30 then _id: id else pubkey: new Buffer id, 'hex'
+    # Allows usernames, base64 pubkeys and base64 pubkeys triple sha256 hashes
+    search =
+      if id.length <= 15 then _id: id
+      else switch (bytes = new Buffer id, 'base64').length
+        when PUBKEY_LEN then pubkey: bytes
+        when HASH_LEN then pubkey_hash: bytes
+        else throw new Error 'Invalid key length'
+
     User.findOne search, iferr next, (user) ->
       return res.send 404 unless user?
       req.user = user
@@ -38,7 +47,7 @@ module.exports = ({ models }) -> express().configure ->
 
   # Profile
   @get '/:user', (req, res, next) ->
-    user = format_user req.user, (req.accepts('html, json, text') is 'html')
+    user = format_user req.user
     res.format
       json: -> res.json user
       html: -> res.render 'profile', { user }
@@ -58,7 +67,7 @@ module.exports = ({ models }) -> express().configure ->
     page = req.params.page or 1
     User.find().paginate page, USERS_PER_PAGE, iferr next, (users, total) ->
       is_html = req.accepts('html, json, text') is 'html'
-      users = users.map (user) -> format_user user, is_html
+      users = users.map format_user
       pages = Math.ceil total / USERS_PER_PAGE
       res.format
         json: ->
@@ -68,16 +77,13 @@ module.exports = ({ models }) -> express().configure ->
   @get '/', user_list
   @get '/page/:page', user_list
 
-  format_user = ({ _id, pubkey, content, sig }, is_html) ->
-    user =
-      username: _id
-      pubkey: pubkey.toString 'hex'
-      content: content
-      sig: pubkey.toString 'base64'
-    if is_html
-      user.profile_url = "/u/#{_id}"
-      user.tx_url = "/tx.html#trent=#{encodeURIComponent pubkey.toString 'base64'}"
-    user
+  format_user = ({ _id, pubkey, content, sig }) =>
+    username: _id
+    pubkey: pubkey.toString 'hex'
+    content: content
+    sig: pubkey.toString 'base64'
+    profile_url: @settings.url + "u/#{_id}"
+    tx_url: @settings.url + "tx.html#trent=#{encodeURIComponent pubkey.toString 'base64'}"
 
   ###
   # Rate

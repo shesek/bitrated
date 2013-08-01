@@ -8,8 +8,9 @@ module.exports = express().configure ->
   @set 'port', process.env.PORT or 8070
   @set 'view engine', 'jade'
   @set 'views', join __dirname, 'views'
+  @set 'url', process.env.URL or "http://localhost:#{@settings.port}/"
   @locals
-    url: process.env.URL or "http://localhost:#{@settings.port}/"
+    url: @settings.url
     pubkey_address: process.env.PUBKEY_ADDRESS
     pretty: @settings.env is 'development'
 

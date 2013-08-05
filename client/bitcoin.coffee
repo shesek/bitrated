@@ -6,7 +6,7 @@
 { getSECCurveByName } = BigInteger.sec
 { OP_HASH160, OP_EQUAL } = Bitcoin.Opcode.map
 
-TESTNET = !!~document.location.hash.indexOf('TESTNET')
+TESTNET = document?.location? and !!~document.location.hash.indexOf('TESTNET')
 
 ADDR_PUB  = if TESTNET then 0x6f else 0x00
 ADDR_P2SH = if TESTNET then 0xc4 else 0x05

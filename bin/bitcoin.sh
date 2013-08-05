@@ -9,6 +9,7 @@ TARGET=lib/bitcoinjs-lib.js
 # attempts to identify and use it, which results in
 # broken code)
 echo 'module.exports = (function(module){' > $TARGET
+echo 'var navigator={}, window=global;' >> $TARGET
 ( cd node_modules/bitcoinjs-lib/src/ && \
   for file in jsbn/{jsbn,jsbn2,prng4,rng,ec,sec}.js \
               crypto-js/{crypto,sha256,ripemd160}.js \

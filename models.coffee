@@ -4,6 +4,11 @@ require 'mongoose-pagination'
 
 to_buff = (val) -> if val instanceof Buffer then val else new Buffer val, 'base64'
 buff_getter = (key, encoding) -> -> this[key].toString encoding
+triple_sha256 = (bytes) ->
+  bytes
+  # TODO load sha256b and use that
+  # ensure that it works well on buffers, or cast it to an array
+  # sha256b sha256b sha256b bytes
 
 TX_EXPIRY = '24h'
 
@@ -16,14 +21,18 @@ module.exports = (db) ->
     pubkey:  type: Buffer, required: true, set: to_buff
     content: type: String, required: true
     sig:     type: Buffer, required: true, set: to_buff
+    pubkey_hash: type: Buffer
+
   userSchema.plugin timestamp
   userSchema.virtual('address').get -> get_address [ @pubkey... ], ADDR_PUB
   userSchema.virtual('pubkey_str').get buff_getter 'pubkey', 'hex'
   userSchema.virtual('sig_str').get buff_getter 'pubkey', 'base64'
-  #userSchema.pre 'save', (next) ->
-  #  if verify_message_sig (hexToBytes @pubkey), user.content, (hexToBytes @sig)
-  #    next null
-  #  else next new Error 'Invalid signature provided'
+  userSchema.pre 'save', (next) ->
+    if @isModified 'pubkey'
+      @pubkey_hash = new Buffer triple_sha256 @pubkey[..]
+    #unless verify_message_sig (hexToBytes @pubkey), user.content, (hexToBytes @sig)
+    #  return next new Error 'Invalid signature provided'
+    next null
 
   #
   # Rating model

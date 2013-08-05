@@ -1,4 +1,3 @@
-qs = require 'querystring'
 qr = require 'qruri'
 tx_builder = require './tx-builder.coffee'
 { Bitcoin, Crypto } = require '../../lib/bitcoinjs-lib.js'
@@ -6,7 +5,7 @@ tx_builder = require './tx-builder.coffee'
 BitUtil = Bitcoin.Util
 { get_channel, tx_request, tx_broadcast, handshake_listen, handshake_reply } = require './networking.coffee'
 { is_final_tx, format_locals } = require './lib.coffee'
-{ iferr, error_displayer, success, format_url, render } = require '../util.coffee'
+{ iferr, error_displayer, success, parse_query, format_url, render } = require '../util.coffee'
 { get_address, parse_pubkey, create_multisig, random_privkey
   parse_key_string, parse_key_bytes, sign_message, verify_sig
   ADDR_PUB, PRIVKEY_LEN, PUBKEY_LEN } = require '../bitcoin.coffee'
@@ -31,11 +30,7 @@ route = (query, ctx) ->
   teardown = []
 
   try new -> # new `this` context used for initializing request data
-
-    # Firefox decodes the hash, making the qs.parse() call decode it twice,
-    # making "%2B" render as a space. Replacing this back to a plus sign
-    # makes it work on Firefox.
-    @[k] = base64ToBytes v.replace(/( )/g, '+') for k, v of query when v.length
+    @[k] = v for k, v of query
     @is_dispute = true if query.dispute?
     
     for k in ['alice', 'trent'] when @[k]? and not @[k] = parse_pubkey @[k]
@@ -197,6 +192,5 @@ navto = (query, ctx) ->
 $(window).on 'hashchange', run = ->
   ctx = next_ctx
   next_ctx = null
-  query = qs.parse location.hash.substr(1)
-  route query, ctx or {}
+  route parse_query(), (ctx or {})
 do run

@@ -1,9 +1,8 @@
 { Bitcoin, Crypto, BigInteger } = require '../lib/bitcoinjs-lib.js'
-{ sha256b } = require './util.coffee'
 { ECDSA, ECKey, Script, Address, Base58, Message } = Bitcoin
 { sha256ripe160 } = Bitcoin.Util
 { randomBytes, bytesToHex, hexToBytes, bytesToBase64, base64ToBytes } = Crypto.util
-{ UTF8 } = Crypto.charenc
+{ SHA256, charenc: { UTF8 } } = Crypto
 { getSECCurveByName } = BigInteger.sec
 { OP_HASH160, OP_EQUAL } = Bitcoin.Opcode.map
 
@@ -122,10 +121,13 @@ parse_key_bytes = (bytes) -> switch bytes.length
   when PRIVKEY_LEN then pub: (get_pub bytes), priv: bytes
   else throw new Error 'Invalid public/private key'
 
+sha256b = (bytes) -> SHA256 bytes, asBytes: true
+
 module.exports = {
   ADDR_P2SH, ADDR_PUB, ADDR_PRIV, PRIVKEY_LEN, PUBKEY_LEN, ADDR_LEN
   get_address, get_pub, parse_address, parse_pubkey, get_script_address
   create_multisig, create_out_script, random_privkey
   sign_message, verify_sig
   parse_key_string, parse_key_bytes
+  sha256b
 }

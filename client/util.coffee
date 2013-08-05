@@ -1,6 +1,6 @@
 qs = require 'querystring'
 { Bitcoin, Crypto } = require '../lib/bitcoinjs-lib.js'
-{ SHA256, util: { bytesToBase64  } } = Crypto
+{ bytesToBase64, base64ToBytes } = Crypto.util
 # { PRIVKEY_LEN } = require './bitcoin.coffee' # circular
 PRIVKEY_LEN = 32
 { iferr, extend } = require '../util.coffee'
@@ -8,7 +8,6 @@ PRIVKEY_LEN = 32
 DEBUG = /(^|&)DEBUG(&|$)/.test location.hash.substr(1)
 
 lpad = (bytes, len) -> bytes.unshift 0x00 while bytes.length<len; bytes
-sha256b = (bytes) -> SHA256 bytes, asBytes: true
 
 # given a container element, returns a function that displays an error in it
 error_displayer = (container) -> (e) ->
@@ -21,6 +20,14 @@ error_displayer = (container) -> (e) ->
   el.find('p').text(e.message ? e).end().show()
   throw e if DEBUG
 
+# Parse base64-encoded query string
+parse_query = (str=document.location.hash.substr(1)) ->
+  query = qs.parse str
+  # Firefox decodes the hash, making the qs.parse() call decode it twice,
+  # making "%2B" render as a space. Replacing this back to a plus sign
+  # makes it work on Firefox.
+  query[k] = base64ToBytes v.replace(/( )/g, '+') for k, v of query when v.length
+  query
 
 # Create query string for the given data, with base64 encoding
 format_url = (data) ->
@@ -46,7 +53,7 @@ render = do ($root = $ '.content') -> (el) ->
   el.find('[data-toggle=popover]').popover()
 
 module.exports = {
-  lpad, sha256b, extend
+  lpad, extend
   iferr, error_displayer
-  format_url, success, render
+  parse_query, format_url, success, render
 }

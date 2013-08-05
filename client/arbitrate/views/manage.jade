@@ -1,0 +1,39 @@
+.container-page
+  h3 User info
+
+  //p This page contains private account information and should be kept secret.
+  //-p You should keep a safe backup of your private key, which is embedded in the page URL.
+    | You can bookmark this page, or copy the URL below:
+  //-pre.url= current_url
+
+  label Username:
+  p= user.username
+
+  label Public profile URL:
+  p: a(href=user.profile_url)= user.profile_url
+  p.muted Your public profile contains your public key, your terms and your signature.
+
+  label Start transaction URL:
+  p: a.break(href=user.tx_url)= user.tx_url
+  p.muted This opens the new transaction interface with your public key pre-filled.
+
+  label Public key:
+  pre= user.pubkey
+  p.muted To allow you to arbitrate a transaction, the payments will be
+        | made to a multisig address with this public key.
+
+  label Terms:
+  pre.terms= user.content
+
+  label Signature:
+  pre= user.sig
+  p.muted This signature proves that you wrote the terms and agree to abide by them.
+        | Whenever you publish your terms, you should include your signature along with it.
+
+  if priv
+    label Private key:
+    pre.blurry= priv
+    p.muted The private key allows you to control the funds, and <strong>should be kept secret</strong>.
+
+    label Import private key to bitcoind:
+    pre bitcoind importprivkey <span class="blurry">#{priv}</span>

@@ -12,7 +12,8 @@ module.exports = ->
   @use express.static @settings.public
 
   @get '/tx.js', browserify './client/tx/index.coffee'
-  @get '/arbitrate.js', browserify './client/arbitrate.coffee'
+  @get '/arbitrate/new.js', browserify './client/arbitrate/new.coffee'
+  @get '/arbitrate/manage.js', browserify './client/arbitrate/manage.coffee'
 
   @get '/', (req, res) -> res.render 'index'
   @get '/*.html', (req, res) -> res.render basename req.url, '.html'

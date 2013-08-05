@@ -31,7 +31,7 @@ parse_query = (str=document.location.hash.substr(1)) ->
 
 # Create query string for the given data, with base64 encoding
 format_url = (data) ->
-  is_sensitive = data.bob?.length is PRIVKEY_LEN
+  is_sensitive = (data.bob?.length is PRIVKEY_LEN) or (data.key?.length is PRIVKEY_LEN)
   query = {}
   for name, val of data when val?
     query[name] = if Array.isArray val then bytesToBase64 val \

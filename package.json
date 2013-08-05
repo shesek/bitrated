@@ -24,5 +24,8 @@
     "mongoose-time": "~0.1.0",
     "mongoose-pagination": "~1.0.0",
     "connect-ext-type": "0.0.1"
+  },
+  "devDependencies": {
+    "browserify": "~2.25.1"
   }
 }

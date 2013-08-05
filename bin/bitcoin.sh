@@ -1,7 +1,8 @@
 #!/bin/bash
 # Package bitcoinjs-lib as a nodejs module
 
-TARGET=lib/bitcoinjs-lib.js
+[[ $TARGET ]] || TARGET=lib/bitcoinjs-lib.js
+[[ $MINIFY ]] && minify_cmd='uglifyjs -m' || minify_cmd='cat'
 
 # Wrap all of bitcoinjs-lib and its dependencies in an IIFE
 # and export the Bitcoin, Crypto and BigInteger objects.
@@ -19,7 +20,7 @@ echo 'var navigator={}, window=global;' >> $TARGET
     cat $file
     echo ';'
   done \
-) | uglifyjs -m >> $TARGET
+) | $minify_cmd >> $TARGET
 echo 'BigInteger.sec={getSECCurveByName: getSECCurveByName};' >> $TARGET
 echo 'return { Bitcoin: Bitcoin, Crypto: Crypto, BigInteger: BigInteger } ; })()' >> $TARGET
 

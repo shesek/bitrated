@@ -42,6 +42,16 @@ tx_builder = do (addr_tmpl=null) -> (el, { key, trent, multisig, script, channel
     remain = BigInteger.ZERO if (remain.compareTo BigInteger.ZERO) < 0
     val_el.val BitUtil.formatValue remain
 
+  # Pay %
+  BI_100 = new BigInteger '100'
+  el.on 'click', '.pay-some', ->
+    val_el = $(this).closest('.address').find('[name=value]')
+    return unless percentage = prompt 'Enter the percentage to pay (between 0% and 100%)'
+    percentage = +percentage.replace /\s|%/g, ''
+    return display_error 'Invalid percentage amount' if isNaN percentage
+    amount = balance.divide(BI_100).multiply(new BigInteger String percentage)
+    val_el.val BitUtil.formatValue amount
+
   # Update balance
   el.find('.update-balance').click update_balance = ->
     load_unspent multisig, iferr display_error, (_unspent) ->

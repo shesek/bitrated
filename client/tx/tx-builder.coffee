@@ -2,8 +2,8 @@
 { iferr, error_displayer, rpad } = require '../lib/util.coffee'
 { get_address, parse_address, parse_key_bytes, get_pub
   create_out_script, get_script_address
-  ADDR_PUB, ADDR_PRIV, ADDR_P2SH } = require '../../lib/bitcoin.coffee'
-{ sign_tx, calc_total_in, sum_inputs, decode_raw_tx } = require './lib.coffee'
+  ADDR_PUB, ADDR_PRIV, ADDR_P2SH } = require '../../lib/bitcoin/index.coffee'
+{ sign_tx, calc_total_in, sum_inputs, decode_raw_tx } = require '../../lib/bitcoin/tx.coffee'
 { tx_listen, load_unspent } = require './networking.coffee'
 { bytesToHex, hexToBytes } = Crypto.util
 { Transaction, TransactionOut, Util: BitUtil } = Bitcoin
@@ -109,7 +109,7 @@ build_tx = (inputs, $form) ->
   tx
 
 # Display the transaction dialog
-tx_dialog = do (view=require './views/tx-dialog.jade') ->
+tx_dialog = do (view=require './views/dialogs/confirm-tx.jade') ->
   ({ pub, priv, tx, script, initiator }, cb) ->
     total_out = sum_inputs (BitUtil.valueToBigInt value.slice().reverse() for { value } in tx.outs)
     if tx.total_in? and (total_out.compareTo tx.total_in) > 0
@@ -165,13 +165,13 @@ tx_dialog = do (view=require './views/tx-dialog.jade') ->
     dialog.on 'hidden', -> do dialog.remove
     dialog.modal()
 
-show_rawtx_dialog = do (view = require './views/show-rawtx-dialog.jade') -> (tx) ->
+show_rawtx_dialog = do (view = require './views/dialogs/show-rawtx.jade') -> (tx) ->
   rawtx = bytesToHex tx.serialize()
   dialog = $ view { rawtx }
   dialog.on 'hidden', -> do dialog.remove
   dialog.modal()
 
-input_rawtx_dialog = do (view = require './views/input-rawtx-dialog.jade') -> (cb) ->
+input_rawtx_dialog = do (view = require './views/dialogs/input-rawtx.jade') -> (cb) ->
   dialog = $ view()
   display_error = error_displayer dialog.find('.errors')
 

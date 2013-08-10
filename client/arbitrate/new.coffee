@@ -1,6 +1,6 @@
 { Bitcoin, Crypto } = require '../../lib/bitcoinjs-lib.js'
 { bytesToBase64, randomBytes } = Crypto.util
-{ random_privkey, get_address, parse_key_string, ADDR_PRIV } = require '../../lib/bitcoin.coffee'
+{ random_privkey, get_address, parse_key_string, ADDR_PRIV } = require '../../lib/bitcoin/index.coffee'
 { signup } = require '../lib/user.coffee'
 { format_url, render, iferr, error_displayer } = require '../lib/util.coffee'
 view = require './views/new.jade'

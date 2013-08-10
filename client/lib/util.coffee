@@ -1,7 +1,7 @@
 qs = require 'querystring'
 { Bitcoin, Crypto } = require '../../lib/bitcoinjs-lib.js'
 { bytesToBase64, base64ToBytes } = Crypto.util
-# { PRIVKEY_LEN } = require '../../lib/bitcoin.coffee' # circular
+# { PRIVKEY_LEN } = require '../../lib/bitcoin/index.coffee' # circular
 PRIVKEY_LEN = 32
 { iferr, extend } = require '../../lib/util.coffee'
 

@@ -8,7 +8,7 @@ BitUtil = Bitcoin.Util
 { iferr, error_displayer, success, parse_query, format_url, render } = require '../lib/util.coffee'
 { get_address, parse_pubkey, create_multisig, random_privkey
   parse_key_string, parse_key_bytes, sign_message, verify_sig
-  ADDR_PUB, PRIVKEY_LEN, PUBKEY_LEN } = require '../../lib/bitcoin.coffee'
+  ADDR_PUB, PRIVKEY_LEN, PUBKEY_LEN } = require '../../lib/bitcoin/index.coffee'
 
 
 DEBUG = !!~document.location.hash.indexOf('DEBUG')

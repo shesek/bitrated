@@ -1,5 +1,5 @@
 { render, iferr, error_displayer, parse_query } = require '../lib/util.coffee'
-{ parse_key_bytes, get_address, ADDR_PRIV } = require '../../lib/bitcoin.coffee'
+{ parse_key_bytes, get_address, ADDR_PRIV } = require '../../lib/bitcoin/index.coffee'
 { load_user } = require '../lib/user.coffee'
 view = require './views/manage.jade'
 

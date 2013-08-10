@@ -74,7 +74,7 @@ include ../../views/mixin/copy.jade
       your private key and request approval from the other key holders.
     p Once its approved and signed by one of them, the transaction will be broadcasted to the Bitcoin network.
 
-    include ./tx-builder
+    include ./mixin/tx-builder
 
     if !is_dispute
       h3 File dispute

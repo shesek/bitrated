@@ -8,6 +8,7 @@ PRIVKEY_LEN = 32
 DEBUG = /(^|&)DEBUG(&|$)/.test location.hash.substr(1)
 
 lpad = (bytes, len) -> bytes.unshift 0x00 while bytes.length<len; bytes
+rpad = (bytes, len) -> bytes.push 0x00 while bytes.length<len; bytes
 
 # given a container element, returns a function that displays an error in it
 error_displayer = (container) -> (e) ->
@@ -53,7 +54,7 @@ render = do ($root = $ '.content') -> (el) ->
   el.find('[data-toggle=popover]').popover()
 
 module.exports = {
-  lpad, extend
+  lpad, rpad, extend
   iferr, error_displayer
   parse_query, format_url, success, render
 }

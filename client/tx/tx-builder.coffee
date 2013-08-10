@@ -1,5 +1,5 @@
 { Bitcoin, Crypto, BigInteger } = require '../../lib/bitcoinjs-lib.js'
-{ iferr, error_displayer } = require '../util.coffee'
+{ iferr, error_displayer, rpad } = require '../util.coffee'
 { get_address, parse_address, parse_key_bytes, get_pub
   create_out_script, get_script_address
   ADDR_PUB, ADDR_PRIV, ADDR_P2SH } = require '../bitcoin.coffee'
@@ -102,9 +102,10 @@ build_tx = (inputs, $form) ->
   # Read outputs from DOM
   $form.find('.address').each ->
     $this = $ this
+    amount_bi = BitUtil.parseValue $this.find('[name=value]').val()
     tx.addOutput new TransactionOut
       script: create_out_script $this.find('[name=address]').val()
-      value: BitUtil.parseValue($this.find('[name=value]').val()).toByteArrayUnsigned().reverse()
+      value: rpad amount_bi.toByteArrayUnsigned().reverse(), 8
   tx
 
 # Display the transaction dialog

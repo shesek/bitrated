@@ -1,4 +1,4 @@
-{ sha256b, verify_sig, create_multisig } = require '../bitcoin.coffee'
+{ sha256b, verify_sig, create_multisig } = require '../../lib/bitcoin.coffee'
 { decode_raw_tx } = require './lib.coffee'
 { hexToBytes, bytesToHex, bytesToBase64, base64ToBytes } = Crypto.util
 { Transaction, Util: BitUtil } = Bitcoin

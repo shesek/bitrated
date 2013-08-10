@@ -1,6 +1,6 @@
 { Bitcoin, Crypto, BigInteger } = require '../../lib/bitcoinjs-lib.js'
 { Script, ECKey } = Bitcoin
-{ get_address, ADDR_PRIV } = require '../bitcoin.coffee'
+{ get_address, ADDR_PRIV } = require '../../lib/bitcoin.coffee'
 { util: { bytesToHex, bytesToBase64 }, charenc: { UTF8 } } = Crypto
 { OP_0 } = Bitcoin.Opcode.map
 SIGHASH_ALL = 0x01

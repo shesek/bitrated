@@ -1,14 +1,11 @@
 express = require 'express'
 marked = require 'marked'
 ValidationError = require 'mongoose/lib/errors/validation'
-{ PUBKEY_LEN } = require './client/bitcoin.coffee'
-HASH_LEN = 32
-#{ Bitcoin, Crypto } = require '../lib/bitcoinjs-lib.js'
-
-
-{ iferr, only } = require './util'
+{ PUBKEY_LEN } = require '../lib/bitcoin'
+{ iferr, only } = require '../lib/util'
 { join } = require 'path'
 
+HASH_LEN = 32
 USERS_PER_PAGE = 35
 
 module.exports = ({ models }) -> express().configure ->

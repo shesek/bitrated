@@ -1,6 +1,6 @@
-{ render, iferr, error_displayer, parse_query } = require '../util.coffee'
-{ parse_key_bytes, get_address, ADDR_PRIV } = require '../bitcoin.coffee'
-{ load_user } = require '../user.coffee'
+{ render, iferr, error_displayer, parse_query } = require '../lib/util.coffee'
+{ parse_key_bytes, get_address, ADDR_PRIV } = require '../../lib/bitcoin.coffee'
+{ load_user } = require '../lib/user.coffee'
 view = require './views/manage.jade'
 
 display_error = error_displayer $ '.content'

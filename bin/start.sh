@@ -1,5 +1,5 @@
 #!/bin/bash
 [ -f .env ]  && source .env
 
-./node_modules/.bin/coffee app.coffee "$@"
+./node_modules/.bin/coffee ./server/app.coffee "$@"
 

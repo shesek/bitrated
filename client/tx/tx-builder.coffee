@@ -1,8 +1,8 @@
 { Bitcoin, Crypto, BigInteger } = require '../../lib/bitcoinjs-lib.js'
-{ iferr, error_displayer, rpad } = require '../util.coffee'
+{ iferr, error_displayer, rpad } = require '../lib/util.coffee'
 { get_address, parse_address, parse_key_bytes, get_pub
   create_out_script, get_script_address
-  ADDR_PUB, ADDR_PRIV, ADDR_P2SH } = require '../bitcoin.coffee'
+  ADDR_PUB, ADDR_PRIV, ADDR_P2SH } = require '../../lib/bitcoin.coffee'
 { sign_tx, calc_total_in, sum_inputs, decode_raw_tx } = require './lib.coffee'
 { tx_listen, load_unspent } = require './networking.coffee'
 { bytesToHex, hexToBytes } = Crypto.util

@@ -1,8 +1,8 @@
 { Bitcoin, Crypto } = require '../../lib/bitcoinjs-lib.js'
 { bytesToBase64, randomBytes } = Crypto.util
-{ random_privkey, get_address, parse_key_string, ADDR_PRIV } = require '../bitcoin.coffee'
-{ signup } = require '../user.coffee'
-{ format_url, render, iferr, error_displayer } = require '../util.coffee'
+{ random_privkey, get_address, parse_key_string, ADDR_PRIV } = require '../../lib/bitcoin.coffee'
+{ signup } = require '../lib/user.coffee'
+{ format_url, render, iferr, error_displayer } = require '../lib/util.coffee'
 view = require './views/new.jade'
 
 sign_terms = (key, terms, cb) -> cb null, [1, 6, 7, 10, 200]

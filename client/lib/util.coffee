@@ -1,9 +1,9 @@
 qs = require 'querystring'
-{ Bitcoin, Crypto } = require '../lib/bitcoinjs-lib.js'
+{ Bitcoin, Crypto } = require '../../lib/bitcoinjs-lib.js'
 { bytesToBase64, base64ToBytes } = Crypto.util
-# { PRIVKEY_LEN } = require './bitcoin.coffee' # circular
+# { PRIVKEY_LEN } = require '../../lib/bitcoin.coffee' # circular
 PRIVKEY_LEN = 32
-{ iferr, extend } = require '../util.coffee'
+{ iferr, extend } = require '../../lib/util.coffee'
 
 DEBUG = /(^|&)DEBUG(&|$)/.test location.hash.substr(1)
 
@@ -42,7 +42,7 @@ format_url = (data) ->
   qs.stringify query
 
 # returns a function that dispalys the given success message
-success = do (view = require './views/dialog-success.jade') -> (message) -> ->
+success = do (view = require '../views/dialog-success.jade') -> (message) -> ->
   dialog = $ view { message }
   dialog.on 'hidden', -> do dialog.remove
   dialog.modal()

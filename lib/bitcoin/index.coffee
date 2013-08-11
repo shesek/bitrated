@@ -20,10 +20,11 @@ ADDR_LEN = 20
 sha256b = (bytes) -> SHA256 bytes, asBytes: true
 
 # Turn a byte array to a bitcoin address
-get_address = (hash, version) ->
-  [ version, hash... ] = hash unless version?
-  hash = sha256ripe160 hash if version in [ ADDR_PUB, ADDR_P2SH ] and hash.length isnt ADDR_LEN
-  Address::toString.call { version, hash }
+#
+# If version is omitted, treats the first byte as the version
+get_address = (bytes, version=bytes.shift()) ->
+  bytes = sha256ripe160 bytes if version in [ ADDR_PUB, ADDR_P2SH ] and bytes.length isnt ADDR_LEN
+  Address::toString.call { version, hash: bytes }
 
 # Parse and validate base58 Bitcoin addresses
 # Validates and strips the checksum, and optionally the expected version byte

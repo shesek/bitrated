@@ -144,13 +144,15 @@ tx_dialog = do (view=require './views/dialogs/confirm-tx.jade') ->
         throw new Error 'Invalid private key provided' unless (bytesToHex get_pub priv_) is (bytesToHex pub)
         sign_tx priv_, tx, script
       # Use user-provided signed transaction
-      else if rawtx = dialog.find(':visible[name=signed-raw-tx]')
+      else if rawtx = dialog.find(':visible[name=signed-raw-tx]').val()
         signed_tx = decode_raw_tx rawtx
         throw new Error 'Invalid signature provided' unless verify_tx_sig pub, signed
         signed_tx
       else
         throw new Error 'Please provide the private key or the signed transaction'
 
+    # @FIXME: uses form submit event instead of button clicks,
+    #         so it'll work when submitting the form with other means
     dialog.find('.authorize .ok').click sure_cb = ->
       dialog
         .find('.authorize').hide().end()

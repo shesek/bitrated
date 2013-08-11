@@ -27,6 +27,7 @@ get_address = (bytes, version=bytes.shift()) ->
   Address::toString.call { version, hash: bytes }
 
 # Parse and validate base58 Bitcoin addresses
+#
 # Validates and strips the checksum, and optionally the expected version byte
 parse_address = (address, version) ->
   bytes = Base58.decode address
@@ -43,6 +44,8 @@ parse_address = (address, version) ->
   else bytes[0...-4]
 
 # Get the public key of a private key
+#
+# secexp can be either a BigInteger or a byte array
 get_pub = (secexp, compressed=false) ->
   secexp = BigInteger.fromByteArrayUnsigned secexp unless secexp instanceof BigInteger
   (getSECCurveByName 'secp256k1')
@@ -70,7 +73,7 @@ create_out_script = (address) ->
       script.writeBytes hash
       script.writeOp OP_EQUAL
       script
-    else throw new Error 'Invalid payment address version'
+    else throw new Error 'Invalid address version'
 
 # Get the textual address of an output script
 #

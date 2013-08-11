@@ -1,0 +1,33 @@
+form.modal.hide.fade(action='http://')
+  .modal-header
+    button.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
+    h3 Signature required
+
+  .modal-body
+    p Your signature for the #{address} Bitcoin address is required.
+      | Please provide your private key, or follow the instructions below for signing locally. 
+    .errors
+    ul.nav.nav-tabs
+      li.active: a(href='#provide-private', data-toggle='tab') Private key 
+      li: a(href='#sign-locally', data-toggle='tab') Sign locally
+    div.tab-content
+      .tab-pane.active#provide-private
+        input.fullwidth(type='text', name='priv', placeholder='Base58-check encoded private key')
+      .tab-pane#sign-locally
+        :markdown
+          1. Open the Bitcoin-qt client (or [download it](http://bitcoin.org/en/download) if you don't have it installed).
+          1. Ensure *#{address}* is in your local wallet.
+          1. Under the "Recieve" tab, click the "Sign message" button in the bottom right.
+          1. In the first box, enter your Bitcoin address:
+            <pre>#{address}</pre>
+          1. Copy the following message **in its exact form** (with no extra spaces or blank lines),
+             and paste it to the second box:
+             <pre>#{message}</pre>
+          1. Click the "Sign Message" button in the bottom left.
+          1. Copy the signature, and paste it below:
+
+             <textarea class="input-block-level" name="sig" placeholder="Signature in base64 format"></textarea>
+
+  .modal-footer
+      button.btn(data-dismiss='modal') Cancel
+      button.btn.btn-primary(type='submit') Continue

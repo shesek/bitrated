@@ -1,14 +1,16 @@
 qr = require 'qruri'
 tx_builder = require './tx-builder.coffee'
+sign_message = require '../sign-message.coffee'
 { Bitcoin, Crypto } = require '../../lib/bitcoinjs-lib.js'
-{ util: { bytesToBase64, base64ToBytes, bytesToHex, hexToBytes, randomBytes }, charenc: { UTF8 } } = Crypto
+{ util: { bytesToHex, randomBytes }, charenc: { UTF8 } } = Crypto
 BitUtil = Bitcoin.Util
 { get_channel, tx_request, tx_broadcast, handshake_listen, handshake_reply } = require './networking.coffee'
-{ is_final_tx, format_locals } = require './lib.coffee'
+{ format_locals } = require './lib.coffee'
 { iferr, error_displayer, success, parse_query, format_url, render } = require '../lib/util.coffee'
 { get_address, parse_pubkey, create_multisig, random_privkey
-  parse_key_string, parse_key_bytes, sign_message, verify_sig
-  ADDR_PUB, PRIVKEY_LEN, PUBKEY_LEN } = require '../../lib/bitcoin/index.coffee'
+  parse_key_string, parse_key_bytes, verify_sig
+  ADDR_PUB } = require '../../lib/bitcoin/index.coffee'
+{ is_final_tx } = require '../../lib/bitcoin/tx.coffee'
 
 
 DEBUG = !!~document.location.hash.indexOf('DEBUG')
@@ -83,7 +85,7 @@ action_awaiting = do (view = require './views/awaiting.jade') ->
     $(window).on 'beforeunload', beforeunload_cb = -> 'To continue, you must wait for the other party to connect.'
     teardown.push -> $(window).off 'beforeunload', beforeunload_cb
 
-    sign_terms bob_main, terms, iferr display_error, (signature) ->
+    sign_message bob_main, terms, iferr display_error, (signature) ->
       # Start listening for handshake replies on the random channel
       handshake_unlisten = handshake_listen channel, { bob, trent, terms }, iferr display_error, ({ alice, proof }) ->
         navto { alice, trent, bob: bob_main, terms, proof },
@@ -113,7 +115,7 @@ action_join = do (view = require './views/join.jade') ->
         el.find('input[name=bob]').focus()
         return display_error e.message
       { pub: bob, priv: bob_priv } = keys
-      sign_terms (bob_priv ? bob), terms, iferr display_error, (signature) ->
+      sign_message (bob_priv ? bob), terms, iferr display_error, (signature) ->
         { script } = create_multisig [ bob, alice, trent ]
         handshake_reply channel, { pub: bob, proof: signature, script }
         navto { alice, trent, bob: (bob_priv ? bob), terms, proof },
@@ -150,8 +152,8 @@ action_multisig = do (view = require './views/multisig.jade') ->
     }
     render el
 
-    if display_warning
-      $('.headsup').removeClass('hide').modal()
+    # TODO move to a separate dialog view file
+    $('.headsup').removeClass('hide').modal() if display_warning
 
     # Initialize transaction builder
     teardown.push tx_builder el.find('.tx-builder'), {
@@ -170,20 +172,6 @@ action_multisig = do (view = require './views/multisig.jade') ->
       else tx_request channel, signed_tx, iferr display_error,
                                           success '''Transaction approval request was sent to the other
                                                      parties.'''
-
-
-# Sign terms
-#
-# If the private key is unknown, popup a dialog asking for the
-# signature or the private key
-sign_terms = (key, terms, cb) ->
-  switch key.length
-    when PRIVKEY_LEN
-      cb null, sign_message key, terms
-    when PUBKEY_LEN
-      throw new Error 'Not yet supported'
-    else
-      throw new Error 'Invalid key'
 
 next_ctx = null
 navto = (query, ctx) ->

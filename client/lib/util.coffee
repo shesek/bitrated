@@ -18,7 +18,10 @@ error_displayer = (container) -> (e) ->
       .append('<button type="button" class="close" data-dismiss="alert">&times;</button>')
       .append('<p></p>')
       .prependTo(container)
-  el.find('p').text(e.message ? e).end().show()
+  message = switch e.name
+    when 'InvalidCharacterError' then 'Invalid input string provided.'
+    else e.message ? e
+  el.find('p').text(message).end().show()
   throw e if DEBUG
 
 # Parse base64-encoded query string

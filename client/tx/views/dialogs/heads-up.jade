@@ -1,0 +1,24 @@
+.modal
+  .modal-header
+    button.close(type='button', data-dismiss='modal') &times;
+    h3 Heads up!
+  .modal-body
+    p.
+      Make sure to keep a safe copy of all three public keys, your private key,
+      the terms and the signature. They're required for releasing the funds or
+      starting a dispute, and <strong>cannot be recovered by any means</strong>.
+    p All this information
+      if !has_priv
+        | , <strong>except the private key which you should have saved elsewhere</strong>,
+      |  is embeded in the page URL. You can bookmark the page, or copy the URL below:
+    pre.url= bob_url 
+    if has_priv
+      p: strong This URL includes your private key and should be kept secret.
+
+    p If this website ever becomes unavailable, all the relevant information can be
+     | extracted from the URL alone and be used to release the funds using the standard
+     | Bitcoin client.  
+  .modal-footer
+    button.btn.btn-primary(type='button', data-dismiss='modal') Okay, I have a safe copy
+
+

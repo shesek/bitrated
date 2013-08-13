@@ -1,9 +1,12 @@
 extend ./template/layout
 
+prepend title
+  | Join transaction | 
+
 append css
   link(rel='stylesheet', href='tx.css')
 
 append scripts
-  script(src='tx/multisig.js')
+  script(src='tx/join.js')
 
 // Content is loaded with JS

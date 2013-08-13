@@ -63,10 +63,6 @@ include ../../views/mixin/copy.jade
           p.help-block (or scan the QR code to the right)
         p.muted Multisig transactions are still new, and not supported by all miners. It might take awhile
           | for the payment to be confirmed.
-        .alert
-          :markdown
-            This website is under active development stages and might NOT WORK as expected.
-            **DO NOT deposit any Bitcoins to that address.**
 
     h3 Release funds
     p.
@@ -85,36 +81,3 @@ include ../../views/mixin/copy.jade
       pre.url= trent_url
       :markdown
         This URL contains all three *public* keys, the terms and the other party's signature.
-
-if display_warning
-  .headsup.hide.modal
-    .modal-header
-      button.close(type='button', data-dismiss='modal') &times;
-      h3 Heads up!
-    .modal-body
-      p.
-        Make sure to keep a safe copy of all three public keys, your private key,
-        the terms and the signature. They're required for releasing the funds or
-        starting a dispute, and <strong>cannot be recovered by any means</strong>.
-      p All this information
-        if !bob_priv
-          | , <strong>except the private key which you should have saved elsewhere</strong>,
-        |  is embeded in the page URL. You can bookmark the page, or copy the URL below:
-      pre.url= bob_url 
-      if bob_priv
-        p: strong This URL includes your private key and should be kept secret.
-
-      p If this website ever becomes unavailable, all the relevant information can be
-       | extracted from the URL alone and be used to release the funds using the standard
-       | Bitcoin client.  
-    .modal-footer
-      button.btn.btn-primary(type='button', data-dismiss='modal') Okay, I have a safe copy
-
-      //p The arbitrator is a registered Bitscrow user. You can contact him using the form below, and we'll forward him
-        | the public keys and terms of agreement. Make sure to provide him with an explaination of what happened,
-        | any evidence you might have, and anything else that you find relevant.
-      //form.dispute
-        label Message body:
-        textarea
-        button.btn Submit dispute
-

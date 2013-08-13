@@ -6,6 +6,7 @@ PRIVKEY_LEN = 32
 { iferr, extend } = require '../../lib/util.coffee'
 
 DEBUG = /(^|&)DEBUG(&|$)/.test location.hash.substr(1)
+BASE = $('base').attr('href') or throw new Error 'Missing <base>'
 
 lpad = (bytes, len) -> bytes.unshift 0x00 while bytes.length<len; bytes
 rpad = (bytes, len) -> bytes.push 0x00 while bytes.length<len; bytes
@@ -34,15 +35,20 @@ parse_query = (str=document.location.hash.substr(1)) ->
   query
 
 # Create query string for the given data, with base64 encoding
-format_url = (data) ->
-  is_sensitive = (data.bob?.length is PRIVKEY_LEN) or (data.key?.length is PRIVKEY_LEN)
+format_url = (page, data={}) ->
   query = {}
+
+  # Prefix URLs that contains private keys with "DO-NOT-SHARE"
+  if (data.bob?.length is PRIVKEY_LEN) or (data.key?.length is PRIVKEY_LEN)
+    query['DO-NOT-SHARE'] = null
+
   for name, val of data when val?
     query[name] = if Array.isArray val then bytesToBase64 val \
                   else val
-  (if is_sensitive then 'DO-NOT-SHARE&' else '') + \
-  #(if TESTNET      then 'TESTNET&'      else '') + \
-  qs.stringify query
+  (if page? then BASE+page+'#' else '') + qs.stringify query
+
+# Navigate to page
+navto = (page, data) -> document.location = format_url page, data
 
 # returns a function that dispalys the given success message
 success = do (view = require '../views/dialog-success.jade') -> (message) -> ->
@@ -59,5 +65,5 @@ render = do ($root = $ '.content') -> (el) ->
 module.exports = {
   lpad, rpad, extend
   iferr, error_displayer
-  parse_query, format_url, success, render
+  parse_query, format_url, navto, success, render
 }

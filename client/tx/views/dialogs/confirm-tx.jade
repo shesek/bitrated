@@ -14,10 +14,10 @@ form.tx-dialog.modal.hide.fade
             td #{out.value} BTC
       tfoot
         tr
-          td(style='text-align:right;font-weight: bold') Fees:
+          th Fees:
           td #{fees} BTC
         tr
-          td(style='text-align:right;font-weight: bold') Total:
+          th Total:
           td #{total_in} BTC
     
     if final
@@ -38,12 +38,10 @@ form.tx-dialog.modal.hide.fade
         .tab-pane.active#provide-private
           input.fullwidth(type='text', name='priv', placeholder='Base58-check encoded private key')
         .tab-pane#sign-locally
-          p Verify the transaction (optional):
-          pre bitcoind decoderawtransaction #{rawtx}
-          p Sign the transaction:
+          p Sign the transaction (you can verify it with "decoderawtransaction" first):
           pre bitcoind signrawtransaction #{rawtx}
-          p And paste the output here:
-          textarea.signedtx.fullwidth(name='signedtx', placeholder='Input signed raw transaction in hex format')
+          p Paste the output here:
+          textarea.signedtx.fullwidth(name='signed-raw-tx', placeholder='Input signed raw transaction in hex format')
     
     .errors
   .modal-footer

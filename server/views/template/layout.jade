@@ -25,7 +25,7 @@ html
       .nav-collapse.collapse
         ul.nav
           +menu_item('/', 'Home')
-          +menu_item('/tx.html', 'Start transaction')
+          +menu_item('/new.html', 'Start transaction')
           +menu_item('/arbitrate.html', 'Offer Arbitration')
           +menu_item('/u', 'Browse arbitrators')
         ul.nav.pull-right
@@ -55,8 +55,9 @@ html
         &copy; 2013 Bitrated. Some rights reserved.
       .alert.alert-block
         :markdown
-          This website is in **pre-alpha stage** and is activaly being tested.
-          Any funds deposited to multisig addresses might be **permanently lost**.
+          This website is in active development and may NOT WORK as expected.
+          **DO NOT** deposit any funds to multisig addresses until this message
+          is removed.
 
           Please report bugs or send feature requests to GitHub's
           [issue tracker](https://github.com/shesek/bitrated/issues/new).

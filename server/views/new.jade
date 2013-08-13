@@ -1,0 +1,15 @@
+extend ./template/layout
+
+append template-vars
+  active_page = '/new.html'
+
+prepend title
+  | Start transaction | 
+
+append scripts
+  script(src='tx/new.js')
+
+append css
+  link(rel='stylesheet', href='tx.css')
+
+// Content is loaded with JS

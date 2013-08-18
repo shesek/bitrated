@@ -1,6 +1,6 @@
 { Crypto } = require '../../lib/bitcoinjs-lib.js'
-{ util: { randomBytes }, charenc: { UTF8 } } = Crypto
-{ parse_pubkey, parse_key_string, random_privkey } = require '../../lib/bitcoin/index.coffee'
+{ util: { randomBytes, bytesToHex }, charenc: { UTF8 } } = Crypto
+{ parse_pubkey, parse_key_string, random_privkey, sha256b } = require '../../lib/bitcoin/index.coffee'
 { navto, format_url, render, parse_query, iferr, error_displayer } = require '../lib/util.coffee'
 { format_locals } = require './lib/util.coffee'
 { handshake_listen } = require './lib/networking.coffee'
@@ -22,16 +22,40 @@ render el = $ new_view format_locals { bob_priv: random_privkey(), trent }
 display_error = error_displayer el
 
 # Handle form submission
-el.find('form').submit (e) ->
+form = el.find('form').submit (e) ->
   e.preventDefault()
   try
     { pub: bob, priv: bob_priv } = parse_key_string el.find('input[name=bob]').val()
     trent = parse_pubkey el.find('input[name=trent]').val()
-    terms = UTF8.stringToBytes switch
-      when val = el.find('textarea:visible[name=terms]').val().trim() then val
-      else throw new Error 'mot implemented'
-    exchange { bob, bob_priv, trent, terms }
+    get_terms form, iferr display_error, (terms) ->
+      exchange { bob, bob_priv, trent, terms }
   catch err then display_error err
+
+get_terms = (form, cb) ->
+  switch
+    when val = el.find('textarea:visible[name=terms]').val()?.trim()
+      debugger
+      cb null, UTF8.stringToBytes val
+    when file = form.find('input:visible[name=terms_file]')[0]?.files[0]
+      debugger
+      reader = new FileReader
+      reader.onload = ->
+        hash = bytesToHex sha256b Array.apply null, reader.result
+        cb null, format_hash_terms hash
+      reader.readAsArrayBuffer file
+    when hash = form.find('input:visible[name=terms_hash]').val()?.trim()
+      debugger
+      cb null, format_hash_terms hash
+    else
+      debugger
+
+format_hash_terms = (hash) -> UTF8.stringToBytes """
+  I hereby declare that:
+
+  - I have a copy of the file that hashes (with sha256) to #{hash}.
+  - This file contains the terms of the transaction.
+  - I fully agree with terms outlined in this file.
+"""
 
 # Exchange keys with other party
 exchange = ({ bob, bob_priv, trent, terms }) ->

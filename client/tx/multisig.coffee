@@ -50,7 +50,7 @@ document.title = "#{multisig} | Bitrated"
 render el = $ view format_locals {
   bob, alice, trent
   bob_priv, terms, proof
-  is_dispute 
+  is_dispute
 
   pubkeys: pubkeys.map bytesToHex
   multisig, multisig_qr: qr 'bitcoin:'+multisig

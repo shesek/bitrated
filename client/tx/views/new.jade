@@ -72,11 +72,11 @@
           .help-block
             p Only the file's hash will be embedded to the URL. Both parties should have a safe local copy of the file.
             p Select file: 
-              input(type='file')
+              input(type='file', name='terms_file')
             p.muted The file is hashed and signed locally, and is never uploaded to the server.
         .tab-pane#hash
           p.help-block You can hash the terms locally and input the hash here:
-          input.fullwidth(type='text')
+          input.fullwidth(type='text', name='terms_hash')
 
     button.btn.btn-large.btn-primary(type='submit') Start transaction 
   .muted

@@ -1,15 +1,15 @@
 qs = require 'querystring'
 { Bitcoin, Crypto } = require '../../lib/bitcoinjs-lib.js'
 { bytesToBase64, base64ToBytes } = Crypto.util
-# { PRIVKEY_LEN } = require '../../lib/bitcoin/index.coffee' # circular
-PRIVKEY_LEN = 32
+{ PRIVKEY_LEN } = require '../../lib/bitcoin/index.coffee'
 { iferr, extend } = require '../../lib/util.coffee'
 
 DEBUG = /(^|&)DEBUG(&|$)/.test location.hash.substr(1)
-BASE = $('base').attr('href') or throw new Error 'Missing <base>'
+BASE = $('base[href]').attr('href') or throw new Error 'Missing <base>'
 
+# Right/left pad
 lpad = (bytes, len) -> bytes.unshift 0x00 while bytes.length<len; bytes
-rpad = (bytes, len) -> bytes.push 0x00 while bytes.length<len; bytes
+rpad = (bytes, len) -> bytes.push    0x00 while bytes.length<len; bytes
 
 # given a container element, returns a function that displays an error in it
 error_displayer = (container) -> (e) ->

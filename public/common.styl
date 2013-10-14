@@ -28,7 +28,9 @@ footer
   width 96%
 
 .alert a
-  color #2c3e50 !important
+  color white !important
+  font-weight bold
+  text-decoration underline
   
 a, .btn
   cursor pointer
@@ -65,4 +67,17 @@ pre
     background transparent
     color #fff
     border 0
-  
+    
+// Embed Lato font
+latofont(type, weight=400, style=normal)
+  @font-face
+    font-family Lato
+    font-style style
+    font-weight weight
+    src local('Lato '+type), local('Lato-'+type), url('lato/' + type + '.otf') format('opentype'), url('lato/' + type + '.woff') format('woff')
+    
+latofont(Regular)
+latofont(Bold, 700)
+latofont(Black, 900)
+latofont(Italic, 400, italic)
+

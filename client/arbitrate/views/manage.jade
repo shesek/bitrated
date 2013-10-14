@@ -1,11 +1,8 @@
 .container-page
-  h3 User info
+  h3 Private user info
 
-  //p This page contains private account information and should be kept secret.
-  //-p You should keep a safe backup of your private key, which is embedded in the page URL.
-    | You can bookmark this page, or copy the URL below:
-  //-pre.url= current_url
-
+  p This page contains private account information and should be kept private.
+    | Your public URL can be found below. 
   label Username:
   p= user.username
 
@@ -27,7 +24,8 @@
 
   label Signature:
   pre= user.sig
-  p.muted This signature proves that you wrote the terms and agree to abide by them.
+  p.muted This digital signature confirms that you are the owner of the public key, and that
+        | you agree with the terms.
         | Whenever you publish your terms, you should include your signature along with it.
 
   if priv

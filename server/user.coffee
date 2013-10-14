@@ -11,7 +11,7 @@ USERS_PER_PAGE = 35
 module.exports = ({ models }) -> express().configure ->
   @set 'views', join __dirname, 'views', 'user'
   @set 'view engine', 'jade'
-  @locals.marked = marked
+  @locals.marked = (content) -> marked content, sanitize: true, smartypants: true
 
   { User, Rating } = models
 
@@ -80,7 +80,7 @@ module.exports = ({ models }) -> express().configure ->
     content: content
     sig: pubkey.toString 'base64'
     profile_url: @settings.url + "u/#{_id}"
-    tx_url: @settings.url + "tx.html#trent=#{encodeURIComponent pubkey.toString 'base64'}"
+    tx_url: @settings.url + "new.html#trent=#{encodeURIComponent pubkey.toString 'base64'}"
 
   ###
   # Rate

@@ -1,4 +1,5 @@
 block template-vars
+  moden_browser_only = false
 
 mixin menu_item(path, anchor)
   li(class=(active_page == path ? 'active': '')): a(href=path)= anchor
@@ -31,6 +32,9 @@ html
         ul.nav.pull-right
           li: a(href='https://github.com/shesek/bitrated') <i class="icon-share icon-white"></i> Source Code 
 
+    if modern_browser_only
+      include ../mixin/test-browser
+          
     .container.content: block content
 
     block scripts
@@ -52,12 +56,14 @@ html
         [MIT License](https://github.com/shesek/bitrated/blob/master/LICENSE).
         Contributions are welcome.
 
-        &copy; 2013 Bitrated. Some rights reserved.
-      .alert.alert-block
+        &copy; 2013 Bitrated. [Some rights reserved.](/terms.html)
+      //.alert.alert-block
+        a.close(href='#', data-dismiss="alert") &times;
         :markdown
-          This website is in active development and may NOT WORK as expected.
-          **DO NOT** deposit any funds to multisig addresses until this message
-          is removed.
+          **Important:** This website is under active development and beta testing, and may not work as expected.
+          Until the stable version is released, **DO NOT deposit any funds** you aren't willing
+          to lose.
 
           Please report bugs or send feature requests to GitHub's
           [issue tracker](https://github.com/shesek/bitrated/issues/new).
+

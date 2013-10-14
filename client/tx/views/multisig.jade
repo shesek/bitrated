@@ -61,8 +61,10 @@ include ../../views/mixin/copy.jade
         .pay-link
           a.btn.btn-primary(href="bitcoin:#{multisig}") Pay with Bitcoin
           p.help-block (or scan the QR code to the right)
-        p.muted Multisig transactions are still new, and not supported by all miners. It might take awhile
+        //p.muted Multisig transactions are still new, and not supported by all miners. It might take awhile
           | for the payment to be confirmed.
+        p.text-error This website is under active development, and is currently being beta-tested. You're
+          | not advised to deposit funds until a stable version is ready.
 
     h3 Release funds
     p.

@@ -11,10 +11,11 @@ append css
 
 block content
   .page-header: h2 Bitrated arbitrators directory
-  for user in users
-    .user
-      h4: a(href=user.profile_url)= user.username
-      .well!= marked(user.content.substr(0, 100))
-      a.btn.btn-primary(href=user.profile_url) Profile
-      | 
-      a.btn(href=user.tx_url) Start transaction
+  .row: .span7
+    for user in users
+      .user
+        h4: a(href=user.profile_url)= user.username
+        .well!= marked(user.content.substr(0, 500) + '...')
+        a.btn.btn-primary(href=user.profile_url) Full profile 
+        | 
+        a.btn(href=user.tx_url) Start transaction

@@ -20,6 +20,7 @@ if trent? and not (try parse_pubkey trent)
 render el = $ new_view format_locals { bob_priv: random_privkey(), trent }
 
 display_error = error_displayer el
+#$(window).error display_error
 
 # Handle form submission
 form = el.find('form').submit (e) ->
@@ -31,20 +32,18 @@ form = el.find('form').submit (e) ->
       exchange { bob, bob_priv, trent, terms }
   catch err then display_error err
 
+# Get the provided terms from text, file or hash
 get_terms = (form, cb) ->
   switch
     when val = el.find('textarea:visible[name=terms]').val()?.trim()
-      debugger
       cb null, UTF8.stringToBytes val
     when file = form.find('input:visible[name=terms_file]')[0]?.files[0]
-      debugger
       reader = new FileReader
       reader.onload = ->
         hash = bytesToHex sha256b Array.apply null, reader.result
         cb null, format_hash_terms hash
       reader.readAsArrayBuffer file
     when hash = form.find('input:visible[name=terms_hash]').val()?.trim()
-      debugger
       cb null, format_hash_terms hash
     else
       debugger
@@ -63,10 +62,6 @@ exchange = ({ bob, bob_priv, trent, terms }) ->
   # that's sent along with the URL
   channel = randomBytes 15
   
-  # Start listening for handshake replies on the random channel
-  unlisten = handshake_listen channel, { bob, trent, terms }, iferr display_error, ({ alice, proof }) ->
-    navto 'tx.html', { alice, trent, bob: (bob_priv ? bob), terms, proof, _is_new: true }
-
   # Sign message (with known private key, or with dialog asking user to do this
   # locally)
   sign_message (bob_priv ? bob), terms, iferr display_error, (sig) ->
@@ -75,11 +70,16 @@ exchange = ({ bob, bob_priv, trent, terms }) ->
     # random channel name
     alice_url = format_url 'join.html', { alice: bob, trent, terms, proof: sig, channel }
 
-    # Finally, display the dialog instructing the user to share the URL with
+    # Display the dialog instructing the user to share the URL with
     # the other party
     dialog = $ invite_view { alice_url }
     dialog.on 'hidden', ->
       unlisten()
       dialog.remove()
     dialog.modal()
+
+    # Start listening for handshake replies on the random channel
+    unlisten = handshake_listen channel, { bob, trent, terms }, iferr display_error, ({ alice, proof }) ->
+      navto 'tx.html', { alice, trent, bob: (bob_priv ? bob), terms, proof, _is_new: true }
+
 

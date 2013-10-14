@@ -54,9 +54,8 @@
     .help-block
       :markdown
         This random private key was created for you and **should be kept secret**.
-        You can replace it with a [locally generated public key](keys),
-        or use keys from sites like [brainwallet](http://brainwallet.org/)
-        or [bitaddress](https://www.bitaddress.org/).
+        For enhanced security, you can replace it with a [locally generated public key](security.html#keys)
+        and sign your transactions/messages locally.
     input.fullwidth(type='text', name='key', value=privkey, placeholder='Public key (hex) or private key (base58)',
                     required, pattern='^([a-f0-9]{130}|[59][123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{50})$',
                     autocomplete='off')
@@ -71,7 +70,7 @@
       :markdown
         Your terms of service describes your handling of disputes. This should include the fees
         you're charging, information regarding your dispute resolution process, contact information
-        and identifying information. You can reference external files by mentioning their hash.
+        and identifying information. If you reference external files, make sure to include their hash.
 
         The terms will be signed with your private key in the next page. You should publish
         your terms along with the signature, to show you're the public key owner.

@@ -18,13 +18,6 @@ display_error = error_displayer $root
 # Read and validate query params
 { bob, alice, trent, terms, proof, _is_new } = parse_query()
 
-# This is passed from the previous page, to indicate this transaction is opened
-# for the first time. It is removed immediately from the hash, and:
-# - Causes the "Please backup your data" popup to appear
-# - Doesn't re-validate the signature (it was validated on the previous page)
-if _is_new
-  document.location.hash = format_url null, { alice, trent, bob, terms, proof }
-
 for key, val of { bob, alice, trent, terms, proof } when not val
   throw new Error "Missing argument: #{ key }"
 
@@ -34,6 +27,7 @@ for key, val of { alice, trent } when not (try parse_pubkey val)
 unless keys = (try parse_key_bytes bob)
   throw new Error 'Invalid main public/private key'
 
+# Don't re-validate the signature when _is_new
 unless _is_new or verify_sig alice, terms, proof
   throw new Error 'Invalid signature'
 
@@ -47,6 +41,7 @@ channel = get_channel { bob, alice, trent, terms }
 
 document.title = "#{multisig} | Bitrated"
 
+# Render the main view
 render el = $ view format_locals {
   bob, alice, trent
   bob_priv, terms, proof
@@ -64,10 +59,13 @@ render el = $ view format_locals {
   default_fee: Bitcoin.Util.formatValue DEFAULT_FEE
 }
 
+# When loaded for the first time, display the headsup message
+# and remove the _is_new flag from the URL
 if _is_new then do ->
+  # bob is listed after alice and trent to ensure its not visible in the URL
+  document.location.hash = format_url null, { alice, trent, bob: bob_main, terms, proof }
   dialog = $ headsup_view {
-    # bob is listed after alice and trent to ensure its not visible in the URL
-    bob_url: format_url 'tx.html', { alice, trent, bob: bob_main, terms, proof }
+    bob_url: location.href
     has_priv: bob_priv?
   }
   dialog.on 'hidden', -> dialog.remove()

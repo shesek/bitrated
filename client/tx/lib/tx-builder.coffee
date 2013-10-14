@@ -8,8 +8,7 @@
 { bytesToHex, hexToBytes } = Crypto.util
 { Transaction, TransactionOut, Util: BitUtil } = Bitcoin
 
-# Initialize the transaction builder interface,
-# and return a teardown function
+# Initialize the transaction builder interface
 tx_builder = do (addr_tmpl=null) -> (el, { key, trent, multisig, script, channel, fees }, cb) ->
   { pub, priv } = parse_key_bytes key
   fees = BitUtil.parseValue fees unless fees instanceof BigInteger
@@ -90,6 +89,9 @@ tx_builder = do (addr_tmpl=null) -> (el, { key, trent, multisig, script, channel
     # TODO validate signature
     try show_dialog tx,' other'
     catch e then display_error e
+
+  # Calling the returned function will stop listening on the channel
+  tx_unlisten
 
 # Build transaction with the given inputs and parse outputs from <form>
 build_tx = (inputs, $form) ->

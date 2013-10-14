@@ -59,60 +59,70 @@ block content
       **You are responsible for keeping a safe and secure backup of your URL.
       The data contained in the URL is cryptographically required for releasing
       the funds, and cannot be recovered by any means.**
-    //-
-      div.
-        Work in progress, not quite ready yet
 
-        #### Browser extension
-        Our browser extension provides improved security by verifying the intergrity
-        of the files served by the server. The verification is done using two factors:
+      #### Browser extension
+      <div class="alert alert-info">
+      
+      The browser extension is still work in progress.
+      Due do the importance of the extension, the website will
+      remain in beta stage until this is operational.
+      
+      The text below describes how it will work once ready.
 
-        - **Cold storage signature verification:**
-          In addition to SSL, static files (html/css/javascript)
-          are signed using standard Bitcoin message signatures on an offline machine
-          (the private key was created on that machine, and has no other copies)
-          and appended to the response body as a comment.
+      </div>
 
-        - **Comparing against the code on GitHub repository:**
-          The source code from the GitHub repository is built on Travis-CI,
-          and the resulting hashes are published publicly on Travis's job page.
-          The extension compares the web server response against those hashes.
+      Our browser extension provides improved security by verifying the intergrity
+      of the files served by the server. The verification is done using two factors:
 
-        If a potential attacker gains control over the web server, he still only has
-        access to information the web server already has (which is very little).
-        To get sensitive information, he would have to modify the client-side code
-        to send back more data to the server.
+      - **Cold storage signature verification:**
+        In addition to SSL, static files (html/css/javascript)
+        are signed using standard Bitcoin message signatures
+        (the private key is stored encrypted and offline).
+        This ensures that the content served from the webserver was not tampered
+        with by a third party.
 
-        For an attacker to succesfully mount such an attack against someone with the
-        browser extension, he would have to:
+      - **Comparing against the code on GitHub repository:**
+        The source code from the GitHub repository is built on Travis-CI,
+        the resulting hashes are published publicly on Travis's job page.
+        The extension ensures that the content served by the webserver matches
+        the open-source repository on GitHub.
 
-        1. Gain access to the web server
-        1. Gain access to the personal computer of a developer with commit access
-           to the Github repository
-        1. Commit his changes to the public GitHub repository, where they
-           can be seen by anyone
-        1. Gain **physical access** to the offline machine with the private key
+      If a potential attacker gains control over the web server, he still only has
+      access to information the web server already has (which is very little).
+      To get sensitive information, he would have to modify the client-side code
+      to send back more data to the server.
 
-        For users without the extension, he would only have to do the first step.
-        It is highly recommended to install the extension.
+      For an attacker to succesfully mount such an attack against someone with the
+      browser extension, he would have to:
 
-        <a class="btn btn-primary" href="TODO">Install extension</a>
+      1. Gain access to the web server.
+      1. Gain access to the personal computer of a developer with commit access
+         to the Github repository.
+      1. Commit his changes to the public GitHub repository, where they
+         can be seen by anyone.
+      1. Gain **physical access** to the offline machine with the private key.
 
-        #### Public key verification
-        To prevent an attacker from modifying our published Bitcoin public key,
-        its permanently embedded into Bitcoin blockchain in a way that is
-        [nearly impossible](https://en.bitcoin.it/wiki/Weaknesses#Attacker_has_a_lot_of_computing_power)
-        to modify (and becomes exponentially more difficult as time goes by).
+      For users without the extension, an attacker only has to do step (1).
 
-        The public key can be verified by taking the following procedure:
+      It is highly recommended to install the extension.
 
-        1. Take the SHA256 of the domain name ("bitrated.com")
-        2. Create a Bitcoin address using that hash as the private key
-        3. Find the **first** transaction with that address as its *output address*
-        4. The *input address* of that transaction is our public key
+      <a class="btn btn-primary" href="#TODO">Install extension</a>
 
-        If its ever required to change the public key, the announcement
-        will be signed with the old public key.
+      #### Public key verification
+      To prevent an attacker from modifying our published Bitcoin public key,
+      its permanently embedded into Bitcoin blockchain in a way that is
+      [nearly impossible](https://en.bitcoin.it/wiki/Weaknesses#Attacker_has_a_lot_of_computing_power)
+      to modify (and becomes exponentially more difficult as time goes by).
+
+      The public key can be verified by taking the following procedure:
+
+      1. Take the SHA256 of the domain name ("bitrated.com")
+      2. Create a Bitcoin address using that hash as the private key
+      3. Find the **first** transaction with that address as its *output address*
+      4. The *input address* of that transaction is our public key
+
+      If its ever required to change the public key, the announcement
+      will be signed with the old public key.
 
     :markdown
       #### Local private keys support

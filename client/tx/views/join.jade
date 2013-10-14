@@ -29,9 +29,8 @@
       .help-block
         :markdown
           This random private key was created for you and **should be kept secret**.
-          You can replace it with a [locally generated public key](keys),
-          or use keys from sites like [brainwallet](http://brainwallet.org/)
-          or [bitaddress](https://www.bitaddress.org/).
+          For enhanced security, you can replace it with a [locally generated public key](security.html#keys)
+          and sign your transactions/messages locally.
       input.fullwidth(type='text', name='bob', value=bob_priv, placeholder='Public key (hex) or private key (base58)',
                       required, pattern='^([a-f0-9]{130}|[59][123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{50})$',
                       autocomplete='off')

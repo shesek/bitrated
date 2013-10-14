@@ -2,12 +2,12 @@
 { util: { bytesToBase64, randomBytes }, charenc: { UTF8 } } = Crypto
 { random_privkey, get_address, parse_key_string, ADDR_PRIV } = require '../../lib/bitcoin/index.coffee'
 { signup } = require '../lib/user.coffee'
-{ format_url, render, iferr, error_displayer } = require '../lib/util.coffee'
+{ navto, render, iferr, error_displayer } = require '../lib/util.coffee'
 sign_message = require '../sign-message.coffee'
 view = require './views/new.jade'
 
 # Render with random private key
-render form = $ view privkey: get_address random_privkey(), ADDR_PRIV
+render form = $ view privkey: (get_address random_privkey(), ADDR_PRIV)
 
 # Handle submission
 display_error = error_displayer form
@@ -26,6 +26,6 @@ form.submit (e) ->
   sign_message (priv ? pub), terms_ba, iferr display_error, (sig) ->
     user = { username, pubkey: pub, content: terms, sig }
     signup user, iferr display_error, (res) ->
-      document.location = '/arbitrator.html#' + format_url _: (randomBytes 60), key: (priv ? pub)
+      navto 'arbitrator.html', _: (randomBytes 160), key: (priv ? pub), _is_new: true
       # Add some random data so that the key won't be visible in the URL bar
 

@@ -17,6 +17,7 @@ module.exports = express().configure ->
   @db = mongoose.connect process.env.MONGO_URI or 'mongodb://localhost/'
   @models = require('./models')(@db)
 
+  @use express.basicAuth 'u2', 'b1tr4t3d'
   @use express.favicon()
   @use express.logger 'dev'
   @use express.bodyParser()

@@ -9,7 +9,7 @@ module.exports = ->
   @set 'public', join __dirname, '..', 'public'
 
   @use stylus.middleware src: @settings.public
-  @use express.static @settings.public
+  @use express.static @settings.public, maxAge: 86400000 # one day
 
   @get '/tx/new.js', browserify '../client/tx/new.coffee'
   @get '/tx/join.js', browserify '../client/tx/join.coffee'

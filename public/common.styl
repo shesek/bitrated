@@ -31,7 +31,11 @@ footer
   color white !important
   font-weight bold
   text-decoration underline
-  
+
+.text-error a
+  color inherit
+  font-weight bold
+
 a, .btn
   cursor pointer
 
@@ -75,9 +79,7 @@ latofont(type, weight=400, style=normal)
     font-style style
     font-weight weight
     src local('Lato '+type), local('Lato-'+type), url('lato/' + type + '.otf') format('opentype'), url('lato/' + type + '.woff') format('woff')
-    
 latofont(Regular)
 latofont(Bold, 700)
 latofont(Black, 900)
 latofont(Italic, 400, italic)
-

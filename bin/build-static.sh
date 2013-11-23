@@ -1,18 +1,26 @@
 #!/bin/bash
 [ -f .env ]  && source .env
-[ ! -z "$1" ] && BUILD="$1"
-[ -z "$BUILD" ] && echo "Usage: BUILD=build_target npm run build-static, or set BUILD in .env" && exit 1
+[ ! -z "$1" ] && TARGET="$1"
+[ -z "$TARGET" ] && echo "Usage: TARGET=build_target npm run build-static, or set TARGET in .env" && exit 1
 
-rm -r "$BUILD"
-mkdir "$BUILD"
+echo "Preparing target..."
+rm -r $TARGET
+mkdir $TARGET
+mkdir $TARGET/{tx,arbitrate}
 
-cp -r public/{lib,img} "$BUILD"
+echo "Copying static files..."
+cp -r public/{lib,img,lato} $TARGET
 
-browserify -e client/tx/index.coffee -t coffeeify -t jadeify2 -o "$BUILD/tx.js"
-browserify -e client/arbitrate.coffee -t coffeeify -t jadeify2 -o "$BUILD/arbitrate.js"
+echo "Browserifying..."
+for file in tx/new tx/join tx/multisig arbitrate/new arbitrate/manage; do
+  echo "  - $file"
+  browserify -e client/$file.coffee -t coffeeify -t jadeify2 -o $TARGET/$file.js
+done
 
-stylus stylus -o "$BUILD"
+echo "Compiling stylus..."
+stylus public/*.styl -o $TARGET
 
+echo "Compiling jade..."
 read -d '' LOCALS <<JSON
   {
     "pubkey_address": "${PUBKEY_ADDRESS}",
@@ -20,5 +28,5 @@ read -d '' LOCALS <<JSON
     "api": "${API_URL}"
   }
 JSON
-jade views/*.jade -o "$BUILD" --obj "$LOCALS"
+jade server/views/*.jade -o $TARGET --obj "$LOCALS"
 

@@ -1,5 +1,5 @@
-{ Crypto } = require '../lib/bitcoinjs-lib.js'
-{ util: { bytesToHex, base64ToBytes }, charenc: { UTF8 } } = Crypto
+{ Crypto, convert: { bytesToHex, base64ToBytes } } = require 'bitcoinjs-lib'
+{ UTF8 } = Crypto.charenc
 { error_displayer } = require './lib/util.coffee'
 { get_address, parse_address, get_pub
   sign_message, verify_sig

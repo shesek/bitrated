@@ -1,24 +1,22 @@
-{ Bitcoin, Crypto, BigInteger } = require '../../../lib/bitcoinjs-lib.js'
+{ BigInteger, Transaction, TransactionOut, Util, convert: { bytesToHex, hexToBytes } } = require 'bitcoinjs-lib'
 { iferr, error_displayer, rpad } = require '../../lib/util.coffee'
 { get_address, parse_address, parse_key_bytes, get_pub
   create_out_script, get_script_address
   ADDR_PUB, ADDR_PRIV, ADDR_P2SH } = require '../../../lib/bitcoin/index.coffee'
 { sign_tx, calc_total_in, sum_inputs, decode_raw_tx } = require '../../../lib/bitcoin/tx.coffee'
 { tx_listen, load_unspent } = require './networking.coffee'
-{ bytesToHex, hexToBytes } = Crypto.util
-{ Transaction, TransactionOut, Util: BitUtil } = Bitcoin
 
 # Initialize the transaction builder interface
-tx_builder = do (addr_tmpl=null) -> (el, { key, trent, multisig, script, channel, fees }, cb) ->
+tx_builder = (el, { key, trent, multisig, script, channel, fees }, cb) ->
   { pub, priv } = parse_key_bytes key
-  fees = BitUtil.parseValue fees unless fees instanceof BigInteger
+  fees = Util.parseValue fees unless fees instanceof BigInteger
   display_error = error_displayer el
   unspent = balance = null
   addresses = el.find('.addresses')
 
   # Add address
-  el.find('.add-address').click ->
-    addr_tmpl ||= addresses.find('.address:eq(0)').clone()
+  el.find('.add-address').click do (addr_tmpl=null) -> ->
+    addr_tmpl ?= addresses.find('.address:eq(0)').clone()
       .find('input').val('').end()
       .find('.add-address').toggleClass('add-address del-address').end()
       .find('.icon-plus').toggleClass('icon-plus icon-minus').end()
@@ -36,10 +34,9 @@ tx_builder = do (addr_tmpl=null) -> (el, { key, trent, multisig, script, channel
     val_el = $(this).closest('.address').find('[name=value]')
     spent = el.find('.address input[name=value]').not(val_el)
       .filter(->!!@value)
-      .map(-> BitUtil.parseValue @value).get()
-    remain = balance.subtract(sum_inputs spent).subtract(fees)
-    remain = BigInteger.ZERO if (remain.compareTo BigInteger.ZERO) < 0
-    val_el.val BitUtil.formatValue remain
+      .map(-> Util.parseValue @value).get()
+    remain = Math.max 0, balance - (sum_inputs spent) - fees
+    val_el.val Util.formatValue remain
 
   # Pay %
   BI_100 = new BigInteger '100'
@@ -48,23 +45,25 @@ tx_builder = do (addr_tmpl=null) -> (el, { key, trent, multisig, script, channel
     return unless percentage = prompt 'Enter the percentage to pay (between 0% and 100%)'
     percentage = +percentage.replace /\s|%/g, ''
     return display_error 'Invalid percentage amount' if isNaN percentage
-    amount = balance.divide(BI_100).multiply(new BigInteger String percentage)
-    val_el.val BitUtil.formatValue amount
+    amount = balance/100*percentage
+    val_el.val Util.formatValue amount
 
   # Update balance
   el.find('.update-balance').click update_balance = ->
     load_unspent multisig, iferr display_error, (_unspent) ->
       unspent = _unspent
       balance = sum_inputs unspent
-      $('.balance').text (BitUtil.formatValue balance)+' BTC'
+      $('.balance').text (Util.formatValue balance)+' BTC'
   do update_balance
   
+  cb_success = cb.bind null, null
+
+  # Helper for displaying the transaction dialog with
+  # all the common data
   show_dialog = (tx, initiator) ->
     tx.total_in ?= calc_total_in tx, unspent
     tx_dialog { pub, priv, script, tx, el, initiator },
               iferr display_error, cb_success
-
-  cb_success = cb.bind null, null
 
   # Release button - open dialog for confirmation
   el.find('.release').click ->
@@ -87,7 +86,7 @@ tx_builder = do (addr_tmpl=null) -> (el, { key, trent, multisig, script, channel
     # TODO ignore requests made by the current user
     # TODO validate tx
     # TODO validate signature
-    try show_dialog tx,' other'
+    try show_dialog tx, 'other'
     catch e then display_error e
 
   # Calling the returned function will stop listening on the channel
@@ -104,7 +103,7 @@ build_tx = (inputs, $form) ->
   # Read outputs from DOM
   $form.find('.address').each ->
     $this = $ this
-    amount_bi = BitUtil.parseValue $this.find('[name=value]').val()
+    amount_bi = Util.parseValue $this.find('[name=value]').val()
     tx.addOutput new TransactionOut
       script: create_out_script $this.find('[name=address]').val()
       value: rpad amount_bi.toByteArrayUnsigned().reverse(), 8
@@ -113,8 +112,8 @@ build_tx = (inputs, $form) ->
 # Display the transaction dialog
 tx_dialog = do (view=require '../views/dialogs/confirm-tx.jade') ->
   ({ pub, priv, tx, script, initiator }, cb) ->
-    total_out = sum_inputs (BitUtil.valueToBigInt value.slice().reverse() for { value } in tx.outs)
-    if tx.total_in? and (total_out.compareTo tx.total_in) > 0
+    total_out = sum_inputs (value for { value } in tx.outs)
+    if tx.total_in? and (total_out > tx.total_in)
       return cb new Error 'Insufficient funds. If the payment was sent recently,
                            it might not be confirmed yet.
                            You can refresh the balance to check for new payments.'
@@ -124,11 +123,11 @@ tx_dialog = do (view=require '../views/dialogs/confirm-tx.jade') ->
     dialog = $ view {
       outs: for { script: out_script, value } in tx.outs
         address: get_script_address out_script
-        value: BitUtil.formatValue value.slice().reverse()
+        value: Util.formatValue value
       has_priv: priv?
       pub_address: get_address pub, ADDR_PUB
-      total_in: BitUtil.formatValue tx.total_in
-      fees: BitUtil.formatValue tx.total_in.subtract(total_out)
+      total_in: Util.formatValue tx.total_in
+      fees: Util.formatValue tx.total_in - total_out
       rawtx: bytesToHex tx.serialize()
       initiator
       final: initiator is 'other'

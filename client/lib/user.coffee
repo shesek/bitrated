@@ -1,5 +1,4 @@
-{ Crypto } = require '../../lib/bitcoinjs-lib.js'
-{ bytesToBase64 } = Crypto.util
+{ convert: { bytesToBase64 } } = require 'bitcoinjs-lib'
 
 # Create new user
 signup = (user, cb) ->

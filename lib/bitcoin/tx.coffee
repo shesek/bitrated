@@ -1,7 +1,7 @@
-{ Bitcoin, Crypto, BigInteger } = require '../bitcoinjs-lib.js'
-{ Script, ECKey } = Bitcoin
-{ util: { bytesToBase64 }, charenc: { UTF8 } } = Crypto
-{ OP_0 } = Bitcoin.Opcode.map
+{ Script, Key, BigInteger, Opcode, Transaction, TransactionIn, TransactionOut, Crypto, convert } = require 'bitcoinjs-lib'
+{ bytesToHex } = convert
+{ UTF8 } = Crypto.charenc
+{ OP_0 } = Opcode.map
 SIGHASH_ALL = 0x01
 
 # Sign multisig transaction with the given private key
@@ -31,7 +31,7 @@ sign_tx = do ->
   # Main function - sign a transaction
   (priv, tx, multisig_script, hash_type=SIGHASH_ALL) ->
     tx = tx.clone()
-    key = new ECKey priv
+    key = new Key priv
     for inv, i in tx.ins
       inv.script = sign_input key, multisig_script, tx, i, inv, hash_type
     tx
@@ -47,7 +47,7 @@ calc_total_in = (tx, inputs) ->
 # Calc the sum of the given `inputs`
 #
 # Uses the `value` property if it exists, otherwise uses the value itself
-sum_inputs = (inputs) -> inputs.reduce ((a, b) -> a.add (b.value ? b)), BigInteger.ZERO
+sum_inputs = (inputs) -> inputs.reduce ((a, b) -> a + (b.value ? b)), 0
 
 # Checks if a transaction is signed by both parties
 is_final_tx = ({ ins }) ->
@@ -59,8 +59,6 @@ is_final_tx = ({ ins }) ->
 
 # Decode raw transaction into a Transaction instance
 decode_raw_tx = do ->
-  { Transaction, TransactionIn, TransactionOut } = Bitcoin
-
   # Parse an little-endian bytearray of length `size` as an integer
   # Works for numbers up to 32-bit only
   parse_int = (size) -> (bytes) ->
@@ -97,7 +95,7 @@ decode_raw_tx = do ->
     for [0...in_count]
       tx.addInput new TransactionIn
         outpoint:
-          hash: bytesToBase64 bytes.splice 0, 32
+          hash: bytesToHex (bytes.splice 0, 32).reverse()
           index: u32 bytes
         script: varchar bytes
         seq: u32 bytes

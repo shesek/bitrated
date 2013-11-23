@@ -1,7 +1,6 @@
+{ Transaction, Util: { parseValue, bytesToNum }, convert: { hexToBytes, bytesToHex, bytesToBase64, base64ToBytes } } = require 'bitcoinjs-lib'
 { sha256b, verify_sig, create_multisig } = require '../../../lib/bitcoin/index.coffee'
 { decode_raw_tx } = require '../../../lib/bitcoin/tx.coffee'
-{ hexToBytes, bytesToHex, bytesToBase64, base64ToBytes } = Crypto.util
-{ Transaction, Util: BitUtil } = Bitcoin
 
 triple_sha256 = (bytes) -> sha256b sha256b sha256b bytes
 
@@ -83,19 +82,19 @@ tx_broadcast = (tx, cb) ->
 load_unspent = (address, cb) ->
   if true
     return cb null, [
-      hash: bytesToBase64 (hexToBytes 'b1801e3cff2fe001ba26453224beef2c26ede8a29b828346c893dd8c905d6098').reverse()
-      index: 0 
+      hash: 'b1801e3cff2fe001ba26453224beef2c26ede8a29b828346c893dd8c905d6098'
+      index: 0
       script: hexToBytes 'a91493e58784b30b127e800158b129a8c45e8424137687'
-      value: BitUtil.parseValue '0.1'
+      value: 10000000 # satoshis
     ]
 
   xhr = $.get "http://blockchain.info/unspent?active=#{address}&cors=true"
   xhr.done (res) ->
     if res.unspent_outputs
       unspent = for { tx_hash, tx_output_n, value_hex, script } in res.unspent_outputs
-        hash: bytesToBase64 hexToBytes tx_hash
+        hash: tx_hash
         index: tx_output_n
-        value: BitUtil.valueToBigInt hexToBytes value_hex
+        value: bytesToNum hexToBytes value_hex
         script: script
       cb null, unspent
     else cb new Error 'Missing unspent outputs in blockchain.info response'

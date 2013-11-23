@@ -1,8 +1,7 @@
-qs = require 'querystring'
-{ Bitcoin, Crypto } = require '../../lib/bitcoinjs-lib.js'
-{ bytesToBase64, base64ToBytes } = Crypto.util
+{ convert: { bytesToBase64, base64ToBytes } } = require 'bitcoinjs-lib'
 { PRIVKEY_LEN } = require '../../lib/bitcoin/index.coffee'
 { iferr, extend } = require '../../lib/util.coffee'
+qs = require 'querystring'
 
 DEBUG = /(^|&)DEBUG(&|$)/.test location.hash.substr(1)
 BASE = $('base[href]').attr('href') or throw new Error 'Missing <base>'

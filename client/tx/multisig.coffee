@@ -1,6 +1,6 @@
-{ iferr, error_displayer, success, parse_query, format_url, render } = require '../lib/util.coffee'
-{ Bitcoin, Crypto: { util: { bytesToHex } } } = require '../../lib/bitcoinjs-lib.js'
+{ Util, convert: { bytesToHex } } = require 'bitcoinjs-lib'
 { get_address, parse_pubkey, parse_key_bytes, create_multisig, verify_sig, ADDR_PUB } = require '../../lib/bitcoin/index.coffee'
+{ iferr, error_displayer, success, parse_query, format_url, render } = require '../lib/util.coffee'
 { format_locals } = require './lib/util.coffee'
 { is_final_tx } = require '../../lib/bitcoin/tx.coffee'
 { get_channel, tx_request, tx_broadcast } = require './lib/networking.coffee'
@@ -10,7 +10,7 @@ headsup_view = require './views/dialogs/heads-up.jade'
 view = require './views/multisig.jade'
 qr = require 'qruri'
 
-DEFAULT_FEE = Bitcoin.Util.parseValue '0.0001'
+DEFAULT_FEE = Util.parseValue '0.0001'
 
 $root = $ '.content'
 display_error = error_displayer $root
@@ -56,7 +56,7 @@ render el = $ view format_locals {
 
   trent_url: format_url 'dispute.html', { bob, alice, trent, terms, proof }
 
-  default_fee: Bitcoin.Util.formatValue DEFAULT_FEE
+  default_fee: Util.formatValue DEFAULT_FEE
 }
 
 # When loaded for the first time, display the headsup message

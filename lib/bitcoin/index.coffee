@@ -1,10 +1,9 @@
-{ Bitcoin, Crypto, BigInteger } = require '../bitcoinjs-lib.js'
-{ ECDSA, ECKey, Script, Address, Base58, Message } = Bitcoin
-{ sha256ripe160 } = Bitcoin.Util
-{ randomBytes, bytesToHex, hexToBytes, bytesToBase64, base64ToBytes } = Crypto.util
-{ SHA256, charenc: { UTF8 } } = Crypto
-{ getSECCurveByName } = BigInteger.sec
-{ OP_HASH160, OP_EQUAL } = Bitcoin.Opcode.map
+{ Key, Script, Address, Message, BigInteger, Opcode, Util, Crypto, convert, base58, ecdsa } = require 'bitcoinjs-lib'
+getSECCurveByName = require 'bitcoinjs-lib/src/jsbn/sec'
+{ sha256ripe160 } = Util
+{ SHA256, charenc: { UTF8 }, util: { randomBytes } } = Crypto
+{ bytesToHex, hexToBytes } = convert
+{ OP_HASH160, OP_EQUAL } = Opcode.map
 
 TESTNET = document?.location? and !!~document.location.hash.indexOf('TESTNET')
 
@@ -30,7 +29,7 @@ get_address = (bytes, version=bytes.shift()) ->
 #
 # Validates and strips the checksum, and optionally the expected version byte
 parse_address = (address, version) ->
-  bytes = Base58.decode address
+  bytes = base58.decode address
   checksum = sha256b sha256b bytes[0...-4]
   throw new Error 'Invalid address checksum' for i in [0..3] when bytes[bytes.length-4+i] isnt checksum[i]
   if version?
@@ -64,9 +63,10 @@ create_multisig = (pubkeys) ->
 # Create an output script for the given pubkey/script address
 create_out_script = (address) ->
   address = parse_address address unless Array.isArray address
+
   [ version, hash... ] = address
   switch version
-    when ADDR_PUB then Script.createOutputScript { hash }
+    when ADDR_PUB then Script.createOutputScript hash
     when ADDR_P2SH
       script = new Script
       script.writeOp OP_HASH160
@@ -83,7 +83,7 @@ get_script_address = do(
 ) -> (script) ->
   if is_p2sh script
     get_address script.chunks[1], ADDR_P2SH
-  else get_address script.simpleOutHash(), ADDR_PUB
+  else get_address script.toScriptHash(), ADDR_PUB
 
 # Generate random private key
 random_privkey = ->
@@ -97,14 +97,14 @@ random_privkey = ->
 
 # Verify the signature matches the public key
 verify_sig = (expected_pub, message, sig) ->
-  sig = ECDSA.parseSigCompact sig
+  sig = ecdsa.parseSigCompact sig
   hash = Message.getHash UTF8.bytesToString message
   compressed = !!(sig.i & 4)
-  actual_pub = ECDSA.recoverPubKey(sig.r, sig.s, hash, sig.i).getPubPoint().getEncoded(compressed)
+  actual_pub = ecdsa.recoverPubKey(sig.r, sig.s, hash, sig.i).getPubPoint().getEncoded(compressed)
   (bytesToHex actual_pub) is (bytesToHex expected_pub)
 
 sign_message = (priv, message) ->
-  base64ToBytes Message.signMessage (new ECKey priv), UTF8.bytesToString message
+  hexToBytes Message.signMessage (new Key priv), UTF8.bytesToString message
 
 # Parse and validate public key bytes or hex string
 parse_pubkey = (bytes) ->

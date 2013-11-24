@@ -39,6 +39,8 @@ html
     .container.content: block content
 
     block scripts
+      //- load scripts before footer, to avoid the footer flashing
+      //- before scripts are done loading
       script(src='/lib/jquery.min.js')
       script(src='/lib/bootstrap/bootstrap.min.js')
 

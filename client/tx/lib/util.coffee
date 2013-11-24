@@ -6,7 +6,6 @@
 format_locals = (data) ->
   data[k] = bytesToHex data[k] for k in ['bob', 'alice', 'trent'] when data[k]?
   data.bob_priv = get_address data.bob_priv, ADDR_PRIV if data.bob_priv?
-  console.log 'got data', data
   data.terms = UTF8.bytesToString data.terms if data.terms?
   data.proof = bytesToBase64 data.proof if data.proof?
   data

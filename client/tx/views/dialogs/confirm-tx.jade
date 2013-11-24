@@ -38,9 +38,9 @@ form.tx-dialog.modal.hide.fade
           p Sign the transaction (you can verify it with "decoderawtransaction" first):
           pre bitcoind signrawtransaction #{rawtx}
           p Paste the output here:
-          textarea.signedtx.fullwidth(name='signed-raw-tx', placeholder='Input signed raw transaction in hex format')
+          textarea.signedtx.input-block-level(name='signed-raw-tx', placeholder='Input signed raw transaction in hex format')
         .tab-pane#provide-private
-          input.fullwidth(type='text', name='priv', placeholder='Base58-check encoded private key')
+          input.input-block-level(type='text', name='priv', placeholder='Base58-check encoded private key')
     
     .errors
   .modal-footer

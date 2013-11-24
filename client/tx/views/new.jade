@@ -9,7 +9,7 @@
         :markdown
           **Required.** The owner of this public key will be given power to arbitrate the transaction.
           You can browse the list of available arbitrators [here](/u), or use any other public key.
-        input.fullwidth(type='text', name='trent', placeholder='Public key (hex)', value=trent,
+        input.input-block-level(type='text', name='trent', placeholder='Public key (hex)', value=trent,
                       required, pattern='^[a-f0-9]{130}$')
 
       label Your public/private key
@@ -18,7 +18,7 @@
           This random private key was created for you and **should be kept secret**.
           For enhanced security, you can replace it with a [locally generated public key](security.html#keys)
           and sign your transactions/messages locally.
-        input.fullwidth(type='text', name='bob', value=bob_priv, placeholder='Public key (hex) or private key (base58)',
+        input.input-block-level(type='text', name='bob', value=bob_priv, placeholder='Public key (hex) or private key (base58)',
                         required, pattern='^([a-f0-9]{130}|[59][123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{50})$',
                         autocomplete='off')
         .muted
@@ -75,7 +75,7 @@
             p.muted The file is hashed and signed locally, and is never uploaded to the server.
         .tab-pane#hash
           p.help-block You can hash the terms locally and input the hash here:
-          input.fullwidth(type='text', name='terms_hash')
+          input.input-block-level(type='text', name='terms_hash')
 
     button.btn.btn-large.btn-primary(type='submit') Start transaction 
   .muted

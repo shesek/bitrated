@@ -56,7 +56,7 @@
         This random private key was created for you and **should be kept secret**.
         For enhanced security, you can replace it with a [locally generated public key](security.html#keys)
         and sign your transactions/messages locally.
-    input.fullwidth(type='text', name='key', value=privkey, placeholder='Public key (hex) or private key (base58)',
+    input.input-block-level(type='text', name='key', value=privkey, placeholder='Public key (hex) or private key (base58)',
                     required, pattern='^([a-f0-9]{130}|[59][123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{50})$',
                     autocomplete='off')
     .muted

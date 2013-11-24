@@ -29,19 +29,18 @@ form.tx-dialog.modal.hide.fade
        | send it to the other parties for final approval.
 
     if !has_priv
-      p Please provide the private key for <em>#{pub_address}</em>,
-        | or sign the transaction locally.
+      p Please sign the transaction locally or provide the private key for <em>#{pub_address}</em>.
       ul.nav.nav-tabs
-        li.active: a(href='#provide-private', data-toggle='tab') Private key 
-        li: a(href='#sign-locally', data-toggle='tab') Sign locally with bitcoind
+        li.active: a(href='#sign-locally', data-toggle='tab') Sign locally with Bitcoind
+        li: a(href='#provide-private', data-toggle='tab') Enter private key 
       div.tab-content
-        .tab-pane.active#provide-private
-          input.fullwidth(type='text', name='priv', placeholder='Base58-check encoded private key')
-        .tab-pane#sign-locally
+        .tab-pane.active#sign-locally
           p Sign the transaction (you can verify it with "decoderawtransaction" first):
           pre bitcoind signrawtransaction #{rawtx}
           p Paste the output here:
           textarea.signedtx.fullwidth(name='signed-raw-tx', placeholder='Input signed raw transaction in hex format')
+        .tab-pane#provide-private
+          input.fullwidth(type='text', name='priv', placeholder='Base58-check encoded private key')
     
     .errors
   .modal-footer

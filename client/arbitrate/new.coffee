@@ -1,4 +1,4 @@
-{ Crypto: convert: { bytesToBase64 } } = require 'bitcoinjs-lib'
+{ Crypto, convert: { bytesToBase64 } } = require 'bitcoinjs-lib'
 { util: { randomBytes }, charenc: { UTF8 } } = Crypto
 { random_privkey, get_address, parse_key_string, ADDR_PRIV } = require '../../lib/bitcoin/index.coffee'
 { signup } = require '../lib/user.coffee'

@@ -9,8 +9,10 @@ module.exports = express().configure ->
   @set 'view engine', 'jade'
   @set 'views', join __dirname, 'views'
   @set 'url', process.env.URL or "http://localhost:#{@settings.port}/"
+
   @locals
     url: @settings.url
+    blockchain_api: process.env.BLOCKCHAIN_API
     pubkey_address: process.env.PUBKEY_ADDRESS
     pretty: @settings.env is 'development'
 

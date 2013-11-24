@@ -2,6 +2,8 @@
 { sha256b, verify_sig, create_multisig } = require '../../../lib/bitcoin/index.coffee'
 { decode_raw_tx } = require '../../../lib/bitcoin/tx.coffee'
 
+BLOCKCHAIN_API = $('meta[name=blockchain-api]').attr('content')
+
 triple_sha256 = (bytes) -> sha256b sha256b sha256b bytes
 
 get_socket = do (socket=null) -> -> socket ||= require('socket.io-client').connect '/', transports: ['xhr-polling']
@@ -74,31 +76,18 @@ tx_request = (channel, tx, cb) ->
 # Send transaction to Bitcoin network using blockchain.info's pushtx
 tx_broadcast = (tx, cb) ->
   tx = bytesToHex tx.serialize()
-  ($.post 'https://blockchain.info/pushtx?cors=true', { tx })
-    .fail((xhr, status, err) -> cb "Error from blockchain.info pushtx: #{ xhr.responseText or err }")
+  $.post(BLOCKCHAIN_API + 'pushtx', { tx })
+    .fail((xhr, status, err) -> cb "Cannot pushtx: #{ xhr.responseText or err }")
     .done((data) -> cb null, data)
 
 # Load unspent inputs (from blockchain.info)
 load_unspent = (address, cb) ->
-  if true
-    return cb null, [
-      hash: 'b1801e3cff2fe001ba26453224beef2c26ede8a29b828346c893dd8c905d6098'
-      index: 0
-      script: hexToBytes 'a91493e58784b30b127e800158b129a8c45e8424137687'
-      value: 10000000 # satoshis
-    ]
-
-  xhr = $.get "http://blockchain.info/unspent?active=#{address}&cors=true"
+  xhr = $.get BLOCKCHAIN_API + "unspent/#{address}"
   xhr.done (res) ->
-    if res.unspent_outputs
-      unspent = for { tx_hash, tx_output_n, value_hex, script } in res.unspent_outputs
-        hash: tx_hash
-        index: tx_output_n
-        value: bytesToNum hexToBytes value_hex
-        script: script
+      unspent = for { txid, n, value, script } in res
+        { hash: txid, index: n, value, script }
       cb null, unspent
-    else cb new Error 'Missing unspent outputs in blockchain.info response'
-  xhr.fail (a...) -> cb new Error 'Cannot load data from blockchain.info'
+  xhr.fail (xhr, status,err) -> cb new Error "Cannot load unspent inputs: #{ xhr.responseText or err}"
 
 module.exports = {
   get_channel

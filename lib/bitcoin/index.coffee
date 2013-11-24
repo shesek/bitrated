@@ -5,7 +5,8 @@ getSECCurveByName = require 'bitcoinjs-lib/src/jsbn/sec'
 { bytesToHex, hexToBytes } = convert
 { OP_HASH160, OP_EQUAL } = Opcode.map
 
-TESTNET = document?.location? and !!~document.location.hash.indexOf('TESTNET')
+TESTNET = true # always enabled for alpha
+# TESTNET = document?.location? and !!~document.location.hash.indexOf('TESTNET')
 
 ADDR_PUB  = if TESTNET then 0x6f else 0x00
 ADDR_P2SH = if TESTNET then 0xc4 else 0x05
@@ -54,7 +55,7 @@ get_pub = (secexp, compressed=false) ->
 # Creates an 2-of-3 multisig
 create_multisig = (pubkeys) ->
   # order pubkeys to ensure the same multisig address
-  # regardless of the order
+  # regardless of the original order
   pubkeys = pubkeys.map(bytesToHex).sort().map(hexToBytes)
   script = Script.createMultiSigOutputScript 2, pubkeys
   address = get_address script.buffer, ADDR_P2SH
@@ -103,6 +104,7 @@ verify_sig = (expected_pub, message, sig) ->
   actual_pub = ecdsa.recoverPubKey(sig.r, sig.s, hash, sig.i).getPubPoint().getEncoded(compressed)
   (bytesToHex actual_pub) is (bytesToHex expected_pub)
 
+# Sign a message
 sign_message = (priv, message) ->
   hexToBytes Message.signMessage (new Key priv), UTF8.bytesToString message
 

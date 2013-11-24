@@ -6,6 +6,9 @@ append template-vars
 append css
   link(rel='stylesheet', href='tx.css')
 
+append head
+  meta(name='blockchain-api', content=blockchain_api)
+
 append scripts
   script(src='tx/multisig.js')
 

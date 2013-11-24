@@ -1,5 +1,5 @@
 block template-vars
-  moden_browser_only = false
+  modern_browser_only = false
 
 mixin menu_item(path, anchor)
   li(class=(active_page == path ? 'active': '')): a(href=path)= anchor
@@ -16,6 +16,7 @@ html
       link(rel='stylesheet', href='/lib/bootstrap/css/flatly.min.css')
       link(rel='stylesheet', href='/lib/bootstrap/css/bootstrap-responsive.min.css')
       link(rel='stylesheet', href='/common.css')
+    block head
   body
     .navbar.navbar-fixed-top: .navbar-inner: .container
       button.btn.btn-navbar(type='button', data-toggle='collapse', data-target='.nav-collapse')
@@ -27,7 +28,7 @@ html
         ul.nav
           +menu_item('/', 'Home')
           +menu_item('/new.html', 'Start transaction')
-          +menu_item('/arbitrate.html', 'Offer Arbitration')
+          +menu_item('/arbitrate.html', 'Offer arbitration')
           +menu_item('/u', 'Browse arbitrators')
         ul.nav.pull-right
           li: a(href='https://github.com/shesek/bitrated') <i class="icon-share icon-white"></i> Source Code 
@@ -57,3 +58,5 @@ html
         Contributions are welcome.
 
         &copy; 2013 Bitrated.
+        <span class="text-error">Alpha release - **running on TestNet**</span>
+        <a href="https://en.bitcoin.it/wiki/Testnet"><i class="icon-question-sign"></i></a>

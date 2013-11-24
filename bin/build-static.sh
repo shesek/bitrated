@@ -25,7 +25,7 @@ read -d '' LOCALS <<JSON
   {
     "pubkey_address": "${PUBKEY_ADDRESS}",
     "url": "${URL}",
-    "api": "${API_URL}"
+    "blockchain_api": "${BLOCKCHAIN_API}"
   }
 JSON
 jade server/views/*.jade -o $TARGET --obj "$LOCALS"

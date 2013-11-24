@@ -19,11 +19,11 @@ sign_tx = do ->
 
   # Recover the pubkey used to sign a multisig input
   #
-  # Uses brote force on all possible public keys and recovery parameters until
-  # something matches.
+  # Uses brute force on all the possible recovery parameters ("nRecId") until
+  # it returns one of the multisig public keys.
   recover_sig_pubkey = (sig, hash, multisig_pubs) ->
     { r, s } = parseSig sig
-    for pubkey in multisig_pubs then for i in [0..3]
+    for i in [0..3]
       pubkey = (recoverPubKey r, s, hash, i).getPub()
       return pubkey if (bytesToHex pubkey) in multisig_pubs
 

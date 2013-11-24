@@ -3,7 +3,7 @@
 { get_address, parse_address, parse_key_bytes, get_pub
   create_out_script, get_script_address
   ADDR_PUB, ADDR_PRIV, ADDR_P2SH } = require '../../../lib/bitcoin/index.coffee'
-{ sign_tx, calc_total_in, sum_inputs, decode_raw_tx } = require '../../../lib/bitcoin/tx.coffee'
+{ sign_tx, calc_total_in, sum_inputs, decode_raw_tx, verify_tx_sig } = require '../../../lib/bitcoin/tx.coffee'
 { tx_listen, load_unspent } = require './networking.coffee'
 
 # Initialize the transaction builder interface
@@ -151,19 +151,17 @@ tx_dialog = do (view=require '../views/dialogs/confirm-tx.jade') ->
           rawtx = hexToBytes rawtx
           signed_tx = decode_raw_tx rawtx
         catch e then throw new Error 'Invalid raw transaction format'
-        throw new Error 'Invalid signature provided' unless verify_tx_sig pub, signed_tx
+        throw new Error 'Invalid signature provided' unless verify_tx_sig pub, signed_tx, script
         signed_tx
       else
         throw new Error 'Please provide the private key or the signed transaction'
 
-    # @FIXME: uses form submit event instead of button clicks,
-    #         so it'll work when submitting the form with other means
-    dialog.find('.authorize .ok').click sure_cb = ->
+    dialog.find('.authorize .ok').click ->
       dialog
         .find('.authorize').hide().end()
         .find('.confirm').show().end()
 
-    dialog.find('.confirm .ok').click authorize = ->
+    dialog.find('.confirm .ok').click ->
       try
         cb null, get_signed_tx()
         dialog.modal 'hide'

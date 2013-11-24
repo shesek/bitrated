@@ -22,7 +22,8 @@ module.exports = express().configure ->
   @use express.basicAuth 'u2', 'b1tr4t3d'
   @use express.favicon()
   @use express.logger 'dev'
-  @use express.bodyParser()
+  @use express.json()
+  @use express.urlencoded()
   @use express.methodOverride()
   @use ext_type '.json': 'application/json', '.txt': 'text/plain'
 

@@ -8,15 +8,11 @@
   "author": "Nadav Ivgi",
   "license": "MIT",
   "dependencies": {
-    "express": "~3.3.4",
-    "mongoose": "~3.6.15",
     "coffee-script": "~1.6.3",
-    "jade": "~0.33.0",
-    "stylus": "~0.34.1",
-    "browserify-middleware": "~1.14.1",
-    "coffeeify": "~0.5.1",
-    "jadeify2": "0.0.3",
-    "marked": "~0.2.9",
+    "express": "~3.4.4",
+    "jade": "~0.35.0",
+    "mongoose": "~3.8.1",
+    "marked": "~0.2.10",
     "socket.io": "~0.9.16",
     "socket.io-client": "~0.9.16",
     "bitcoinjs-lib": "git://github.com/vbuterin/bitcoinjs-lib",
@@ -26,6 +22,10 @@
     "connect-ext-type": "0.0.1"
   },
   "devDependencies": {
-    "browserify": "~2.25.1"
+    "browserify": "~2.25.1",
+    "stylus": "~0.40.3",
+    "browserify-middleware": "~1.20.0",
+    "coffeeify": "~0.5.2",
+    "jadeify2": "0.0.4"
   }
 }

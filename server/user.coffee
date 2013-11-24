@@ -1,6 +1,6 @@
 express = require 'express'
 marked = require 'marked'
-ValidationError = require 'mongoose/lib/errors/validation'
+ValidationError = require 'mongoose/lib/error/validation'
 { PUBKEY_LEN } = require '../lib/bitcoin'
 { iferr, only } = require '../lib/util'
 { join } = require 'path'

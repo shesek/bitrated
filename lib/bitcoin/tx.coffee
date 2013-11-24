@@ -12,10 +12,8 @@ SIGHASH_ALL = 0x01
 sign_tx = do ->
   # Get previous signature
   get_prev_sig = (script) ->
-    unless script.chunks.length is 3 and script.chunks[0] is OP_0 and Array.isArray script.chunks[1]
-      throw new Error 'Invalid script signature'
-    script.chunks[1]
-
+    if script.chunks.length is 3 and script.chunks[0] is OP_0 and Array.isArray script.chunks[1]
+      script.chunks[1]
 
   # Recover the pubkey used to sign a multisig input
   #
@@ -42,11 +40,12 @@ sign_tx = do ->
 
       # Detect previous signature and its index in the pubkeys list
       if inv.script.buffer.length
-        prev_sig = get_prev_sig inv.script
-        # [...-1] is used to strip out the hash type
-        prev_pub = recover_sig_pubkey prev_sig[...-1], hash, multisig_pubs
-        unless ~prev_pub_index = multisig_pubs.indexOf(bytesToHex prev_pub)
-          throw new Error 'Signature pubkey not found in multisig pubkeys'
+        unless prev_sig = get_prev_sig inv.script
+          throw new Error 'Invalid transaction script, cannot find previous sig'
+        unless prev_pub = recover_sig_pubkey prev_sig[...-1], hash, multisig_pubs
+          # [...-1] is used to strip out the hash type
+          throw new Error 'Cannot extract signature public key'
+        prev_pub_index = multisig_pubs.indexOf(bytesToHex prev_pub)
 
       signature = key.sign hash
       in_script = new Script

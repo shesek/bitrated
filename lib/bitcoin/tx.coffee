@@ -1,37 +1,62 @@
-{ Script, Key, BigInteger, Opcode, Transaction, TransactionIn, TransactionOut, Crypto, convert } = require 'bitcoinjs-lib'
+{ Script, Key, BigInteger, Opcode, Transaction, TransactionIn, TransactionOut, Crypto, convert, ecdsa } = require 'bitcoinjs-lib'
 { bytesToHex } = convert
+{ parseSig, recoverPubKey } = ecdsa
 { UTF8 } = Crypto.charenc
 { OP_0 } = Opcode.map
 SIGHASH_ALL = 0x01
 
-# Sign multisig transaction with the given private key
+# Sign 2-of-3 transaction with the given private key
 #
 # https://en.bitcoin.it/wiki/BIP_0011#Specification (m-of-n)
 # https://en.bitcoin.it/wiki/BIP_0016#Specification (p2sh)
 sign_tx = do ->
-  ## Some helpers:
-  
   # Get previous signature
   get_prev_sig = (script) ->
     unless script.chunks.length is 3 and script.chunks[0] is OP_0 and Array.isArray script.chunks[1]
       throw new Error 'Invalid script signature'
     script.chunks[1]
 
-  # Sign a single input, optionally already partially-signed with another key
-  sign_input = (key, multisig_script, tx, i, inv, hash_type) ->
-    hash = tx.hashTransactionForSignature multisig_script, i, hash_type
-    signature = key.sign hash
-    in_script = new Script
-    in_script.writeOp OP_0
-    in_script.writeBytes get_prev_sig inv.script if inv.script.buffer.length
-    in_script.writeBytes [ signature..., hash_type ]
-    in_script.writeBytes multisig_script.buffer
-    in_script
 
-  # Main function - sign a transaction
+  # Recover the pubkey used to sign a multisig input
+  #
+  # Uses brote force on all possible public keys and recovery parameters until
+  # something matches.
+  recover_sig_pubkey = (sig, hash, multisig_pubs) ->
+    { r, s } = parseSig sig
+    for pubkey in multisig_pubs then for i in [0..3]
+      pubkey = (recoverPubKey r, s, hash, i).getPub()
+      return pubkey if (bytesToHex pubkey) in multisig_pubs
+
+
+  # Export main function
   (priv, tx, multisig_script, hash_type=SIGHASH_ALL) ->
     tx = tx.clone()
     key = new Key priv
+    multisig_pubs = multisig_script.chunks[1...-2].map(bytesToHex)
+    unless ~pub_index = multisig_pubs.indexOf(bytesToHex key.getPub())
+      throw new Error 'Supplied key not found in multisig pubkeys'
+
+    # Sign a single input, optionally already partially-signed with another key
+    sign_input = (key, multisig_script, tx, i, inv, hash_type) ->
+      hash = tx.hashTransactionForSignature multisig_script, i, hash_type
+
+      # Detect previous signature and its index in the pubkeys list
+      if inv.script.buffer.length
+        prev_sig = get_prev_sig inv.script
+        # [...-1] is used to strip out the hash type
+        prev_pub = recover_sig_pubkey prev_sig[...-1], hash, multisig_pubs
+        unless ~prev_pub_index = multisig_pubs.indexOf(bytesToHex prev_pub)
+          throw new Error 'Signature pubkey not found in multisig pubkeys'
+
+      signature = key.sign hash
+      in_script = new Script
+      in_script.writeOp OP_0
+      in_script.writeBytes prev_sig if prev_sig? and prev_pub_index < pub_index
+      in_script.writeBytes [ signature..., hash_type ]
+      in_script.writeBytes prev_sig if prev_sig? and prev_pub_index > pub_index
+      in_script.writeBytes multisig_script.buffer
+      in_script
+
     for inv, i in tx.ins
       inv.script = sign_input key, multisig_script, tx, i, inv, hash_type
     tx

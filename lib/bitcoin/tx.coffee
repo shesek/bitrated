@@ -9,56 +9,70 @@ SIGHASH_ALL = 0x01
 #
 # https://en.bitcoin.it/wiki/BIP_0011#Specification (m-of-n)
 # https://en.bitcoin.it/wiki/BIP_0016#Specification (p2sh)
-sign_tx = do ->
-  # Get previous signature
-  get_prev_sig = (script) ->
-    if script.chunks.length is 3 and script.chunks[0] is OP_0 and Array.isArray script.chunks[1]
-      script.chunks[1]
+sign_tx = (priv, tx, multisig_script, hash_type=SIGHASH_ALL) ->
+  tx = tx.clone()
+  key = new Key priv
+  multisig_pubs = multisig_script.chunks[1...-2].map(bytesToHex)
+  unless ~pub_index = multisig_pubs.indexOf(bytesToHex key.getPub())
+    throw new Error 'Supplied key not found in multisig pubkeys'
 
-  # Recover the pubkey used to sign a multisig input
-  #
-  # Uses brute force on all the possible recovery parameters ("nRecId") until
-  # it returns one of the multisig public keys.
-  recover_sig_pubkey = (sig, hash, multisig_pubs) ->
-    { r, s } = parseSig sig
-    for i in [0..3]
-      pubkey = (recoverPubKey r, s, hash, i).getPub()
-      return pubkey if (bytesToHex pubkey) in multisig_pubs
+  # Sign a single input, optionally already partially-signed with another key
+  sign_input = (i, inv) ->
+    hash = tx.hashTransactionForSignature multisig_script, i, hash_type
 
+    # Detect previous signature and its index in the pubkeys list
+    if inv.script.buffer.length
+      unless prev_sigs = get_prev_sigs inv.script
+        throw new Error 'Invalid transaction script, cannot find previous sig'
+      unless prev_sigs.length is 1
+        throw new Error 'Transaction is already final, no more signatures needed'
+      prev_sig = prev_sigs[0]
+      unless prev_pub = recover_sig_pubkey prev_sig[...-1], hash, multisig_pubs...
+        # [...-1] is used to strip out the hash type
+        throw new Error 'Cannot extract signature public key'
+      prev_pub_index = multisig_pubs.indexOf(bytesToHex prev_pub)
 
-  # Export main function
-  (priv, tx, multisig_script, hash_type=SIGHASH_ALL) ->
-    tx = tx.clone()
-    key = new Key priv
-    multisig_pubs = multisig_script.chunks[1...-2].map(bytesToHex)
-    unless ~pub_index = multisig_pubs.indexOf(bytesToHex key.getPub())
-      throw new Error 'Supplied key not found in multisig pubkeys'
+    signature = key.sign hash
+    in_script = new Script
+    in_script.writeOp OP_0
+    in_script.writeBytes prev_sig if prev_sig? and prev_pub_index < pub_index
+    in_script.writeBytes [ signature..., hash_type ]
+    in_script.writeBytes prev_sig if prev_sig? and prev_pub_index > pub_index
+    in_script.writeBytes multisig_script.buffer
+    in_script
 
-    # Sign a single input, optionally already partially-signed with another key
-    sign_input = (key, multisig_script, tx, i, inv, hash_type) ->
-      hash = tx.hashTransactionForSignature multisig_script, i, hash_type
+  for inv, i in tx.ins
+    inv.script = sign_input i, inv
+  tx
 
-      # Detect previous signature and its index in the pubkeys list
-      if inv.script.buffer.length
-        unless prev_sig = get_prev_sig inv.script
-          throw new Error 'Invalid transaction script, cannot find previous sig'
-        unless prev_pub = recover_sig_pubkey prev_sig[...-1], hash, multisig_pubs
-          # [...-1] is used to strip out the hash type
-          throw new Error 'Cannot extract signature public key'
-        prev_pub_index = multisig_pubs.indexOf(bytesToHex prev_pub)
+# Verify the 2-of-3 transaction tx is signed by pub
+verify_tx_sig = (pub, tx, multisig_script, hash_type=SIGHASH_ALL) ->
+  verify_input = (i, inv) ->
+    hash = tx.hashTransactionForSignature multisig_script, i, hash_type
+    prev_sigs = get_prev_sigs inv.script
+    return true for prev_sig in prev_sigs when recover_sig_pubkey prev_sig[...-1], hash, pub
+    return false
 
-      signature = key.sign hash
-      in_script = new Script
-      in_script.writeOp OP_0
-      in_script.writeBytes prev_sig if prev_sig? and prev_pub_index < pub_index
-      in_script.writeBytes [ signature..., hash_type ]
-      in_script.writeBytes prev_sig if prev_sig? and prev_pub_index > pub_index
-      in_script.writeBytes multisig_script.buffer
-      in_script
+  return false for inv, i in tx.ins when not verify_input i, inv
+  return true
 
-    for inv, i in tx.ins
-      inv.script = sign_input key, multisig_script, tx, i, inv, hash_type
-    tx
+# Get previous transaction signature(s)
+get_prev_sigs = (script) ->
+  if script.chunks[0] is OP_0 and script.chunks.length >= 3
+    script.chunks[1...-1]
+
+# Recover the pubkey used to sign an transaction input
+#
+# Uses brute force on all the possible recovery parameters ("nRecId") until
+# it returns one of the given possible public keys.
+recover_sig_pubkey = (sig, hash, possible_pubs...) ->
+  possible_pubs = possible_pubs.map (pub) ->
+    if Array.isArray pub then bytesToHex pub
+    else pub
+  { r, s } = parseSig sig
+  for i in [0..3]
+    pubkey = (recoverPubKey r, s, hash, i).getPub()
+    return pubkey if (bytesToHex pubkey) in possible_pubs
 
 # Calc the total amount paid in `tx`, using the unspent inputs `inputs`
 calc_total_in = (tx, inputs) ->
@@ -73,7 +87,7 @@ calc_total_in = (tx, inputs) ->
 # Uses the `value` property if it exists, otherwise uses the value itself
 sum_inputs = (inputs) -> inputs.reduce ((a, b) -> a + (b.value ? b)), 0
 
-# Checks if a transaction is signed by both parties
+# Checks if a transaction is signed by two parties
 is_final_tx = ({ ins }) ->
   # The final tx script of an 2-of-3 should have 4 chunks:
   # OP_0, 1st signature, 2nd signature, redeemScript
@@ -136,6 +150,7 @@ decode_raw_tx = do ->
     tx
 
 module.exports = {
-  sign_tx, decode_raw_tx, is_final_tx
+  sign_tx, verify_tx_sig
+  decode_raw_tx, is_final_tx
   calc_total_in, sum_inputs
 }

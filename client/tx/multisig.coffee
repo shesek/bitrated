@@ -16,7 +16,7 @@ $root = $ '.content'
 display_error = error_displayer $root
 
 # Read and validate query params
-{ bob, alice, trent, terms, proof, _is_new } = parse_query()
+{ bob, alice, trent, terms, proof, is_dispute, _is_new } = parse_query()
 
 for key, val of { bob, alice, trent, terms, proof } when not val
   throw new Error "Missing argument: #{ key }"
@@ -30,9 +30,6 @@ unless keys = (try parse_key_bytes bob)
 # Don't re-validate the signature when _is_new
 unless _is_new or verify_sig alice, terms, proof
   throw new Error 'Invalid signature'
-
-# @TODO: handle dispute
-is_dispute = false
 
 { pub: bob, priv: bob_priv } = keys
 bob_main = bob_priv ? bob
@@ -54,7 +51,7 @@ render el = $ view format_locals {
   alice_address: get_address alice, ADDR_PUB
   trent_address: get_address trent, ADDR_PUB
 
-  trent_url: format_url 'dispute.html', { bob, alice, trent, terms, proof }
+  trent_url: format_url 'tx.html', { bob, alice, trent, terms, proof, is_dispute: true }
 
   default_fee: Util.formatValue DEFAULT_FEE
 }

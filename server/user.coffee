@@ -8,9 +8,10 @@ ValidationError = require 'mongoose/lib/error/validation'
 HASH_LEN = 32
 USERS_PER_PAGE = 35
 
-module.exports = ({ models }) -> express().configure ->
+module.exports = ({ models, locals }) -> express().configure ->
   @set 'views', join __dirname, 'views', 'user'
   @set 'view engine', 'jade'
+  @locals.__proto__ = locals # inherit locals
   @locals.marked = (content) -> marked content, sanitize: true, smartypants: true
 
   { User, Rating } = models

@@ -3,7 +3,8 @@
   "version": "0.2.0",
   "description": "Source code for Bitrated.com - bitcoin arbitration marketplace",
   "scripts": {
-    "start": "./bin/start.sh"
+    "start": "./bin/start.sh",
+    "build-static": "./bin/build-static.sh"
   },
   "author": "Nadav Ivgi",
   "license": "MIT",

@@ -6,7 +6,7 @@ BLOCKCHAIN_API = $('meta[name=blockchain-api]').attr('content')
 
 triple_sha256 = (bytes) -> sha256b sha256b sha256b bytes
 
-get_socket = do (socket=null) -> -> socket ||= require('socket.io-client').connect '/', transports: ['xhr-polling']
+get_socket = do (socket=null) -> -> socket ||= require('socket.io-client').connect '/'
 
 # Create a deterministic channel name based on the public keys and terms
 get_channel = ({ bob, alice, trent, terms }) ->

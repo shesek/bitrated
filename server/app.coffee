@@ -9,6 +9,7 @@ module.exports = express().configure ->
   @set 'view engine', 'jade'
   @set 'views', join __dirname, 'views'
   @set 'url', process.env.URL or "http://localhost:#{@settings.port}/"
+  @enable 'trust proxy' if process.env.PROXIED
 
   @locals
     url: @settings.url

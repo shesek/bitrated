@@ -89,9 +89,6 @@ tx_builder = (el, { key, trent, multisig, script, channel, fees }, cb) ->
     try show_dialog tx, 'other'
     catch e then display_error e
 
-  # Calling the returned function will stop listening on the channel
-  tx_unlisten
-
 # Build transaction with the given inputs and parse outputs from <form>
 build_tx = (inputs, $form) ->
   tx = new Transaction

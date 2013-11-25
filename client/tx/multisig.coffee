@@ -78,8 +78,8 @@ tx_builder el.find('.tx-builder'), {
   # Bitcoin network
   if is_final_tx signed_tx
     tx_broadcast signed_tx, iferr display_error,
-                            success '''Transaction succesfully broadcasted to Bitcoin network.
-                                       Since multisig transaction are new and not supports by all
+                            success '''Transaction successfully broadcasted to Bitcoin network.
+                                       Since multisig transaction are new and not supported by all
                                        miners, it might take some time to confirm.'''
   # Otherwise, submit an approval request
   else tx_request channel, signed_tx, iferr display_error,

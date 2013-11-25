@@ -61,33 +61,39 @@ tx_builder = (el, { key, trent, multisig, script, channel, fees }, cb) ->
   # Helper for displaying the transaction dialog with
   # all the common data
   show_dialog = (tx, initiator) ->
-    tx.total_in ?= calc_total_in tx, unspent
-    tx_dialog { pub, priv, script, tx, el, initiator },
-              iferr display_error, cb_success
+    try
+      tx.total_in ?= calc_total_in tx, unspent
+      tx_dialog { pub, priv, script, tx, el, initiator },
+                iferr display_error, cb_success
+    catch err then display_error err
 
   # Release button - open dialog for confirmation
   el.find('.release').click ->
-    try show_dialog (build_tx unspent, el), 'self'
-    catch e then display_error e
+    show_dialog (build_tx unspent, el), 'self'
 
   # Input raw transaction
   el.find('.input-rawtx').click ->
     input_rawtx_dialog iferr display_error, (tx) ->
-      try show_dialog tx, 'self'
-      catch e then display_error e
+      show_dialog tx, 'self'
 
   # Get raw transaction
   el.find('.show-rawtx').click ->
     try show_rawtx_dialog build_tx unspent, el
     catch e then display_error e
 
-  # Subscribe to transaction requests
-  tx_unlisten = tx_listen channel, (tx) ->
-    # TODO ignore requests made by the current user
+  # Add transaction request to list
+  add_tx_request = do ($requests = $ '.tx-requests') -> (tx) ->
     # TODO validate tx
     # TODO validate signature
-    try show_dialog tx, 'other'
-    catch e then display_error e
+    txid = bytesToHex tx.getHash()
+    $(document.createElement 'li')
+      .text("#{ txid }")
+      .click(show_dialog.bind null, tx, 'other')
+      .appendTo($requests.find 'ul')
+    $requests.addClass 'has-requests'
+
+  # Subscribe to transaction requests
+  tx_unlisten = tx_listen channel, add_tx_request
 
 # Build transaction with the given inputs and parse outputs from <form>
 build_tx = (inputs, $form) ->

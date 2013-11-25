@@ -48,8 +48,17 @@
     height 5em
   .confirm
     display none
-
   tfoot th
     text-align right
     font-weight bold
 
+.tx-requests
+  display none
+  &.has-requests
+    display block
+  li
+    cursor pointer
+    color #1ABC9C
+
+    &:hover
+      text-decoration underline

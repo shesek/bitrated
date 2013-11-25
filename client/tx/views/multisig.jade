@@ -71,12 +71,6 @@ include ../../views/mixin/copy.jade
             [here](http://testnet.mojocoin.com/)
             (please return it to the faucet when you're done).
 
-    h3 Release funds
-    p.
-      To release the funds, create the transaction below and authorize it. This will sign the transaction with
-      your private key and request approval from the other key holders.
-    p Once its approved and signed by one of them, the transaction will be broadcasted to the Bitcoin network.
-
     include ./mixin/tx-builder
 
     if !is_dispute

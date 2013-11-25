@@ -6,6 +6,7 @@ ext_type = require 'connect-ext-type'
 
 module.exports = express().configure ->
   @set 'port', process.env.PORT or 8070
+  @set 'host', process.env.HOST or '127.0.0.1'
   @set 'view engine', 'jade'
   @set 'views', join __dirname, 'views'
   @set 'url', process.env.URL or "http://localhost:#{@settings.port}/"
@@ -35,4 +36,4 @@ module.exports = express().configure ->
 
   @use '/u', require('./user')(this)
 
-  server.listen @settings.port, => console.log "Listening on #{@settings.port}"
+  server.listen @settings.port, @settings.host, => console.log "Listening on #{@settings.host}:#{@settings.port}"

@@ -10,7 +10,7 @@
     p All this information
       if !has_priv
         | , <strong>except the private key which you should have saved elsewhere</strong>,
-      |  is embedded in the page URL. You can bookmark the page, or copy the URL below:
+      |  is embedded in the current page URL. You can bookmark the page, or copy the URL below:
     pre.url= bob_url 
     if has_priv
       p: strong This URL includes your private key and should be kept secret.
@@ -19,6 +19,6 @@
      | extracted from the URL alone and be used to release the funds using the standard
      | Bitcoin client.  
   .modal-footer
-    button.btn.btn-primary(type='button', data-dismiss='modal') Okay, I have a safe copy
+    button.btn.btn-danger(type='button', data-dismiss='modal') Okay, I have a safe copy
 
 

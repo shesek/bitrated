@@ -49,7 +49,7 @@ format_url = (page, data={}) ->
 # Navigate to page
 navto = (page, data) -> document.location = format_url page, data
 
-# returns a function that dispalys the given success message
+# success(message) returns a function that dispalys the message
 success = do (view = require '../views/dialog-success.jade') -> (message) -> ->
   dialog = $ view { message }
   dialog.on 'hidden', -> do dialog.remove

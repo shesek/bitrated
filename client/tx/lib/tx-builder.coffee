@@ -34,7 +34,7 @@ tx_builder = (el, { key, trent, multisig, script, channel, fees }, cb) ->
     val_el = $(this).closest('.address').find('[name=value]')
     spent = el.find('.address input[name=value]').not(val_el)
       .filter(->!!@value)
-      .map(-> Util.parseValue @value).get()
+      .map(-> +Util.parseValue @value).get()
     remain = Math.max 0, balance - (sum_inputs spent) - fees
     val_el.val Util.formatValue remain
 

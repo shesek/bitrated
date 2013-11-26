@@ -116,13 +116,16 @@ build_tx = (inputs, $form) ->
 # Display the transaction dialog
 tx_dialog = do (view=require '../views/dialogs/confirm-tx.jade') ->
   ({ pub, priv, tx, script, initiator }, cb) ->
+    unless tx.ins.length
+      return cb new Error 'No inputs provided'
+    unless tx.outs.length
+      return cb new Error 'No outputs provided'
+
     total_out = sum_inputs (value for { value } in tx.outs)
     if tx.total_in? and (total_out > tx.total_in)
       return cb new Error 'Insufficient funds. If the payment was sent recently,
                            it might not be confirmed yet.
                            You can refresh the balance to check for new payments.'
-    unless tx.outs.length
-      return cb new Error 'No outputs provided'
 
     dialog = $ view {
       outs: for { script: out_script, value } in tx.outs

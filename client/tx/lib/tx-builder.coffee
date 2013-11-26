@@ -9,7 +9,6 @@
 # Initialize the transaction builder interface
 tx_builder = (el, { key, trent, multisig, script, channel, fees }, cb) ->
   { pub, priv } = parse_key_bytes key
-  fees = Util.parseValue fees unless fees instanceof BigInteger
   display_error = error_displayer el
   unspent = balance = null
   addresses = el.find('.addresses')
@@ -39,7 +38,6 @@ tx_builder = (el, { key, trent, multisig, script, channel, fees }, cb) ->
     val_el.val Util.formatValue remain
 
   # Pay %
-  BI_100 = new BigInteger '100'
   el.on 'click', '.pay-some', ->
     val_el = $(this).closest('.address').find('[name=value]')
     return unless percentage = prompt 'Enter the percentage to pay (between 0% and 100%)'

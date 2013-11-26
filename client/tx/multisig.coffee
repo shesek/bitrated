@@ -77,11 +77,13 @@ tx_builder el.find('.tx-builder'), {
   # If its a final transaction (with two signatures), broadcast it to the
   # Bitcoin network
   if is_final_tx signed_tx
+    txid = bytesToHex signed_tx.getHash()
     tx_broadcast signed_tx, iferr display_error,
-                            success '''Transaction successfully broadcasted to Bitcoin network.
-                                       Since multisig transaction are new and not supported by all
-                                       miners, it might take some time to confirm.'''
+                            success "<p>Transaction successfully broadcasted to the Bitcoin network.
+                                     Since multisig transaction are new and not yet supported by all
+                                     miners, it might take some time to confirm.</p>
+                                     <p><small><strong>Transaction id</strong>: #{txid}</small></p>"
   # Otherwise, submit an approval request
   else tx_request channel, signed_tx, iferr display_error,
-                                      success '''Transaction approval request was sent to the other
-                                                 parties.'''
+                                      success '''<p>Transaction approval request was sent to the other
+                                                 parties.</p>'''

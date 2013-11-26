@@ -10,7 +10,7 @@ headsup_view = require './views/dialogs/heads-up.jade'
 view = require './views/multisig.jade'
 qr = require 'qruri'
 
-DEFAULT_FEE = Util.parseValue '0.0001'
+DEFAULT_FEE = Util.parseValue '0.00001'
 
 $root = $ '.content'
 display_error = error_displayer $root

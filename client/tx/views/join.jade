@@ -52,7 +52,9 @@
     p.badge.badge-success.pull-right.signed(data-toggle='popover', data-html, data-content=proof_popover)
       | <i class="icon-ok-sign icon-white"></i> Signed by other party 
 
-    button.btn.btn-large.btn-primary(type='submit') I accept
+    button.btn.btn-large.btn-primary.has-spinner(type='submit')
+      span.spinner: i.icon-refresh.icon-spin.icon-white
+      |  I accept
   .muted
     :markdown
       By using this service, you agree to [Bitrated terms of services](/terms.html).

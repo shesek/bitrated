@@ -50,7 +50,10 @@ tx_builder = (el, { key, trent, multisig, script, channel, fees }, cb) ->
 
   # Update balance
   el.find('.update-balance').click update_balance = ->
-    load_unspent multisig, iferr display_error, (_unspent) ->
+    refresh_icon = $(this).find('i').addClass 'icon-spin'
+    load_unspent multisig, (err, _unspent) ->
+      refresh_icon.removeClass 'icon-spin'
+      return display_error err if err?
       unspent = _unspent
       balance = sum_inputs unspent
       $('.balance').text (Util.formatValue balance)+' BTC'

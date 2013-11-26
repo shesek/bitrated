@@ -24,12 +24,23 @@ render el = $ view format_locals {
   alice, trent, terms, proof
   bob_priv: random_privkey()
 }
-display_error = error_displayer el
+
+button = el.find 'form button[type=submit]'
+start_spinner = -> button.attr('disabled', true).addClass('active')
+stop_spinner =  -> button.attr('disabled', false).removeClass('active')
+
+# display_error also stops the spinner
+display_error = do (display_error = error_displayer el) -> (err) ->
+  do stop_spinner
+  display_error err
 
 # Handle form submission
 el.find('form').submit (e) ->
-  # Parse user public/private key
   e.preventDefault()
+
+  do start_spinner
+
+  # Parse user public/private key
   try keys = parse_key_string el.find('input[name=bob]').val()
   catch err
     el.find('input[name=bob]').focus()
@@ -46,4 +57,3 @@ el.find('form').submit (e) ->
       clearTimeout ack_timer
       return display_error err if err?
       navto 'tx.html', { alice, trent, bob: (bob_priv ? bob), terms, proof, _is_new: true }
-

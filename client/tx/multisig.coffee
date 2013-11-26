@@ -10,7 +10,7 @@ headsup_view = require './views/dialogs/heads-up.jade'
 view = require './views/multisig.jade'
 qr = require 'qruri'
 
-DEFAULT_FEE = 1000 # 0.00001 BTC
+DEFAULT_FEE = 10000 # 0.0001 BTC
 
 $root = $ '.content'
 display_error = error_displayer $root

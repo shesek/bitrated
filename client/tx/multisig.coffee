@@ -18,18 +18,20 @@ display_error = error_displayer $root
 # Read and validate query params
 { bob, alice, trent, terms, proof, is_dispute, _is_new } = parse_query()
 
-for key, val of { bob, alice, trent, terms, proof } when not val
-  throw new Error "Missing argument: #{ key }"
+try
+  for key, val of { bob, alice, trent, terms, proof } when not val
+    throw new Error "Missing argument: #{ key }"
 
-for key, val of { alice, trent } when not (try parse_pubkey val)
-  throw new Error "Invalid public key: #{ key }"
+  for key, val of { alice, trent } when not (try parse_pubkey val)
+    throw new Error "Invalid public key: #{ key }"
 
-unless keys = (try parse_key_bytes bob)
-  throw new Error 'Invalid main public/private key'
+  unless keys = (try parse_key_bytes bob)
+    throw new Error 'Invalid main public/private key'
 
-# Don't re-validate the signature when _is_new
-unless _is_new or verify_sig alice, terms, proof
-  throw new Error 'Invalid signature'
+  # Don't re-validate the signature when _is_new
+  unless _is_new or verify_sig alice, terms, proof
+    throw new Error 'Invalid signature'
+catch err then return display_error err
 
 { pub: bob, priv: bob_priv } = keys
 bob_main = bob_priv ? bob

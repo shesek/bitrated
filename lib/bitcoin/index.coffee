@@ -1,6 +1,6 @@
 { Key, Script, Address, Message, BigInteger, Opcode, Util, Crypto, convert, base58, ecdsa } = require 'bitcoinjs-lib'
 getSECCurveByName = require 'bitcoinjs-lib/src/jsbn/sec'
-{ sha256ripe160 } = Util
+{ sha256ripe160, numToBytes } = Util
 { SHA256, charenc: { UTF8 }, util: { randomBytes } } = Crypto
 { bytesToHex, hexToBytes } = convert
 { OP_HASH160, OP_EQUAL } = Opcode.map
@@ -87,14 +87,19 @@ get_script_address = do(
   else get_address script.toScriptHash(), ADDR_PUB
 
 # Generate random private key
+#
+# Based on crypto.getRandomValues, Math.random and the current time
 random_privkey = ->
-  # Use crypto.getRandomValues() if available
-  if window.crypto?.getRandomValues?
-    random = new Uint8Array 32
-    crypto.getRandomValues random
-    Array.apply [], random
-  # And fallback to Math.random()-based randomBytes
-  else randomBytes 32
+  throw new Error 'crypto.getRandomValues() is required' unless window.crypto?.getRandomValues?
+
+  window.crypto.getRandomValues crypto_random = new Uint8Array 32
+  crypto_random = Array.apply [], crypto_random
+
+  math_random = numToBytes Math.random()*Math.pow(2,53)
+
+  time = numToBytes Date.now()
+
+  sha256b [ crypto_random..., math_random..., time... ]
 
 # Verify the signature matches the public key
 verify_sig = (expected_pub, message, sig) ->

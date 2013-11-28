@@ -99,5 +99,6 @@ tx_builder el.find('.tx-builder'), {
                                      <p><small><strong>Transaction id</strong>: #{txid}</small></p>"
   # Otherwise, submit an approval request
   else tx_request channel, signed_tx, iferr display_error,
-                                      success '''<p>Transaction approval request was sent to the other
-                                                 parties.</p>'''
+                                      success '''<p>Transaction approval request was sent to the other parties.</p>
+                                                 <p>Please note that in order for the other parties to receive the
+                                                 transaction request, they must be connected to the transaction page.</p>'''

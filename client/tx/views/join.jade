@@ -29,8 +29,11 @@
       .help-block
         :markdown
           This random private key was created for you and **should be kept secret**.
-          For enhanced security, you can replace it with a [locally generated public key](security.html#keys)
+          For improved security, you can replace it with a [locally generated public key](security.html#keys)
           and sign your transactions/messages locally.
+
+          Please note that the key is stored in the URL, and as such is saved to your browsing history.
+          To avoid that, switch to incognito/private browsing mode.
       input.input-block-level(type='text', name='bob', value=bob_priv, placeholder='Public key (hex) or private key (base58)',
               required, pattern='^([a-f0-9]{130}|[a-f0-9]{66}|[59cKL][123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{50,51})$',
               autocomplete='off')

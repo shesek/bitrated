@@ -16,7 +16,7 @@
     "marked": "~0.2.10",
     "socket.io": "~0.9.16",
     "socket.io-client": "~0.9.16",
-    "bitcoinjs-lib": "git://github.com/vbuterin/bitcoinjs-lib",
+    "bitcoinjs-lib": "git://github.com/shesek/bitcoinjs-lib",
     "qruri": "~0.0.1",
     "mongoose-time": "~0.1.0",
     "mongoose-pagination": "~1.0.0",

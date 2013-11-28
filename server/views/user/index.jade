@@ -19,3 +19,11 @@ block content
         a.btn.btn-primary(href=user.profile_url) Full profile 
         | 
         a.btn(href=user.tx_url) Start transaction
+
+    if pages > 1
+      ul.pager
+        if page > 1
+          li.previous: a(href="/u/page/#{page-1}") Previous
+        li Page #{page} of #{pages}
+        if page < pages
+          li.next: a(href="/u/page/#{page+1}") Next

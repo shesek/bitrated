@@ -6,7 +6,7 @@ ValidationError = require 'mongoose/lib/error/validation'
 { join } = require 'path'
 
 HASH_LEN = 32
-USERS_PER_PAGE = 35
+USERS_PER_PAGE = 15
 
 module.exports = ({ models, locals }) -> express().configure ->
   @set 'views', join __dirname, 'views', 'user'
@@ -62,7 +62,7 @@ module.exports = ({ models, locals }) -> express().configure ->
 
   # User list
   user_list = (req, res, next) ->
-    page = req.params.page or 1
+    page = +req.params.page or 1
     User.find().paginate page, USERS_PER_PAGE, iferr next, (users, total) ->
       is_html = req.accepts('html, json, text') is 'html'
       users = users.map format_user

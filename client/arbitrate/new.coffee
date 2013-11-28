@@ -10,8 +10,17 @@ view = require './views/new.jade'
 # Render with random private key
 render form = $ view privkey: (get_address Key.random().priv, ADDR_PRIV)
 
+# Spinner helpers
+button = form.find 'form button[type=submit]'
+start_spinner = -> button.attr('disabled', true).addClass('active')
+stop_spinner =  -> button.attr('disabled', false).removeClass('active')
+
+# Make display_error stop the spinner in addition to showing the error
+display_error = do (display_error = error_displayer form) -> (err) ->
+  button.removeClass 'active'
+  display_error err
+
 # Handle submission
-display_error = error_displayer form
 form.submit (e) ->
   e.preventDefault()
   try
@@ -23,6 +32,8 @@ form.submit (e) ->
     unless username.match /^[a-zA-Z0-9]+$/
       throw new Error 'Invalid username. Can only contain alphanumeric characters (a-z, A-Z, 0-9)'
   catch e then return display_error e
+
+  do start_spinner
 
   sign_message key, terms_ba, iferr display_error, (sig) ->
     user = { username, pubkey: key.pub, content: terms, sig }

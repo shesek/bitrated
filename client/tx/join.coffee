@@ -31,6 +31,7 @@ render el = $ view format_locals {
   bob: Key.random()
 }
 
+# Spinner helpers
 button = el.find 'form button[type=submit]'
 start_spinner = -> button.attr('disabled', true).addClass('active')
 stop_spinner =  -> button.attr('disabled', false).removeClass('active')

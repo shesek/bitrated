@@ -1,6 +1,7 @@
 { Transaction, Util: { parseValue, bytesToNum }, convert: { hexToBytes, bytesToHex, bytesToBase64, base64ToBytes } } = require 'bitcoinjs-lib'
 { sha256b, verify_sig, create_multisig } = require '../../../lib/bitcoin/index.coffee'
 { decode_raw_tx } = require '../../../lib/bitcoin/tx.coffee'
+Key = require '../../../lib/bitcoin/key.coffee'
 
 BLOCKCHAIN_API = $('meta[name=blockchain-api]').attr('content')
 
@@ -11,7 +12,7 @@ get_socket = do (socket=null) -> -> socket ||= require('socket.io-client').conne
 # Create a deterministic channel name based on the public keys and terms
 get_channel = ({ bob, alice, trent, terms }) ->
   # quick & dirty way to sort byte arrays
-  ordered_parties = hexToBytes [bob, alice].map(bytesToHex).sort().join('')
+  ordered_parties = hexToBytes [bob.pub, alice.pub].map(bytesToHex).sort().join('')
   triple_sha256 [ ordered_parties..., trent..., terms... ]
 
 # Listen for handshake replies
@@ -27,12 +28,12 @@ handshake_listen = (channel, { bob, trent, terms }, cb) ->
       socket.emit ack_id, err
       cb err
 
-    alice = base64ToBytes alice
+    alice = new Key 'pub', base64ToBytes alice
     proof = base64ToBytes proof
-    { script } = create_multisig [ bob, alice, trent ]
+    { script } = create_multisig [ bob.pub, alice.pub, trent.pub ]
     expected_script_hash = bytesToBase64 triple_sha256 script.buffer
 
-    if not verify_sig alice, terms, proof
+    if not alice.verify_sig terms, proof
       error_cb new Error 'Invalid terms signature'
     else if script_hash isnt expected_script_hash
       error_cb new Error 'Provided multisig script doesn\'t match'

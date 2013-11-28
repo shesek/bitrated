@@ -1,9 +1,10 @@
 { Crypto, convert: { bytesToHex } } = require 'bitcoinjs-lib'
 { util: { randomBytes }, charenc: { UTF8 } } = Crypto
-{ parse_pubkey, parse_key_string, random_privkey, sha256b } = require '../../lib/bitcoin/index.coffee'
+{ sha256b } = require '../../lib/bitcoin/index.coffee'
 { navto, format_url, render, parse_query, iferr, error_displayer } = require '../lib/util.coffee'
-{ format_locals } = require './lib/util.coffee'
+{ format_locals, build_tx_args } = require './lib/util.coffee'
 { handshake_listen } = require './lib/networking.coffee'
+Key = require '../../lib/bitcoin/key.coffee'
 sign_message = require '../sign-message.coffee'
 new_view = require './views/new.jade'
 invite_view = require './views/dialogs/invite.jade'
@@ -12,12 +13,10 @@ BASE = $('base').attr('href') + 'tx.html#'
 
 # Read and validate query params 
 { trent } = parse_query()
-
-if trent? and not (try parse_pubkey trent)
-  trent = null
+trent = Key.from_pubkey trent if trent?
 
 # Render view
-render el = $ new_view format_locals { bob_priv: random_privkey(), trent }
+render el = $ new_view format_locals bob: Key.random(), trent: trent
 
 display_error = error_displayer el
 #$(window).error display_error
@@ -26,10 +25,10 @@ display_error = error_displayer el
 form = el.find('form').submit (e) ->
   e.preventDefault()
   try
-    { pub: bob, priv: bob_priv } = parse_key_string el.find('input[name=bob]').val()
-    trent = parse_pubkey el.find('input[name=trent]').val()
+    bob = Key.from_string el.find('input[name=bob]').val()
+    trent = Key.from_pubkey el.find('input[name=trent]').val()
     get_terms form, iferr display_error, (terms) ->
-      exchange { bob, bob_priv, trent, terms }
+      exchange { bob, trent, terms }
   catch err then display_error err
 
 # Get the provided terms from text, file or hash
@@ -46,29 +45,27 @@ get_terms = (form, cb) ->
     when hash = form.find('input:visible[name=terms_hash]').val()?.trim()
       cb null, format_hash_terms hash
     else
-      debugger
+      throw new Error 'Missing terms'
 
 format_hash_terms = (hash) -> UTF8.stringToBytes """
-  I hereby declare that:
-
-  - I have a copy of the file that hashes (with sha256) to #{hash}.
-  - This file contains the terms of the transaction.
-  - I fully agree with terms outlined in this file.
+  I have a copy of the file that hashes (with SHA256) to #{hash},
+  and I fully agree with its contents.
 """
 
 # Exchange keys with other party
-exchange = ({ bob, bob_priv, trent, terms }) ->
+exchange = ({ bob, trent, terms }) ->
   # The initial channel to send the pubkey/signature is just a random string
   # that's sent along with the URL
   channel = randomBytes 15
   
   # Sign message (with known private key, or with dialog asking user to do this
   # locally)
-  sign_message (bob_priv ? bob), terms, iferr display_error, (sig) ->
+  sign_message bob, terms, iferr display_error, (sig) ->
 
     # Construct the invitation URL with the public keys, terms, signature and
-    # random channel name
-    alice_url = format_url 'join.html', { alice: bob, trent, terms, proof: sig, channel }
+    # random channel name. Bob and Alice are reversed here, as the current
+    # party is the other party for the receiver.
+    alice_url = format_url 'join.html', build_tx_args { alice: bob, trent, terms, proof: sig, channel }
 
     # Display the dialog instructing the user to share the URL with
     # the other party
@@ -80,6 +77,4 @@ exchange = ({ bob, bob_priv, trent, terms }) ->
 
     # Start listening for handshake replies on the random channel
     unlisten = handshake_listen channel, { bob, trent, terms }, iferr display_error, ({ alice, proof }) ->
-      navto 'tx.html', { alice, trent, bob: (bob_priv ? bob), terms, proof, _is_new: true }
-
-
+      navto 'tx.html', build_tx_args { bob, alice, trent, terms, proof, _is_new: true }, true

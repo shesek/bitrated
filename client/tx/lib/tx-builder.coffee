@@ -8,7 +8,6 @@
 
 # Initialize the transaction builder interface
 tx_builder = (el, { key, trent, multisig, script, channel, fees }, cb) ->
-  { pub, priv } = parse_key_bytes key
   display_error = error_displayer el
   unspent = balance = null
   addresses = el.find('.addresses')
@@ -64,7 +63,7 @@ tx_builder = (el, { key, trent, multisig, script, channel, fees }, cb) ->
   show_dialog = (tx, initiator) ->
     try
       tx.total_in ?= calc_total_in tx, unspent
-      tx_dialog { pub, priv, script, tx, el, initiator },
+      tx_dialog { key, script, tx, el, initiator },
                 iferr display_error, cb_success
     catch err then display_error err
 
@@ -115,7 +114,7 @@ build_tx = (inputs, $form) ->
 
 # Display the transaction dialog
 tx_dialog = do (view=require '../views/dialogs/confirm-tx.jade') ->
-  ({ pub, priv, tx, script, initiator }, cb) ->
+  ({ key, tx, script, initiator }, cb) ->
     unless tx.ins.length
       return cb new Error 'No inputs provided'
     unless tx.outs.length
@@ -131,8 +130,8 @@ tx_dialog = do (view=require '../views/dialogs/confirm-tx.jade') ->
       outs: for { script: out_script, value } in tx.outs
         address: get_script_address out_script
         value: Util.formatValue value
-      has_priv: priv?
-      pub_address: get_address pub, ADDR_PUB
+      has_priv: key.priv?
+      pub_address: get_address key.pub, ADDR_PUB
       total_in: Util.formatValue tx.total_in
       fees: Util.formatValue tx.total_in - total_out
       rawtx: bytesToHex tx.serialize()
@@ -144,12 +143,12 @@ tx_dialog = do (view=require '../views/dialogs/confirm-tx.jade') ->
 
     get_signed_tx = ->
       # Sign with the known private key
-      if priv?
-        sign_tx priv, tx, script
+      if key.priv?
+        sign_tx key.eckey, tx, script
       # Use user-provided private key
       else if priv_text = dialog.find(':visible[name=priv]').val()
         priv_ = parse_address priv_text, ADDR_PRIV
-        throw new Error 'Invalid private key provided' unless (bytesToHex get_pub priv_) is (bytesToHex pub)
+        throw new Error 'Invalid private key provided' unless (bytesToHex get_pub priv_) is (bytesToHex key.pub)
         sign_tx priv_, tx, script
       # Use user-provided signed transaction
       else if rawtx = dialog.find(':visible[name=signed-raw-tx]').val()
@@ -158,7 +157,7 @@ tx_dialog = do (view=require '../views/dialogs/confirm-tx.jade') ->
           rawtx = hexToBytes rawtx
           signed_tx = decode_raw_tx rawtx
         catch e then throw new Error 'Invalid raw transaction format'
-        throw new Error 'Invalid signature provided' unless verify_tx_sig pub, signed_tx, script
+        throw new Error 'Invalid signature provided' unless verify_tx_sig key.pub, signed_tx, script
         signed_tx
       else
         throw new Error 'Please provide the private key or the signed transaction'

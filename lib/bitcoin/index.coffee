@@ -1,4 +1,4 @@
-{ Key, Script, Address, Message, BigInteger, Opcode, Util, Crypto, convert, base58, ecdsa } = require 'bitcoinjs-lib'
+{ Script, Address, Message, BigInteger, Opcode, Util, Crypto, convert, base58, ecdsa } = require 'bitcoinjs-lib'
 getSECCurveByName = require 'bitcoinjs-lib/src/jsbn/sec'
 { sha256ripe160, numToBytes } = Util
 { SHA256, charenc: { UTF8 }, util: { randomBytes } } = Crypto
@@ -14,7 +14,9 @@ ADDR_PRIV = if TESTNET then 0xef else 0x80
 PRIVKEY_LEN = 32
 PUBKEY_LEN = 65
 ADDR_LEN = 20
-#PUBKEY_COMPRESS_LEN = 33 # not supported yet
+PUBKEY_C_LEN = 33
+PRIVKEY_C_LEN = 33
+PRIVKEY_C_BYTE = 0x01
 
 # SHA256 for byte arrays
 sha256b = (bytes) -> SHA256 bytes, asBytes: true
@@ -22,7 +24,10 @@ sha256b = (bytes) -> SHA256 bytes, asBytes: true
 # Turn a byte array to a bitcoin address
 #
 # If version is omitted, treats the first byte as the version
-get_address = (bytes, version=bytes.shift()) ->
+get_address = (bytes, version) ->
+  unless version?
+    version = bytes[0]
+    bytes = bytes[1..]
   bytes = sha256ripe160 bytes if version in [ ADDR_PUB, ADDR_P2SH ] and bytes.length isnt ADDR_LEN
   Address::toString.call { version, hash: bytes }
 
@@ -39,15 +44,26 @@ parse_address = (address, version) ->
       when ADDR_PUB, ADDR_P2SH
         throw new Error 'Invalid address length' unless bytes.length-5 is ADDR_LEN
       when ADDR_PRIV
-        throw new Error 'Invalid private key length' unless bytes.length-5 is PRIVKEY_LEN
+        throw new Error 'Invalid private key format' unless (bytes.length-5 is PRIVKEY_LEN) or \
+                                                            (bytes.length-5 is PRIVKEY_C_LEN and bytes[33] is PRIVKEY_C_BYTE)
     bytes[1...-4]
   else bytes[0...-4]
 
 # Get the public key of a private key
 #
-# secexp can be either a BigInteger or a byte array
-get_pub = (secexp, compressed=false) ->
-  secexp = BigInteger.fromByteArrayUnsigned secexp unless secexp instanceof BigInteger
+# priv can be an BigInteger or an byte array (optionally with the compressed
+# flag)
+get_pub = (priv, compressed) ->
+  unless priv instanceof BigInteger
+    if priv.length is PRIVKEY_LEN
+      secexp = BigInteger.fromByteArrayUnsigned priv
+    else if (priv.length is PRIVKEY_C_LEN) and (priv[priv.length-1] is PRIVKEY_C_BYTE)
+      compressed ?= true
+      secexp = BigInteger.fromByteArrayUnsigned priv[...-1]
+    else
+      throw new Error 'Invalid private key'
+  else secexp = priv
+
   (getSECCurveByName 'secp256k1')
     .getG().multiply(secexp)
     .getEncoded(compressed)
@@ -78,7 +94,7 @@ create_out_script = (address) ->
 
 # Get the textual address of an output script
 #
-# Supports p2sh and regular pay-to-pubkey script
+# Supports p2sh and regular pay-to-pubkey scripts
 get_script_address = do(
   is_p2sh = ({ chunks }) -> chunks.length is 3 and chunks[0] is OP_HASH160 and chunks[2] is OP_EQUAL
 ) -> (script) ->
@@ -86,65 +102,10 @@ get_script_address = do(
     get_address script.chunks[1], ADDR_P2SH
   else get_address script.toScriptHash(), ADDR_PUB
 
-# Generate random private key
-#
-# Based on crypto.getRandomValues, Math.random and the current time
-random_privkey = ->
-  throw new Error 'crypto.getRandomValues() is required' unless window.crypto?.getRandomValues?
-
-  window.crypto.getRandomValues crypto_random = new Uint8Array 32
-  crypto_random = Array.apply [], crypto_random
-
-  math_random = numToBytes Math.random()*Math.pow(2,53)
-
-  time = numToBytes Date.now()
-
-  sha256b [ crypto_random..., math_random..., time... ]
-
-# Verify the signature matches the public key
-verify_sig = (expected_pub, message, sig) ->
-  sig = ecdsa.parseSigCompact sig
-  hash = Message.getHash UTF8.bytesToString message
-  compressed = !!(sig.i & 4)
-  actual_pub = ecdsa.recoverPubKey(sig.r, sig.s, hash, sig.i).getPubPoint().getEncoded(compressed)
-  (bytesToHex actual_pub) is (bytesToHex expected_pub)
-
-# Sign a message
-sign_message = (priv, message) ->
-  hexToBytes Message.signMessage (new Key priv), UTF8.bytesToString message
-
-# Parse and validate public key bytes or hex string
-parse_pubkey = (bytes) ->
-  bytes = hexToBytes bytes unless Array.isArray bytes
-  throw new Error 'Invalid public key length' unless bytes.length is PUBKEY_LEN
-  bytes
-
-# Parse an hex-encoded public key or base58check-encoded private key
-#
-# Returns an object with "pub" for the public key, and optionally "priv"
-# when the private key is known
-parse_key_string = do(
-  PUBKEY  = /^[a-f0-9]{130}$/
-  PRIVKEY = ///^#{if TESTNET then '9' else '5'}[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{50}$///
-) -> (key) ->
-  if PUBKEY.test key
-    { pub: parse_pubkey key }
-  else if (PRIVKEY.test key) and (priv = try parse_address key, ADDR_PRIV)?
-    { priv, pub: get_pub priv }
-  else
-    throw new Error 'Invalid public/private key'
-
-# Parse public/private key from byte array
-parse_key_bytes = (bytes) -> switch bytes.length
-  when PUBKEY_LEN  then pub: bytes
-  when PRIVKEY_LEN then pub: (get_pub bytes), priv: bytes
-  else throw new Error 'Invalid public/private key'
-
 module.exports = {
+  TESTNET
   ADDR_P2SH, ADDR_PUB, ADDR_PRIV, PRIVKEY_LEN, PUBKEY_LEN, ADDR_LEN
-  get_address, get_pub, parse_address, parse_pubkey, get_script_address
-  create_multisig, create_out_script, random_privkey
-  sign_message, verify_sig
-  parse_key_string, parse_key_bytes
-  sha256b
+  PUBKEY_C_LEN, PRIVKEY_C_LEN, PRIVKEY_C_BYTE
+  get_address, get_pub, parse_address, get_script_address
+  create_multisig, create_out_script, sha256b
 }

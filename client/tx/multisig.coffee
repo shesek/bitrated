@@ -1,7 +1,8 @@
 { Util, convert: { bytesToHex } } = require 'bitcoinjs-lib'
-{ get_address, parse_pubkey, parse_key_bytes, create_multisig, verify_sig, ADDR_PUB } = require '../../lib/bitcoin/index.coffee'
+{ get_address, create_multisig, verify_sig, ADDR_PUB } = require '../../lib/bitcoin/index.coffee'
+Key = require '../../lib/bitcoin/key.coffee'
 { iferr, error_displayer, success, parse_query, format_url, render } = require '../lib/util.coffee'
-{ format_locals } = require './lib/util.coffee'
+{ format_locals, build_tx_args } = require './lib/util.coffee'
 { is_final_tx } = require '../../lib/bitcoin/tx.coffee'
 { get_channel, tx_request, tx_broadcast } = require './lib/networking.coffee'
 tx_builder = require './lib/tx-builder.coffee'
@@ -16,26 +17,37 @@ $root = $ '.content'
 display_error = error_displayer $root
 
 # Read and validate query params
-{ bob, alice, trent, terms, proof, is_dispute, _is_new } = parse_query()
+{ bob, bob_priv, alice, trent, terms, proof, is_dispute, _is_new } = query_args = parse_query()
 
 try
-  for key, val of { bob, alice, trent, terms, proof } when not val
+  if bob_priv? then bob = Key.from_privkey bob_priv
+  else if bob? then bob = Key.from_pubkey bob
+  else throw new Error "Missing argument: bob"
+
+  for key, val of { alice, trent, terms, proof } when not val
     throw new Error "Missing argument: #{ key }"
 
-  for key, val of { alice, trent } when not (try parse_pubkey val)
-    throw new Error "Invalid public key: #{ key }"
-
-  unless keys = (try parse_key_bytes bob)
-    throw new Error 'Invalid main public/private key'
+  alice = Key.from_pubkey alice
+  trent = Key.from_pubkey trent
 
   # Don't re-validate the signature when _is_new
-  unless _is_new or verify_sig alice, terms, proof
+  unless _is_new or alice.verify_sig terms, proof
     throw new Error 'Invalid signature'
+
 catch err then return display_error err
 
-{ pub: bob, priv: bob_priv } = keys
-bob_main = bob_priv ? bob
-{ address: multisig, pubkeys, script } = create_multisig [ bob, alice, trent ]
+
+
+# ########################
+
+{ ecdsa } = require 'bitcoinjs-lib'
+window.bob = bob
+window.ecdsa = ecdsa
+# ########################
+
+
+
+{ address: multisig, pubkeys, script } = create_multisig [ bob.pub, alice.pub, trent.pub ]
 channel = get_channel { bob, alice, trent, terms }
 
 document.title = "#{multisig} | Bitrated"
@@ -43,17 +55,17 @@ document.title = "#{multisig} | Bitrated"
 # Render the main view
 render el = $ view format_locals {
   bob, alice, trent
-  bob_priv, terms, proof
+  terms, proof
   is_dispute
 
   pubkeys: pubkeys.map bytesToHex
   multisig, multisig_qr: qr 'bitcoin:'+multisig
 
-  bob_address:   get_address bob, ADDR_PUB
-  alice_address: get_address alice, ADDR_PUB
-  trent_address: get_address trent, ADDR_PUB
+  bob_address:   get_address bob.pub, ADDR_PUB
+  alice_address: get_address alice.pub, ADDR_PUB
+  trent_address: get_address trent.pub, ADDR_PUB
 
-  trent_url: format_url 'tx.html', { bob, alice, trent, terms, proof, is_dispute: true }
+  trent_url: format_url 'tx.html', build_tx_args { bob, alice, trent, terms, proof, is_dispute: true }
 
   default_fee: Util.formatValue DEFAULT_FEE
 }
@@ -61,11 +73,11 @@ render el = $ view format_locals {
 # When loaded for the first time, display the headsup message
 # and remove the _is_new flag from the URL
 if _is_new then do ->
-  # bob is listed after alice and trent to ensure its not visible in the URL
-  document.location.hash = format_url null, { alice, trent, bob: bob_main, terms, proof }
+  delete query_args._is_new
+  document.location.hash = format_url null, query_args
   dialog = $ headsup_view {
     bob_url: location.href
-    has_priv: bob_priv?
+    has_priv: bob.priv?
   }
   dialog.on 'hidden', -> dialog.remove()
   dialog.modal()
@@ -73,7 +85,7 @@ if _is_new then do ->
 # Initialize the transaction builder
 tx_builder el.find('.tx-builder'), {
   multisig, script, channel
-  key: if is_dispute then trent else bob_main
+  key: if is_dispute then trent else bob
   fees: DEFAULT_FEE
 }, iferr display_error, (signed_tx) ->
   # If its a final transaction (with two signatures), broadcast it to the

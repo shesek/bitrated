@@ -1,7 +1,7 @@
 express = require 'express'
 marked = require 'marked'
 ValidationError = require 'mongoose/lib/error/validation'
-{ PUBKEY_LEN } = require '../lib/bitcoin'
+{ PUBKEY_LEN, PUBKEY_C_LEN } = require '../lib/bitcoin'
 { iferr, only } = require '../lib/util'
 { join } = require 'path'
 
@@ -21,7 +21,7 @@ module.exports = ({ models, locals }) -> express().configure ->
     search =
       if id.length <= 15 then _id: id
       else switch (bytes = new Buffer id, 'base64').length
-        when PUBKEY_LEN then pubkey: bytes
+        when PUBKEY_LEN, PUBKEY_C_LEN then pubkey: bytes
         when HASH_LEN then pubkey_hash: bytes
         else throw new Error 'Invalid key length'
 

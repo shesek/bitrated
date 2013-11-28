@@ -1,4 +1,4 @@
-{ Script, Key, BigInteger, Opcode, Transaction, TransactionIn, TransactionOut, Crypto, convert, ecdsa } = require 'bitcoinjs-lib'
+{ Script, Key: ECKey, BigInteger, Opcode, Transaction, TransactionIn, TransactionOut, Crypto, convert, ecdsa } = require 'bitcoinjs-lib'
 { bytesToHex } = convert
 { parseSig, recoverPubKey } = ecdsa
 { UTF8 } = Crypto.charenc
@@ -11,7 +11,7 @@ SIGHASH_ALL = 0x01
 # https://en.bitcoin.it/wiki/BIP_0016#Specification (p2sh)
 sign_tx = (priv, tx, multisig_script, hash_type=SIGHASH_ALL) ->
   tx = tx.clone()
-  key = new Key priv
+  key = if priv instanceof ECKey then priv else new ECKey priv
   multisig_pubs = multisig_script.chunks[1...-2].map(bytesToHex)
   unless ~pub_index = multisig_pubs.indexOf(bytesToHex key.getPub())
     throw new Error 'Supplied key not found in multisig pubkeys'
@@ -51,10 +51,10 @@ verify_tx_sig = (pub, tx, multisig_script, hash_type=SIGHASH_ALL) ->
     hash = tx.hashTransactionForSignature multisig_script, i, hash_type
     prev_sigs = get_prev_sigs inv.script
     return true for prev_sig in prev_sigs when recover_sig_pubkey prev_sig[...-1], hash, pub
-    return false
+    false
 
   return false for inv, i in tx.ins when not verify_input i, inv
-  return true
+  true
 
 # Get previous transaction signature(s)
 get_prev_sigs = (script) ->
@@ -71,8 +71,10 @@ recover_sig_pubkey = (sig, hash, possible_pubs...) ->
     else pub
   { r, s } = parseSig sig
   for i in [0..3]
-    pubkey = (recoverPubKey r, s, hash, i).getPub()
-    return pubkey if (bytesToHex pubkey) in possible_pubs
+    pubpoint = (recoverPubKey r, s, hash, i).getPubPoint()
+    for compressed in [ true, false ]
+      pubkey = pubpoint.getEncoded compressed
+      return pubkey if (bytesToHex pubkey) in possible_pubs
 
 # Calc the total amount paid in `tx`, using the unspent inputs `inputs`
 calc_total_in = (tx, inputs) ->

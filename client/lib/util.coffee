@@ -1,5 +1,4 @@
 { convert: { bytesToBase64, base64ToBytes } } = require 'bitcoinjs-lib'
-{ PRIVKEY_LEN } = require '../../lib/bitcoin/index.coffee'
 { iferr, extend } = require '../../lib/util.coffee'
 qs = require 'querystring'
 
@@ -28,7 +27,7 @@ error_displayer = (container) -> (e) ->
 parse_query = (str=document.location.hash.substr(1)) ->
   query = qs.parse str
   # Firefox decodes the hash, making the qs.parse() call decode it twice,
-  # making "%2B" render as a space. Replacing this back to a plus sign
+  # making "%2B" parse as a space. Replacing this back to a plus sign
   # makes it work on Firefox.
   query[k] = base64ToBytes v.replace(/( )/g, '+') for k, v of query when v.length
   query
@@ -38,12 +37,12 @@ format_url = (page, data={}) ->
   query = {}
 
   # Prefix URLs that contains private keys with "DO-NOT-SHARE"
-  if (data.bob?.length is PRIVKEY_LEN) or (data.key?.length is PRIVKEY_LEN)
+  if data.bob_priv? or data.key_priv?
     query['DO-NOT-SHARE'] = null
 
   for name, val of data when val?
-    query[name] = if Array.isArray val then bytesToBase64 val \
-                  else val
+    val = bytesToBase64 val if Array.isArray val
+    query[name] = val
   (if page? then BASE+page+'#' else '') + qs.stringify query
 
 # Navigate to page

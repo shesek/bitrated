@@ -56,6 +56,7 @@ Key.random = (compressed=true) ->
 
 # Returns a new Key instance from public key hex string or byte array
 Key.from_pubkey = (pub) ->
+  throw new Error 'Empty public key' unless pub?.length
   pub = hexToBytes pub if typeof pub is 'string'
   throw new Error 'Invalid public key length' unless pub.length in [ PUBKEY_LEN, PUBKEY_C_LEN ]
   new Key 'pub', pub

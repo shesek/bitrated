@@ -1,5 +1,6 @@
 { BigInteger, Transaction, TransactionOut, Util, convert: { bytesToHex, hexToBytes } } = require 'bitcoinjs-lib'
-{ iferr, error_displayer, rpad } = require '../../lib/util.coffee'
+{ parseValue, formatValue } = Util
+{ iferr, error_displayer } = require '../../lib/util.coffee'
 { get_address, parse_address, parse_key_bytes, get_pub
   create_out_script, get_script_address
   ADDR_PUB, ADDR_PRIV, ADDR_P2SH } = require '../../../lib/bitcoin/index.coffee'
@@ -7,10 +8,12 @@
 { tx_listen, load_unspent } = require './networking.coffee'
 
 # Initialize the transaction builder interface
-tx_builder = (el, { key, trent, multisig, script, channel, fees }, cb) ->
+tx_builder = (el, { key, trent, multisig, script, channel }, cb) ->
   display_error = error_displayer el
   unspent = balance = null
   addresses = el.find('.addresses')
+
+  get_fee = -> parseValue el.find('input[name=fees]').val()
 
   # Add address
   el.find('.add-address').click do (addr_tmpl=null) -> ->
@@ -30,11 +33,10 @@ tx_builder = (el, { key, trent, multisig, script, channel, fees }, cb) ->
   # Pay remaining, minus fees
   el.on 'click', '.pay-remaining', ->
     val_el = $(this).closest('.address').find('[name=value]')
-    spent = el.find('.address input[name=value]').not(val_el)
-      .filter(->!!@value)
-      .map(-> +Util.parseValue @value).get()
-    remain = Math.max 0, balance - (sum_inputs spent) - fees
-    val_el.val Util.formatValue remain
+    spent = sum_value_inputs el.find('.address input[name=value]').not(val_el)
+    remain = Math.max 0, balance - spent - get_fee()
+    val_el.val formatValue remain
+    do update_change
 
   # Pay %
   el.on 'click', '.pay-some', ->
@@ -43,7 +45,8 @@ tx_builder = (el, { key, trent, multisig, script, channel, fees }, cb) ->
     percentage = +percentage.replace /\s|%/g, ''
     return display_error 'Invalid percentage amount' if isNaN percentage
     amount = balance/100*percentage
-    val_el.val Util.formatValue amount
+    val_el.val formatValue amount
+    do update_change
 
   # Update balance
   el.find('.update-balance').click update_balance = ->
@@ -53,23 +56,24 @@ tx_builder = (el, { key, trent, multisig, script, channel, fees }, cb) ->
       return display_error err if err?
       unspent = _unspent
       balance = sum_inputs unspent
-      $('.balance').text (Util.formatValue balance)+' BTC'
+      $('.balance').text (formatValue balance)+' BTC'
   do update_balance
   
   cb_success = cb.bind null, null
 
   # Helper for displaying the transaction dialog with
-  # all the common data
+  # all the common options
   show_dialog = (tx, initiator) ->
     try
       tx.total_in ?= calc_total_in tx, unspent
-      tx_dialog { key, script, tx, el, initiator },
+      tx_dialog { key, script, multisig, tx, el, initiator },
                 iferr display_error, cb_success
     catch err then display_error err
 
   # Release button - open dialog for confirmation
   el.find('.release').click ->
-    show_dialog (build_tx unspent, el), 'self'
+    try show_dialog build_tx(), 'self'
+    catch e then display_error e
 
   # Input raw transaction
   el.find('.input-rawtx').click ->
@@ -80,6 +84,12 @@ tx_builder = (el, { key, trent, multisig, script, channel, fees }, cb) ->
   el.find('.show-rawtx').click ->
     try show_rawtx_dialog build_tx unspent, el
     catch e then display_error e
+
+  # Auto-update the change amount
+  el.on 'change keyup', '.address input[name=value], input[name=fees]', update_change = ->
+    spent = sum_value_inputs el.find('.address input[name=value]')
+    change = Math.max 0, balance - spent - get_fee()
+    el.find('.change-amount').text (formatValue change) + ' BTC'
 
   # Add transaction request to list
   add_tx_request = do ($requests = $ '.tx-requests') -> (tx) ->
@@ -95,26 +105,33 @@ tx_builder = (el, { key, trent, multisig, script, channel, fees }, cb) ->
   # Subscribe to transaction requests
   tx_unlisten = tx_listen channel, add_tx_request
 
-# Build transaction with the given inputs and parse outputs from <form>
-build_tx = (inputs, $form) ->
-  tx = new Transaction
+  # Build transaction with the given inputs and parse outputs from <form>
+  build_tx = ->
+    tx = new Transaction
 
-  # Add inputs
-  tx.addInput { hash }, index for { hash, index } in inputs
-  tx.total_in = sum_inputs inputs
-  
-  # Read outputs from DOM
-  $form.find('.address').each ->
-    $this = $ this
-    amount_bi = Util.parseValue $this.find('[name=value]').val()
-    tx.addOutput new TransactionOut
-      script: create_out_script $this.find('[name=address]').val()
-      value: rpad amount_bi.toByteArrayUnsigned().reverse(), 8
-  tx
+    # Add inputs
+    tx.addInput { hash }, index for { hash, index } in unspent
+    tx.total_in = sum_inputs unspent
+    
+    # Read outputs from DOM
+    el.find('.address').each ->
+      $this = $ this
+      amount = +parseValue $this.find('[name=value]').val()
+      tx.addOutput new TransactionOut
+        script: create_out_script $this.find('[name=address]').val()
+        value: amount
+    change = tx.total_in - (sum_inputs tx.outs) - get_fee()
+    if change > 0
+      tx.addOutput new TransactionOut
+        script: create_out_script multisig
+        value: change
+    tx
+
+  tx_unlisten
 
 # Display the transaction dialog
 tx_dialog = do (view=require '../views/dialogs/confirm-tx.jade') ->
-  ({ key, tx, script, initiator }, cb) ->
+  ({ key, tx, script, initiator, multisig }, cb) ->
     unless tx.ins.length
       return cb new Error 'No inputs provided'
     unless tx.outs.length
@@ -128,12 +145,13 @@ tx_dialog = do (view=require '../views/dialogs/confirm-tx.jade') ->
 
     dialog = $ view {
       outs: for { script: out_script, value } in tx.outs
-        address: get_script_address out_script
-        value: Util.formatValue value
+        address: out_address = get_script_address out_script
+        value: formatValue value
+        is_change: out_address is multisig
       has_priv: key.priv?
       pub_address: get_address key.pub, ADDR_PUB
-      total_in: Util.formatValue tx.total_in
-      fees: Util.formatValue tx.total_in - total_out
+      total_in: formatValue tx.total_in
+      fees: formatValue tx.total_in - total_out
       rawtx: bytesToHex tx.serialize()
       initiator
       final: initiator is 'other'
@@ -195,5 +213,10 @@ input_rawtx_dialog = do (view = require '../views/dialogs/input-rawtx.jade') -> 
 
   dialog.on 'hidden', -> do dialog.remove
   dialog.modal()
+
+sum_value_inputs = ($els) ->
+  sum_inputs $els
+    .filter(->!!@value)
+    .map(-> +parseValue @value).get()
 
 module.exports = tx_builder

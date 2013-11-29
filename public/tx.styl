@@ -32,12 +32,10 @@
 .tx-builder
   .addresses
     margin 0 0 21px
-    //.dropdown-menu
-    //  left -132px
   .address
     margin-bottom 0.5em
     input[name=address]
-      width 21em
+      width 22em
     .add-address, .del-address
       padding 9px 13px
       margin-right 7px
@@ -45,6 +43,17 @@
       margin-bottom 1px // Bugfix
       .dropdown-toggle
         padding 9px 10px
+  .release-btn
+    float left
+  .fees, .change
+    float left
+    padding-top 8px
+    label
+      float left
+      margin 0px 7px 0 9px
+  .fees input
+    margin-top -8px
+
 .tx-dialog
   textarea
     height 5em

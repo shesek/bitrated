@@ -23,21 +23,29 @@ p Once its approved and signed by one of them, the transaction will be broadcast
             li: a(data-address=bob_address)= is_dispute ? 'Party A' : 'You'
             li: a(data-address=alice_address)= is_dispute ? 'Party B': 'Other party'
             li: a(data-address=trent_address) Arbitrator
-            li: a(data-address=multisig) Multisig (change)
       = ' '
       .input-append
         input.input-small(type='text', name='value', placeholder='BTC amount')
         .btn-group
           .btn.dropdown-toggle(data-toggle='dropdown'): span.caret
           ul.dropdown-menu
-            li: a.pay-remaining(title="Minus #{default_fee} BTC in fees") Pay remaining
+            li: a.pay-remaining(title="Minus fees") Pay remaining
             li: a.pay-some Pay % of total
-  .btn-group
-    button.btn.btn-primary.release Release 
-    button.btn.btn-primary.dropdown-toggle(data-toggle='dropdown'): span.caret
-    ul.dropdown-menu
-      li: a.input-rawtx Input hex transaction
-      li: a.show-rawtx Get hex transaction
+  .clearfix
+    .btn-group.release-btn
+      button.btn.btn-primary.release Release 
+      button.btn.btn-primary.dropdown-toggle(data-toggle='dropdown'): span.caret
+      ul.dropdown-menu
+        li: a.input-rawtx Input hex transaction
+        li: a.show-rawtx Get hex transaction
+    .fees
+      label Fees: 
+      input.input-small(type='text', name='fees', placeholder='BTC amount', value=default_fee)
+    .change
+      label Change:
+      span.change-amount n/a
+      = ' '
+      i.icon-question-sign(data-toggle='tooltip', title='Change is paid back to the multisig address, and can be released in the future.')
 
 .tx-requests
   h3 Transaction requests

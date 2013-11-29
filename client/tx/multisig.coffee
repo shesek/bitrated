@@ -36,17 +36,6 @@ try
 
 catch err then return display_error err
 
-
-
-# ########################
-
-{ ecdsa } = require 'bitcoinjs-lib'
-window.bob = bob
-window.ecdsa = ecdsa
-# ########################
-
-
-
 { address: multisig, pubkeys, script } = create_multisig [ bob.pub, alice.pub, trent.pub ]
 channel = get_channel { bob, alice, trent, terms }
 
@@ -86,7 +75,6 @@ if _is_new then do ->
 tx_builder el.find('.tx-builder'), {
   multisig, script, channel
   key: if is_dispute then trent else bob
-  fees: DEFAULT_FEE
 }, iferr display_error, (signed_tx) ->
   # If its a final transaction (with two signatures), broadcast it to the
   # Bitcoin network

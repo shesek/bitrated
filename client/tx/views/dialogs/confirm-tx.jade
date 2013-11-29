@@ -11,6 +11,8 @@ form.tx-dialog.modal.hide.fade
         each out in outs
           tr
             td= out.address
+              if out.is_change
+                strong  (change)
             td #{out.value} BTC
       tfoot
         tr

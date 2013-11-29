@@ -81,9 +81,7 @@ tx_builder el.find('.tx-builder'), {
   if is_final_tx signed_tx
     txid = bytesToHex signed_tx.getHash()
     tx_broadcast signed_tx, iferr display_error,
-                            success "<p>Transaction successfully broadcasted to the Bitcoin network.
-                                     Since multisig transaction are new and not yet supported by all
-                                     miners, it might take some time to confirm.</p>
+                            success "<p>Transaction successfully broadcasted to the Bitcoin network.</p>
                                      <p><small><strong>Transaction id</strong>: #{txid}</small></p>"
   # Otherwise, submit an approval request
   else tx_request channel, signed_tx, iferr display_error,

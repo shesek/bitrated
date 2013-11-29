@@ -9,7 +9,7 @@ headsup_view = require './views/dialogs/heads-up.jade'
 display_error = error_displayer $ '.content'
 
 try
-  { key, key_priv,_is_new } = parse_query()
+  { key, key_priv,_is_new } = query_args = parse_query()
   if key_priv? then key = Key.from_privkey key_priv
   else if key? key = Key.from_pubkey key
   else throw new Error 'Missing key argument'
@@ -18,7 +18,8 @@ catch e then display_error e
 # When loaded for the first time, display the headsup message
 # and remove the _is_new flag from the URL
 if _is_new then do ->
-  document.location.hash = format_url null, { _: (randomBytes 160), key }
+  delete query_args._is_new
+  document.location.hash = format_url null, query_args
 
   dialog = $ headsup_view {
     url: location.href

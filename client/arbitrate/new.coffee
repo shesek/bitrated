@@ -17,7 +17,7 @@ stop_spinner =  -> button.attr('disabled', false).removeClass('active')
 
 # Make display_error stop the spinner in addition to showing the error
 display_error = do (display_error = error_displayer form) -> (err) ->
-  button.removeClass 'active'
+  do stop_spinner
   display_error err
 
 # Handle submission
@@ -31,7 +31,7 @@ form.submit (e) ->
 
     unless username.match /^[a-zA-Z0-9]+$/
       throw new Error 'Invalid username. Can only contain alphanumeric characters (a-z, A-Z, 0-9)'
-  catch e then return display_error e
+  catch err then return display_error err
 
   do start_spinner
 

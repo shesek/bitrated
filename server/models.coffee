@@ -20,7 +20,7 @@ module.exports = (db) ->
     pubkey:  type: Buffer, required: true, set: to_buff
     content: type: String, required: true
     sig:     type: Buffer, required: true, set: to_buff
-    pubkey_hash: type: Buffer
+    pubkey_hash: type: Buffer, index: true
 
   userSchema.plugin timestamp
   userSchema.virtual('address').get -> get_address [ @pubkey... ], ADDR_PUB

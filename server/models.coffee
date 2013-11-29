@@ -1,14 +1,13 @@
 { Schema } = require 'mongoose'
 timestamp = require 'mongoose-time'
+crypto = require 'crypto'
 require 'mongoose-pagination'
 
 to_buff = (val) -> if val instanceof Buffer then val else new Buffer val, 'base64'
 buff_getter = (key, encoding) -> -> this[key].toString encoding
-triple_sha256 = (bytes) ->
-  bytes
-  # TODO load sha256b and use that
-  # ensure that it works well on buffers, or cast it to an array
-  # sha256b sha256b sha256b bytes
+sha256 = (data) -> crypto.createHash('sha256').update(data).digest()
+
+triple_sha256 = (bytes) -> sha256 sha256 sha256 bytes
 
 TX_EXPIRY = '24h'
 

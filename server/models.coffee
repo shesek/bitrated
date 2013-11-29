@@ -17,7 +17,7 @@ module.exports = (db) ->
   #
   User = db.model 'User', userSchema = Schema
     _id:     type: String, required: true, match: /^[A-Za-z0-9\-]{3,15}$/
-    pubkey:  type: Buffer, required: true, set: to_buff
+    pubkey:  type: Buffer, required: true, unique: true, set: to_buff
     content: type: String, required: true
     sig:     type: Buffer, required: true, set: to_buff
     pubkey_hash: type: Buffer, index: true

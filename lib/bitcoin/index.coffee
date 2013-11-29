@@ -1,7 +1,7 @@
 { Script, Address, Message, BigInteger, Opcode, Util, Crypto, convert, base58, ecdsa } = require 'bitcoinjs-lib'
 getSECCurveByName = require 'bitcoinjs-lib/src/jsbn/sec'
 { sha256ripe160, numToBytes } = Util
-{ SHA256, charenc: { UTF8 }, util: { randomBytes } } = Crypto
+{ charenc: { UTF8 }, util: { randomBytes } } = Crypto
 { bytesToHex, hexToBytes } = convert
 { OP_HASH160, OP_EQUAL } = Opcode.map
 
@@ -18,8 +18,11 @@ PUBKEY_C_LEN = 33
 PRIVKEY_C_LEN = 33
 PRIVKEY_C_BYTE = 0x01
 
-# SHA256 for byte arrays
-sha256b = (bytes) -> SHA256 bytes, asBytes: true
+# Same as Crypto's SHA256, but for byte arrays by default
+sha256 = (bytes) -> Crypto.SHA256 bytes, asBytes: true
+
+# Triple SHA256
+triple_sha256 = (bytes) -> sha256 sha256 sha256 bytes
 
 # Turn a byte array to a bitcoin address
 #
@@ -36,7 +39,7 @@ get_address = (bytes, version) ->
 # Validates and strips the checksum, and optionally the expected version byte
 parse_address = (address, version) ->
   bytes = base58.decode address
-  checksum = sha256b sha256b bytes[0...-4]
+  checksum = sha256 sha256 bytes[0...-4]
   throw new Error 'Invalid address checksum' for i in [0..3] when bytes[bytes.length-4+i] isnt checksum[i]
   if version?
     throw new Error 'Invalid address version' unless version is bytes[0]
@@ -107,5 +110,5 @@ module.exports = {
   ADDR_P2SH, ADDR_PUB, ADDR_PRIV, PRIVKEY_LEN, PUBKEY_LEN, ADDR_LEN
   PUBKEY_C_LEN, PRIVKEY_C_LEN, PRIVKEY_C_BYTE
   get_address, get_pub, parse_address, get_script_address
-  create_multisig, create_out_script, sha256b
+  create_multisig, create_out_script, sha256, triple_sha256
 }

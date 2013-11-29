@@ -2,7 +2,7 @@
 { charenc: { UTF8 } } = Crypto
 { numToBytes } = Util
 { bytesToHex, hexToBytes } = convert
-{ get_pub, sha256b, parse_address, parse_pubkey
+{ get_pub, sha256, parse_address, parse_pubkey
   TESTNET, ADDR_PRIV
   PUBKEY_LEN, PRIVKEY_LEN, PUBKEY_C_LEN, PRIVKEY_C_LEN, PRIVKEY_C_BYTE
 } = require './index.coffee'
@@ -49,7 +49,7 @@ Key.random = (compressed=true) ->
 
   time = numToBytes Date.now()
 
-  priv = sha256b [ crypto_random..., math_random..., time... ]
+  priv = sha256 [ crypto_random..., math_random..., time... ]
   priv.push PRIVKEY_C_BYTE if compressed
 
   new Key 'priv', priv

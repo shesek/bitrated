@@ -1,11 +1,9 @@
 { Transaction, Util: { parseValue, bytesToNum }, convert: { hexToBytes, bytesToHex, bytesToBase64, base64ToBytes } } = require 'bitcoinjs-lib'
-{ sha256b, verify_sig, create_multisig } = require '../../../lib/bitcoin/index.coffee'
+{ triple_sha256, verify_sig, create_multisig } = require '../../../lib/bitcoin/index.coffee'
 { decode_raw_tx } = require '../../../lib/bitcoin/tx.coffee'
 Key = require '../../../lib/bitcoin/key.coffee'
 
 BLOCKCHAIN_API = $('meta[name=blockchain-api]').attr('content')
-
-triple_sha256 = (bytes) -> sha256b sha256b sha256b bytes
 
 get_socket = do (socket=null) -> -> socket ||= require('socket.io-client').connect '/'
 

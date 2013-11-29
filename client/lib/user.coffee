@@ -12,10 +12,13 @@ signup = (user, cb) ->
 # Load user
 # id can be either username, pubkey byte array or pubkey hash byte array
 load_user = (id, cb) ->
-  if Array.isArray id
-    id = bytesToBase64 id
-  $.get("/u/#{encodeURIComponent id}", {}, 'json')
-    .done((res) -> cb null, res)
-    .fail(cb)
+  id = bytesToBase64 id if Array.isArray id
+  xhr = $.get "/u/#{encodeURIComponent id}", {}, 'json'
+  xhr.done (res) -> cb null, res
+  xhr.fail (res) ->
+    # 404s aren't considered an error, just send null as the result
+    if res?.status is 404 then cb null, null
+    else cb res
+
 
 module.exports = { signup, load_user }

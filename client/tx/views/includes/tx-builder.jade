@@ -4,16 +4,16 @@ p.
   your private key and request approval from the other key holders.
 p Once its approved and signed by one of them, the transaction will be broadcasted to the Bitcoin network.
 
-.tx-builder
+form.tx-builder(action='http://')
   p
     | <strong>Balance:</strong> <span class="balance">unknown</span> 
-    button.btn.btn-mini.update-balance: i.icon-refresh
+    button.btn.btn-mini.update-balance(type='button'): i.icon-refresh
     = ' '
     span.muted.
       (requires 1 confirmation. see <a href="https://blockchain.info/address/#{multisig}/"><span class="icon-share"></span> full transaction history</a>)
   .addresses
     .address.form-inline
-      button.btn.add-address(tabindex=-1): i.icon-plus
+      button.btn.add-address(type='button', tabindex=-1): i.icon-plus
       = ' '
       .input-append
         input.input-xlarge(type='text', name='address', placeholder='Destination address')
@@ -25,7 +25,7 @@ p Once its approved and signed by one of them, the transaction will be broadcast
             li: a(data-address=trent_address) Arbitrator
       = ' '
       .input-append
-        input.input-small(type='text', name='value', placeholder='BTC amount')
+        input.input-small(type='text', name='value', placeholder='BTC amount', pattern='\\d+(\\.\\d{1,8})?')
         .btn-group
           .btn.dropdown-toggle(data-toggle='dropdown'): span.caret
           ul.dropdown-menu
@@ -40,7 +40,7 @@ p Once its approved and signed by one of them, the transaction will be broadcast
         li: a.show-rawtx Get hex transaction
     .fees
       label Fees: 
-      input.input-small(type='text', name='fees', placeholder='BTC amount', value=default_fee)
+      input.input-small(type='text', name='fees', placeholder='BTC amount', pattern='\\d+(\\.\\d{1,8})?', value=default_fee)
     .change
       label Change:
       span.change-amount n/a

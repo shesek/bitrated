@@ -71,7 +71,8 @@ tx_builder = (el, { key, trent, multisig, script, channel }, cb) ->
     catch err then display_error err
 
   # Release button - open dialog for confirmation
-  el.find('.release').click ->
+  el.submit (e) ->
+    e.preventDefault()
     try show_dialog build_tx(), 'self'
     catch e then display_error e
 
@@ -93,8 +94,6 @@ tx_builder = (el, { key, trent, multisig, script, channel }, cb) ->
 
   # Add transaction request to list
   add_tx_request = do ($requests = $ '.tx-requests') -> (tx) ->
-    # TODO validate tx
-    # TODO validate signature
     txid = bytesToHex tx.getHash()
     $(document.createElement 'li')
       .text("#{ txid }")

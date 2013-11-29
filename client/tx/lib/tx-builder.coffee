@@ -126,6 +126,10 @@ tx_builder = (el, { key, trent, multisig, script, channel }, cb) ->
     el.find('.address').each ->
       $this = $ this
       amount = +parseValue $this.find('[name=value]').val()
+      try out_script = create_out_script $this.find('[name=address]').val()
+      catch err
+        $this.find('[name=address]').focus()
+        throw err
       tx.addOutput new TransactionOut
         script: create_out_script $this.find('[name=address]').val()
         value: amount

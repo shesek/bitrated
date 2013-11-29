@@ -24,7 +24,9 @@ tx_builder = (el, { key, trent, multisig, script, channel }, cb) ->
     addresses.append addr_tmpl.clone()
 
   # Delete address
-  el.on 'click', '.del-address', -> $(this).closest('.address').remove()
+  el.on 'click', '.del-address', ->
+    $(this).closest('.address').remove()
+    do update_change
 
   # Address dropdown items
   el.on 'click', '[data-address]', ->

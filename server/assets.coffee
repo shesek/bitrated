@@ -4,6 +4,7 @@ express = require 'express'
 browserify = do (browserify = require 'browserify-middleware') ->
   (path) -> browserify path, transform: [ 'coffeeify', 'jadeify2' ]
 
+pages_dir = join __dirname, '..', 'pages'
 
 module.exports = ->
   @set 'public', join __dirname, '..', 'public'
@@ -18,5 +19,5 @@ module.exports = ->
   @get '/arbitrate/new.js', browserify '../client/arbitrate/new.coffee'
   @get '/arbitrate/manage.js', browserify '../client/arbitrate/manage.coffee'
 
-  @get '/', (req, res) -> res.render 'index'
-  @get '/*.html', (req, res) -> res.render basename req.url, '.html'
+  @get '/', (req, res) -> res.render join pages_dir, 'index'
+  @get '/*.html', (req, res) -> res.render join pages_dir, basename req.url, '.html'

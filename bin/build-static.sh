@@ -28,5 +28,5 @@ read -d '' LOCALS <<JSON
     "blockchain_api": "${BLOCKCHAIN_API}"
   }
 JSON
-jade server/views/*.jade -o $TARGET --obj "$LOCALS"
+jade pages/*.jade -o $TARGET --obj "$LOCALS"
 

@@ -7,6 +7,8 @@
 { sign_tx, calc_total_in, sum_inputs, decode_raw_tx, verify_tx_sig } = require '../../../lib/bitcoin/tx.coffee'
 { tx_listen, load_unspent } = require './networking.coffee'
 
+SPIN_MIN = 1000
+
 # Initialize the transaction builder interface
 tx_builder = (el, { key, trent, multisig, script, channel }, cb) ->
   display_error = error_displayer el
@@ -53,8 +55,14 @@ tx_builder = (el, { key, trent, multisig, script, channel }, cb) ->
   # Update balance
   el.find('.update-balance').click update_balance = ->
     refresh_icon = $(this).find('i').addClass 'icon-spin'
+    stop_spin = -> refresh_icon.removeClass 'icon-spin'
+    spin_start = Date.now()
     load_unspent multisig, (err, _unspent) ->
-      refresh_icon.removeClass 'icon-spin'
+      # Ensure that its spinning for at-least SPIN_MIN so that it does a full circle,
+      # otherwise it looks really quirky
+      if Date.now() - spin_start >= SPIN_MIN then do stop_spin
+      else setTimeout stop_spin, SPIN_MIN - (Date.now() - spin_start)
+
       return display_error err if err?
       unspent = _unspent
       balance = sum_inputs unspent

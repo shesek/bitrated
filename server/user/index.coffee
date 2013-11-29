@@ -40,7 +40,7 @@ module.exports = ({ models, locals }) -> express().configure ->
         if err instanceof ValidationError
           res.send 400, err
         else if ~err.message.indexOf 'E11000 duplicate key error index'
-          res.send 422, message: 'Username is already taken'
+          res.send 422, message: 'Username or public key is already used'
         else next err
       else res.redirect 303, user._id
 
@@ -80,7 +80,7 @@ module.exports = ({ models, locals }) -> express().configure ->
     username: _id
     pubkey: pubkey.toString 'hex'
     content: content
-    sig: pubkey.toString 'base64'
+    sig: sig.toString 'base64'
     profile_url: @settings.url + "u/#{_id}"
     tx_url: @settings.url + "new.html#trent=#{encodeURIComponent pubkey.toString 'base64'}"
 

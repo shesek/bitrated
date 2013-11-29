@@ -25,7 +25,7 @@ module.exports = (db) ->
   userSchema.plugin timestamp
   userSchema.virtual('address').get -> get_address [ @pubkey... ], ADDR_PUB
   userSchema.virtual('pubkey_str').get buff_getter 'pubkey', 'hex'
-  userSchema.virtual('sig_str').get buff_getter 'pubkey', 'base64'
+  userSchema.virtual('sig_str').get buff_getter 'sig', 'base64'
   userSchema.pre 'save', (next) ->
     if @isModified 'pubkey'
       @pubkey_hash = new Buffer triple_sha256 @pubkey[..]

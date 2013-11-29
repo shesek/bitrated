@@ -2,6 +2,8 @@
 { iferr, error_displayer, parse_query, navto, render } = require '../lib/util.coffee'
 { format_locals, build_tx_args } = require './lib/util.coffee'
 { handshake_reply } = require './lib/networking.coffee'
+{ load_user } = require '../lib/user.coffee'
+{ triple_sha256 } = require '../../lib/bitcoin/index.coffee'
 Key = require '../../lib/bitcoin/key.coffee'
 sign_message = require '../sign-message.coffee'
 view = require './views/join.jade'
@@ -30,6 +32,18 @@ render el = $ view format_locals {
   alice, trent, terms, proof
   bob: Key.random()
 }
+
+# Display arbitrator info on request
+arb_info = el.find('.arbitrator-info')
+arb_info.find('button').click ->
+  trent = Key.from_pubkey el.find('.trent-pubkey').text()
+  check_button = $(this).addClass('active').attr('disabled', true)
+  pubkey_hash = triple_sha256 trent.pub
+  load_user pubkey_hash, (err, user) ->
+    check_button.removeClass('active').attr('disabled', false)
+    return display_error err if err?
+    arb_info.addClass('loaded')
+      .find('.username').html if user?.username then "<a href='/u/#{user.username}'>#{user.username}</a>" else 'Not found'
 
 # Spinner helpers
 button = el.find 'form button[type=submit]'

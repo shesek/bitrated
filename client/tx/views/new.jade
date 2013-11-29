@@ -11,6 +11,7 @@
           You can browse the list of available arbitrators [here](/u), or use any other public key.
         input.input-block-level(type='text', name='trent', placeholder='Public key (hex)', value=trent,
                                 required, pattern='^([a-f0-9]{130}|[a-f0-9]{66})$')
+        include ./includes/arbitrator-info
 
       label Your public/private key
       .help-block

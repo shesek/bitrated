@@ -1,9 +1,10 @@
 { Crypto, convert: { bytesToHex } } = require 'bitcoinjs-lib'
 { util: { randomBytes }, charenc: { UTF8 } } = Crypto
-{ sha256b } = require '../../lib/bitcoin/index.coffee'
+{ sha256, triple_sha256 } = require '../../lib/bitcoin/index.coffee'
 { navto, format_url, render, parse_query, iferr, error_displayer } = require '../lib/util.coffee'
 { format_locals, build_tx_args } = require './lib/util.coffee'
 { handshake_listen } = require './lib/networking.coffee'
+{ load_user } = require '../lib/user.coffee'
 Key = require '../../lib/bitcoin/key.coffee'
 sign_message = require '../sign-message.coffee'
 new_view = require './views/new.jade'
@@ -19,7 +20,23 @@ trent = Key.from_pubkey trent if trent?
 render el = $ new_view format_locals bob: Key.random(), trent: trent
 
 display_error = error_displayer el
-#$(window).error display_error
+
+# Display arbitrator info on request
+arb_info = el.find('.arbitrator-info')
+arb_info.find('button').click ->
+  try trent = Key.from_pubkey el.find('input[name=trent]').val()
+  catch err then return display_error err
+
+  check_button = $(this).addClass('active').attr('disabled', true)
+  pubkey_hash = triple_sha256 trent.pub
+  load_user pubkey_hash, (err, user) ->
+    check_button.removeClass('active').attr('disabled', false)
+    return display_error err if err?
+    arb_info.addClass('loaded')
+      .find('.username').html if user?.username then "<a href='/u/#{user.username}'>#{user.username}</a>" else 'Not found'
+
+el.find('input[name=trent]').on 'keyup change', ->
+  arb_info.removeClass('loaded')
 
 # Handle form submission
 form = el.find('form').submit (e) ->
@@ -39,7 +56,7 @@ get_terms = (form, cb) ->
     when file = form.find('input:visible[name=terms_file]')[0]?.files[0]
       reader = new FileReader
       reader.onload = ->
-        hash = bytesToHex sha256b Array.apply null, reader.result
+        hash = bytesToHex sha256 Array.apply null, reader.result
         cb null, format_hash_terms hash
       reader.readAsArrayBuffer file
     when hash = form.find('input:visible[name=terms_hash]').val()?.trim()

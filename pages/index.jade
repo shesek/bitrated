@@ -16,7 +16,46 @@ block content
       = ' '
       a.btn.btn-large(href='/arbitrate.html') Offer arbitration
 
-    .row-fluid.home-text
+      p: a(href='/faq.html') or learn more
+
+
+    .row-fluid
+      .span4
+        :markdown
+          ### Consumers
+          **Protect yourself against online fraud.**
+
+          The permenent nature of Bitcoin transactions makes it unfavorable for the consumer,
+          who might have no recourse in case of fraud.
+
+          With arbitration, you can ensure that a trusted third party can reverse the payment
+          in case of fraud and help you resolve disputes with the merchent.
+
+      .span4
+        :markdown
+          ### Merchents
+          **Give your customers a peace of mind.**
+
+          Allow your customers to transact safely with you,
+          knowing that they have a recourse in case of a dispute.
+
+          Arbitration services have been known for being favorable to the consumer on the expense of the merchent.
+          With the open nature of this marketplace and the selection of arbitratos,
+          you can ensure that the arbitrator is fair and has a reputable history.
+
+      .span4
+        :markdown
+          ### Arbitrators
+          **Provide dispute resolution services for a fee.**
+
+          Escrow services has traditionally been highly regulated and associated with high costs,
+          which crippled innvoation and prevented small players from entering into the market.
+
+          Bitcoin's technology allows anyone to offer dispute resolution services in a way that was never possible before
+          and [does not require an escrow](http://localhost:8070/faq.html#is-this-an-escrow-).
+          Help people solve disputes, build a reputable history and earn fees.
+
+    //-.row-fluid.home-text
       .span6.features
         :markdown
           - ### Anyone can offer arbitration services
@@ -69,20 +108,3 @@ block content
           aspects of using m-of-n transactions, signing the terms, and have a
           [directory of available arbitrators](/u).
           We do not offer arbitration services directly.
-
-    //-.row-fluid
-      .span4
-        h2 Buyers
-        :markdown
-          Protect yourself against online fraud.
-        a.btn.btn-primary(href='/tx.html') Get started
-      .span4
-        h2 Sellers 
-        :markdown
-          Give your customers a peace of mind.
-        a.btn(href='/tx.html') Get started
-      .span4
-        h2 Arbitrators
-        :markdown
-          Provide dispute resolution services for a fee.
-        a.btn(href='/arbitrate.html') Get started

@@ -25,22 +25,28 @@ block content
       - Private keys are created and used in your browser, and are **never sent to or proccessed by our servers**.
       - The transaction terms are stored in the hash portion of the URL, and are never sent to our servers.
 
-      Some data is sent to the server or stored temporarily in order to enable communication
-      between users. This is kept to the absolute required minimum, and the data is not of
-      sensitive nature. The data that is sent is:
+      Some data is sent to the server in order to enable communication between users, using the server
+      as a proxy to pass messages around.
+      The data is sent to the other parties and discarded immediately, and no permenent copy ever saved.
+      This is kept to the absolute required minimum, and the data is not of sensitive nature.
+
+      The data that is sent to the server is:
 
       - During the initial keys/signature exhchange, the party that joins the arbitration
         sends his ***public* key**, his **signature** and the **triple-SHA256 of the multisig
-        script** (to verify both parties ended up with the same script, without revealing that to the server).
-        The data is sent immediately to the other party, and *no permenent copy is ever saved*.
-      - When a transaction is created, the partially signed **transaction** is sent and
-        stored on the server for up to 24 hours (or until its deleted), and can be read by
-        both parties and the arbitrator.
+        script** (to verify both parties ended up with the same script, without revealing it to the server)
+        to the other party.
+      - When a transaction is created, the **partially signed transaction** is sent to the other parties.
         This is the same transaction that later becomes part of the blockchain, and thus
-        *mostly considered public information*.
-      - To check if a public key is associated with a registered user and display additional information,
-        we send the **triple-SHA256 of his public key** to our servers. This allows us to check
-        if it exists on our index, *without revealing the actual public key* if its not.
+        mostly considered public information.
+
+      **Note:** In a future release, this data will be encrypted end-to-end.
+      You can track the progress [here](https://github.com/shesek/bitrated/issues/1).
+
+      Also, optionally, you can check if an arbitrator public key is associated with a registered
+      user in the new/join transaction page using the "Check public key" button.
+      This sends the **triple-SHA256 of his public key** to our servers, which allows us to
+      check if it exists on our index, without revealing the actual public key if its not.
 
       In addition to that, some data is shared with third parties:
 
@@ -50,47 +56,41 @@ block content
         [blockchain.info pushtx service](https://blockchain.info/pushtx) (over SSL).
 
       Except for those cases, nothing else is sent to the server during the arbitration process.
-      The arbitration data (including the transaction terms) is stored in
-      the hash portion of the URL, which is *not* sent to the server during http requests,
-      and is only accessible to you and people you choose to share URLs with.
+      The arbitration data is stored in the hash portion of the URL, which is *not* sent to the
+      server during http requests and is only accessible to you and people you choose to share URLs with.
 
       Whenever we display URLs, we clearly state who it should be shared with and what
-      data it contains.
-      URLs that contain your private key are always marked with "DO-NOT-SHARE".
+      data they contain. URLs that contain your private key are always marked with "DO-NOT-SHARE".
       
       **You are responsible for keeping a safe and secure backup of your URL.
       The data contained in the URL is cryptographically required for releasing
       the funds, and cannot be recovered by any means.**
 
       #### Browser extension
-      <div class="alert alert-info">
-      
-      The browser extension is still work in progress.
-      Due do the importance of the extension, the website will
-      remain in beta stage until this is operational.
-      
-      The text below describes how it will work once ready.
 
-      </div>
+      **Note:** The browser extension is still work in progress, and not ready for use yet.
+      Due do the importance of the extension, the website will remain in beta stage until this is operational.
+      The text below describes how it will work once ready, and not what exists today.
+      You can track the progress [here](https://github.com/shesek/bitrated/issues/4).
 
-      Our browser extension provides improved security by verifying the integrity
+      The browser extension provides improved security by verifying the integrity
       of the files served by the server. The verification is done using two factors:
 
       - **Cold storage signature verification:**
         In addition to SSL, static files (html/css/javascript)
-        are signed using standard Bitcoin message signatures
-        (the private key is stored encrypted and offline).
+        are signed using standard Bitcoin message signatures,
+        with a private key that is stored offline and encrypted.
         This ensures that the content served from the webserver was not tampered
         with by a third party.
 
       - **Comparing against the code on GitHub repository:**
-        The source code from the GitHub repository is built on Travis-CI,
-        the resulting hashes are published publicly on Travis's job page.
+        The source code from the GitHub repository is built on Travis-CI
+        and the resulting hashes are published publicly on Travis's job page.
         The extension ensures that the content served by the webserver matches
         the open-source repository on GitHub.
 
-      If a potential attacker gains control over the web server, he still only has
-      access to information the web server already has (which is very little).
+      If an attacker gains control over the web server, he still only has
+      access to information the web server already knows (which is very little).
       To get sensitive information, he would have to modify the client-side code
       to send back more data to the server.
 
@@ -102,13 +102,11 @@ block content
          to the Github repository.
       1. Commit his changes to the public GitHub repository, where they
          can be seen by anyone.
-      1. Gain **physical access** to the offline machine with the private key.
+      1. Gain physical access to the offline machine with the private key
+         and know the passphrase used to encrypt it.
 
-      For users without the extension, an attacker only has to do step (1).
+      For users without the extension, an attacker only has to do (1).
 
-      It is highly recommended to install the extension.
-
-      <a class="btn btn-primary" href="#TODO">Install extension</a>
     //
       #### Public key verification
       To prevent an attacker from modifying our published Bitcoin public key,

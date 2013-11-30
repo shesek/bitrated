@@ -1,8 +1,8 @@
 - unsupported_styles = '<style>.unsupported-browser{display:block;visibility:visible}.content{display:none}</style>'
 
 //if IE
-  != unsupported_style
-script (window.crypto && window.crypto.getRandomValues) || document.write('!{unsupported_style}')
+  != unsupported_styles
+script (window.crypto && window.crypto.getRandomValues) || document.write('!{unsupported_styles}')
 
 .container.unsupported-browser.hidden: .alert.alert-error.alert-block
   :markdown

@@ -67,6 +67,7 @@ tx_builder = (el, { key, trent, multisig, script, channel }, cb) ->
       unspent = _unspent
       balance = sum_inputs unspent
       $('.balance').text (formatValue balance)+' BTC'
+      do update_change
   do update_balance
   
   cb_success = cb.bind null, null
@@ -93,7 +94,7 @@ tx_builder = (el, { key, trent, multisig, script, channel }, cb) ->
 
   # Get raw transaction
   el.find('.show-rawtx').click ->
-    try show_rawtx_dialog build_tx unspent, el
+    try show_rawtx_dialog build_tx()
     catch e then display_error e
 
   # Auto-update the change amount
@@ -125,14 +126,21 @@ tx_builder = (el, { key, trent, multisig, script, channel }, cb) ->
     # Read outputs from DOM
     el.find('.address').each ->
       $this = $ this
-      amount = +parseValue $this.find('[name=value]').val()
-      try out_script = create_out_script $this.find('[name=address]').val()
+      # Ignore empty addresses
+      return unless address = $this.find('[name=address]').val().trim()
+
+      amount = +parseValue $this.find('[name=value]').val().trim()
+      try out_script = create_out_script address
       catch err
         $this.find('[name=address]').focus()
         throw err
       tx.addOutput new TransactionOut
-        script: create_out_script $this.find('[name=address]').val()
+        script: out_script
         value: amount
+
+    unless tx.outs.length
+      throw new Error 'No output address provided'
+
     change = tx.total_in - (sum_inputs tx.outs) - get_fee()
     if change > 0
       tx.addOutput new TransactionOut
@@ -230,6 +238,6 @@ input_rawtx_dialog = do (view = require '../views/dialogs/input-rawtx.jade') -> 
 sum_value_inputs = ($els) ->
   sum_inputs $els
     .filter(->!!@value)
-    .map(-> +parseValue @value).get()
+    .map(-> +parseValue @value.trim()).get()
 
 module.exports = tx_builder

@@ -32,11 +32,12 @@ arb_info.find('button').click ->
   load_user pubkey_hash, (err, user) ->
     check_button.removeClass('active').attr('disabled', false)
     return display_error err if err?
-    arb_info.addClass('loaded')
-      .find('.username').html if user?.username then "<a href='/u/#{user.username}'>#{user.username}</a>" else 'Not found'
+    if user?
+      arb_info.addClass('loaded').find('.username').html "<a href='/u/#{user.username}'>#{user.username}</a>"
+    else arb_info.addClass('not-found')
 
 el.find('input[name=trent]').on 'keyup change', ->
-  arb_info.removeClass('loaded')
+  arb_info.removeClass('loaded not-found')
 
 # Handle form submission
 form = el.find('form').submit (e) ->

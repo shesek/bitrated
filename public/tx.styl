@@ -77,10 +77,11 @@
       text-decoration underline
 
 .arbitrator-info
-  .loaded-data
+  .loaded-data, .not-found-msg
     display none
-  &.loaded
-    .loaded-data
-      display block
-    button
-      display none
+  &.loaded button, &.not-found button
+    display none
+  &.loaded .loaded-data
+    display block
+  &.not-found .not-found-msg
+    display block

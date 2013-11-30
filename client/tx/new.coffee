@@ -90,7 +90,7 @@ exchange = ({ bob, trent, terms }) ->
     dialog.on 'hidden', ->
       unlisten()
       dialog.remove()
-    dialog.modal()
+    dialog.modal backdrop: 'static'
 
     # Start listening for handshake replies on the random channel
     unlisten = handshake_listen channel, { bob, trent, terms }, iferr display_error, ({ alice, proof }) ->

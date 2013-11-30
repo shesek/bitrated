@@ -205,7 +205,7 @@ tx_dialog = do (view=require '../views/dialogs/confirm-tx.jade') ->
       catch err then display_error err
 
     dialog.on 'hidden', -> do dialog.remove
-    dialog.modal()
+    dialog.modal backdrop: 'static'
 
 show_rawtx_dialog = do (view = require '../views/dialogs/show-rawtx.jade') -> (tx) ->
   rawtx = bytesToHex tx.serialize()

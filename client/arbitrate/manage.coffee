@@ -26,8 +26,7 @@ if _is_new then do ->
     has_priv: key.priv?
   }
   dialog.on 'hidden', -> dialog.remove()
-  dialog.modal()
-
+  dialog.modal backdrop: 'static', keyboard: false
 
 load_user key.pub, iferr display_error, (user) ->
   return display_error 'User cannot be found' unless user?

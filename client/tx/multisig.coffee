@@ -69,7 +69,7 @@ if _is_new then do ->
     has_priv: bob.priv?
   }
   dialog.on 'hidden', -> dialog.remove()
-  dialog.modal()
+  dialog.modal backdrop: 'static', keyboard: false
 
 # Initialize the transaction builder
 tx_builder el.find('.tx-builder'), {

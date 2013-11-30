@@ -100,8 +100,9 @@ tx_builder = (el, { key, trent, multisig, script, channel }, cb) ->
   # Auto-update the change amount
   el.on 'change keyup', '.address input[name=value], input[name=fees]', update_change = ->
     spent = sum_value_inputs el.find('.address input[name=value]')
-    change = Math.max 0, balance - spent - get_fee()
-    el.find('.change-amount').text (formatValue change) + ' BTC'
+    change = if spent > 0 then (formatValue Math.max 0, balance - spent - get_fee()) + ' BTC' \
+             else 'n/a'
+    el.find('.change-amount').text change
 
   # Add transaction request to list
   add_tx_request = do ($requests = $ '.tx-requests') -> (tx) ->

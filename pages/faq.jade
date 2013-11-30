@@ -42,6 +42,26 @@ block content
       We do not offer arbitration services ourselves, nor we are a party to any of the transactions
       conducted using our service.
 
+      #### How do I use this website to create an arbitrated transaction?
+
+      The transaction process has five steps:
+
+      1. The buyer and seller agree on the terms and pick an arbitrator that's acceptable with both of them.
+      2. One party starts the transaction by entering the terms, the arbitrator public key and his public/private key
+         (which is automatically generated). He gets a link to share with the other party.
+      3. When the other party enters that link, he's requested to enter his public/private key (which is automatically generated)
+         and accept the terms.
+         This sends his public key to the other party, and opens the multisig transaction page.
+      4. The buyer deposits the funds into the multisig address (that can be found in the transaction page).
+         The funds are locked in that address, until two of the parties (buyer, seller and arbitrator) agree to releasing it.
+      5. Depending on how the transaction ends,
+         - If it ended well, one of the parties creates a transaction that releases the funds to the seller,
+           which sends an approval request to the other party. Once approved, the transaction is broadcasted
+           to the Bitcoin network and the funds are released.
+         - In case of dispute, one of the parties can contact the arbitrator by providing him with the arbitrator
+           link (which can be found on the transaction page) and request him to approve a transaction that releases
+           the funds to him.
+
       #### Is this an escrow?
       No. Escrow services requires the parties to deposit the funds into an escrow,
       where the service provider has full control over them.

@@ -18,7 +18,7 @@ for file in tx/new tx/join tx/multisig arbitrate/new arbitrate/manage; do
 done
 
 echo "Compiling stylus..."
-stylus public/*.styl -o $TARGET
+stylus --compress public/*.styl -o $TARGET
 
 echo "Compiling jade..."
 read -d '' LOCALS <<JSON

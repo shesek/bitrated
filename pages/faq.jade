@@ -1,0 +1,63 @@
+extend ../views/layout
+
+prepend title
+  | FAQ | 
+
+block content
+  .container-page
+    :markdown
+      ## FAQ
+
+      #### What is an arbitration service?
+      Arbitration is a dispute resolution mechanism where the arbitrator,
+      an independent trusted third party, resolves disputes between two transacting parties,
+      typically a buyer and a seller.
+
+      The arbitrator is chosen ahead of time, and is to be agreed upon by both the buyer and the seller.
+      In case of a dispute, the parties can ask the arbitrator to give his ruling and decide what to do with the money.
+
+      #### How does Bitcoin arbitration work?
+      Bitcoin allows using m-of-n multi signature transactions.
+      With m-of-n transactions, funds can be paid to a special Bitcoin address
+      that contains n public keys and requires m of them to sign a transaction in order to release the funds.
+
+      For the case of arbitration, an 2-of-3 multisig address is created with the buyer, seller and arbitrator public keys.
+      The buyer deposits his payment to that address, and releasing it requires the approval of two parties.
+
+      If the transaction ends well and the buyer and seller are in agreement, they can sign a transaction themselves that
+      releases the money from the multisig address to the seller.
+      In case of a dispute, the parties can contact the arbitrator and ask him to approve a transaction that releases the
+      funds in the manner they find fair.
+
+      The arbitrator can only approve a transaction that is signed by either the buyer or the seller,
+      and cannot control the funds otherwise.
+
+      #### What is this website?
+      This website is provides an interface for using m-of-transaction and a marketplace for Bitcoin arbitration services.
+
+      The transaction themselves are managed using standard Bitcoin technology -
+      we merely help manage the technical aspects of using m-of-n transactions
+      and have a [directory of available arbitrators](/u).
+
+      We do not offer arbitration services ourselves, nor we are a party to any of the transactions
+      conducted using our service.
+
+      #### Is this an escrow?
+      No. Escrow services requires the parties to deposit the funds into an escrow,
+      where the service provider has full control over them.
+      Because of that, escrows are strictly government regulated in the US and most parts of the world,
+      making it difficult to obtain an escrow license and raises the costs associated with operating such services.
+
+      With Bitcoin's m-of-n transactions, the service provider never has full control over the funds.
+      What he provides is dispute resolution and arbitration services,
+      which fundamentally provides the same value to the end-users,
+      but does not require adhering to such strict regulations -
+      making it easier to operate the service and lowers the costs for both the arbitrator and the end-users.
+
+      #### Help, I lost my private key! Can you recover it for me?
+      No. The private key only exists in your browser as part of the URL and in-memory while the service is used,
+      and is never uploaded to our servers.
+      If you lost your access to the URL, it cannot be recovered my any means.
+
+      That being said, you might be able to recover the URL from your browsing history,
+      unless you chose to use incognito or private browsing mode (as suggested in the transaction page).

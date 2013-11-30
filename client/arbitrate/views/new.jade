@@ -45,7 +45,11 @@
   //- form is processed client-side, should never be submitted anywhere
   form.arbitrate(action='http://'): fieldset
     legend Register to our arbitrators directory
-    
+
+    :markdown
+      This page allows you to setup your keys and profile page, and start offering arbitration services.
+      To learn more about this website and how Bitcoin arbitration works, see [our FAQ](faq.html).
+
     label Username
     input.input-xlarge(type='text', name='username', placeholder='3-15 alphanumeric characters',
                        required, pattern='^[a-zA-Z0-9]{3,15}$')

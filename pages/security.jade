@@ -66,6 +66,28 @@ block content
       The data contained in the URL is cryptographically required for releasing
       the funds, and cannot be recovered by any means.**
 
+      <div id="keys"></div>
+      #### Local private keys support
+      For improved security, you can generate your keys locally and provide our interface
+      with your *public key* only.
+      When your signature is required, you'll be given instructions for signing
+      locally using the bitcoind/bitcoin-qt api and be asked to provide the
+      signature.
+
+      To create a key pair with Bitcoind and get the public key, issue the following commands:
+
+          $ bitcoind getnewaddress # creates a key pair and returns the Bitcoin address
+          $ bitcoind validateaddress [NEW-ADDRESS] # returns information for the address
+          or, combined: $ bitcoind validateaddress `bitcoind getnewaddress`
+
+      This should return some information about the address in JSON format.
+      Look for the public key line with `"pubkey" : "[public key here]"`.
+
+      When a key is requested, replace the automatically generated private key with
+      your public key. If you're starting a transaction, you should also import the
+      multisig address to your local wallet (the command is available on the multisig
+      page).
+
       #### Browser extension
 
       **Note:** The browser extension is still work in progress, and not ready for use yet.
@@ -125,27 +147,6 @@ block content
       will be signed with the old public key.
 
     :markdown
-      #### Local private keys support
-      For improved security, you can generate your keys locally and provide our interface
-      with your *public key* only.
-      When your signature is required, you'll be given instructions for signing
-      locally using the bitcoind/bitcoin-qt api and be asked to provide the
-      signature.
-      
-      To create a key pair with Bitcoind and get the public key, issue the following commands:
-
-          $ bitcoind getnewaddress # creates a key pair and returns the Bitcoin address
-          $ bitcoind validateaddress [NEW-ADDRESS] # returns information for the address
-          or, combined: $ bitcoind validateaddress `bitcoind getnewaddress`
-
-      This should return some information about the address in JSON format.
-      Look for the public key line with `"pubkey" : "[public key here]"`.
-
-      When a key is requested, replace the automatically generated private key with
-      your public key. If you're starting a transaction, you should also import the
-      multisig address to your local wallet (the command is available on the multisig
-      page).
-
       #### No external scripts
       Everything is loaded from the web server over SSL.
       We don't use any CDNs, never load data with JSONP (which allows executing

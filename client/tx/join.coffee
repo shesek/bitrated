@@ -73,7 +73,9 @@ el.find('form').submit (e) ->
   # Sign message (with known private key, or with dialog asking user to do this
   # locally)
   sign_message bob, terms, iferr display_error, (sig) ->
-    ack_timer = setTimeout (-> display_error 'Handshake verification response timed out'), ACK_TIMEOUT
+    ack_timer = setTimeout (->
+      display_error 'Handshake verification response timed out. The other party might have closed the page.'
+    ), ACK_TIMEOUT
     handshake_reply channel, { pub: bob.pub, proof: sig, script }, (err) ->
       clearTimeout ack_timer
       return display_error err if err?

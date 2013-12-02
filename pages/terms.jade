@@ -5,8 +5,8 @@ prepend title
 
 append css
   :stylus
-    .terms
-      ol, ul
+    .tos
+      ol
         margin-bottom 1em
       & > ol > li > ol
         list-style-type lower-alpha
@@ -14,7 +14,7 @@ append css
           list-style-type lower-roman
 
 block content
-  .container-page
+  .container-page.tos
     :markdown
       ## Bitrated Terms of Service
 

@@ -24,19 +24,20 @@ block content
 
       - Private keys are created and used in your browser, and are **never sent to or proccessed by our servers**.
       - The transaction terms are stored in the hash portion of the URL, and are never sent to our servers.
+      - The transaction construction and signing are done locally.
 
       Some data is sent to the server in order to enable communication between users, using the server
       as a proxy to pass messages around.
-      The data is sent to the other parties and discarded immediately, and no permenent copy ever saved.
+      The data is sent to the other parties and discarded immediately, and no permenent copy is ever saved.
       This is kept to the absolute required minimum, and the data is not of sensitive nature.
 
       The data that is sent to the server is:
 
       - During the initial keys/signature exhchange, the party that joins the arbitration
         sends his ***public* key**, his **signature** and the **triple-SHA256 of the multisig
-        script** (to verify both parties ended up with the same script, without revealing it to the server)
-        to the other party.
-      - When a transaction is created, the **partially signed transaction** is sent to the other parties.
+        script** (to verify both parties ended up with the same script)
+        to the other party via the server.
+      - When a transaction is created, the **partially signed transaction** is sent to the other parties via the server.
         This is the same transaction that later becomes part of the blockchain, and thus
         mostly considered public information.
 

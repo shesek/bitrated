@@ -126,7 +126,9 @@ tx_builder = (el, { key, trent, multisig, script, pubkeys, channel }, cb) ->
       # Ignore empty addresses
       return unless address = $this.find('[name=address]').val().trim()
 
-      amount = +parseValue $this.find('[name=value]').val().trim()
+      unless amount = +parseValue $this.find('[name=value]').val().trim()
+        throw new Error 'BTC amount cannot be left blank. Please fill in the amount of coins you want to send.'
+
       try out_script = create_out_script address
       catch err
         $this.find('[name=address]').focus()

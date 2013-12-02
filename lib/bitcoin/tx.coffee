@@ -22,7 +22,7 @@ sign_tx = (priv, tx, multisig_script, hash_type=SIGHASH_ALL) ->
 
     # Detect previous signature and its index in the pubkeys list
     if inv.script.buffer.length
-      unless prev_sigs = get_prev_sigs inv.script
+      unless (prev_sigs = get_prev_sigs inv.script).length
         throw new Error 'Invalid transaction script, cannot find previous sig'
       unless prev_sigs.length is 1
         throw new Error 'Transaction is already final, no more signatures needed'
@@ -45,11 +45,12 @@ sign_tx = (priv, tx, multisig_script, hash_type=SIGHASH_ALL) ->
     inv.script = sign_input i, inv
   tx
 
-# Verify the 2-of-3 transaction tx is signed by pub
+# Verify the 2-of-3 transaction is signed by pub
 verify_tx_sig = (pub, tx, multisig_script, hash_type=SIGHASH_ALL) ->
   verify_input = (i, inv) ->
     hash = tx.hashTransactionForSignature multisig_script, i, hash_type
     prev_sigs = get_prev_sigs inv.script
+    return false unless prev_sigs.length
     return true for prev_sig in prev_sigs when recover_sig_pubkey prev_sig[...-1], hash, pub
     false
 
@@ -60,6 +61,7 @@ verify_tx_sig = (pub, tx, multisig_script, hash_type=SIGHASH_ALL) ->
 get_prev_sigs = (script) ->
   if script.chunks[0] is OP_0 and script.chunks.length >= 3
     script.chunks[1...-1]
+  else []
 
 # Recover the pubkey used to sign an transaction input
 #

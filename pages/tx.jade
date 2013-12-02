@@ -3,11 +3,12 @@ extend ../views/layout
 append template-vars
   modern_browser_only = true
 
+append head
+  if testnet
+    meta(name='testnet-api', content=testnet_api)
+
 append css
   link(rel='stylesheet', href='tx.css')
-
-append head
-  meta(name='blockchain-api', content=blockchain_api)
 
 append scripts
   script(src='tx/multisig.js')

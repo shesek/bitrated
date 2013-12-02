@@ -12,6 +12,9 @@ html
       | Bitrated
     base(href=url)
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    if testnet
+      meta(name='testnet', content=1)
+
     block css
       link(rel='stylesheet', href='lib/bootstrap/css/flatly.min.css')
       link(rel='stylesheet', href='lib/bootstrap/css/bootstrap-responsive.min.css')
@@ -61,5 +64,7 @@ html
         Contributions are welcome.
 
         &copy; 2013 Bitrated.
-        <span class="text-error">Alpha release - **running on TestNet**</span>
-        <a href="https://en.bitcoin.it/wiki/Testnet"><i class="icon-question-sign"></i></a>
+      if testnet
+        :markdown
+          <strong class="text-error">Running on Testnet</strong>
+          [<i class="icon-question-sign"></i>](https://en.bitcoin.it/wiki/Testnet)

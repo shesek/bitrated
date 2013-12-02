@@ -12,7 +12,8 @@ SPIN_MIN = 1000
 # Initialize the transaction builder interface
 tx_builder = (el, { key, trent, multisig, script, pubkeys, channel }, cb) ->
   display_error = error_displayer el
-  unspent = balance = null
+  balance = null
+  unspent = []
   addresses = el.find('.addresses')
 
   get_fee = -> parseValue el.find('input[name=fees]').val()

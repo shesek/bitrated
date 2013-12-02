@@ -5,8 +5,7 @@ getSECCurveByName = require 'bitcoinjs-lib/src/jsbn/sec'
 { bytesToHex, hexToBytes } = convert
 { OP_HASH160, OP_EQUAL } = Opcode.map
 
-TESTNET = true # always enabled for alpha
-# TESTNET = document?.location? and !!~document.location.hash.indexOf('TESTNET')
+TESTNET = if window? then !!$('meta[name=testnet]').attr('content') else !!process.env.TESTNET
 
 ADDR_PUB  = if TESTNET then 0x6f else 0x00
 ADDR_P2SH = if TESTNET then 0xc4 else 0x05

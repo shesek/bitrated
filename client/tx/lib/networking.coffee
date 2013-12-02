@@ -1,9 +1,11 @@
-{ Transaction, Util: { parseValue, bytesToNum }, convert: { hexToBytes, bytesToHex, bytesToBase64, base64ToBytes } } = require 'bitcoinjs-lib'
-{ triple_sha256, verify_sig, create_multisig } = require '../../../lib/bitcoin/index.coffee'
+{ Transaction, convert: { hexToBytes, bytesToHex, bytesToBase64, base64ToBytes } } = require 'bitcoinjs-lib'
+{ triple_sha256, verify_sig, create_multisig, TESTNET } = require '../../../lib/bitcoin/index.coffee'
 { decode_raw_tx } = require '../../../lib/bitcoin/tx.coffee'
 Key = require '../../../lib/bitcoin/key.coffee'
 
-BLOCKCHAIN_API = $('meta[name=blockchain-api]').attr('content')
+{ tx_broadcast, load_unspent } = if TESTNET then require './blockchain/testnet.coffee' \
+                                            else require './blockchain/bci.coffee'
+
 
 get_socket = do (socket=null) -> -> socket ||= require('socket.io-client').connect '/'
 
@@ -71,22 +73,6 @@ tx_request = (channel, tx, cb) ->
   tx = bytesToBase64 tx.serialize()
   get_socket().emit 'msg', channel, tx
   cb null
-
-# Send transaction to Bitcoin network using blockchain.info's pushtx
-tx_broadcast = (tx, cb) ->
-  tx = bytesToHex tx.serialize()
-  $.post(BLOCKCHAIN_API + 'pushtx', { tx })
-    .fail((xhr, status, err) -> cb "Cannot pushtx: #{ xhr.responseText or err }")
-    .done((data) -> cb null, data)
-
-# Load unspent inputs (from blockchain.info)
-load_unspent = (address, cb) ->
-  xhr = $.get BLOCKCHAIN_API + "unspent/#{address}"
-  xhr.done (res) ->
-      unspent = for { txid, n, value, script } in res
-        { hash: txid, index: n, value, script }
-      cb null, unspent
-  xhr.fail (xhr, status,err) -> cb new Error "Cannot load unspent inputs: #{ xhr.responseText or err}"
 
 module.exports = {
   get_channel

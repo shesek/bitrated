@@ -14,8 +14,9 @@ module.exports = express().configure ->
 
   @locals
     url: @settings.url
-    blockchain_api: process.env.BLOCKCHAIN_API
     pubkey_address: process.env.PUBKEY_ADDRESS
+    testnet: !!process.env.TESTNET
+    testnet_api: process.env.TESTNET_API
     pretty: @settings.env is 'development'
 
   @db = mongoose.connect process.env.MONGO_URI or 'mongodb://localhost/'

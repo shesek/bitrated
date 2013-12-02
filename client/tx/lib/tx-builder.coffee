@@ -141,7 +141,15 @@ tx_builder = (el, { key, trent, multisig, script, pubkeys, channel }, cb) ->
     unless tx.outs.length
       throw new Error 'No output address provided'
 
-    change = tx.total_in - (sum_inputs tx.outs) - get_fee()
+    tx_unspent = tx.total_in - (sum_inputs tx.outs)
+    fees = get_fee()
+
+    if fees > tx_unspent
+      throw new Error 'You did not leave enough funds for the transaction fees.
+                       You can use the "Pay all remaining" button (in the BTC amount dropdown) to pay the maximum amount possible,
+                       after accounting for transaction fees.'
+
+    change = tx_unspent - fees
     if change > 0
       tx.addOutput new TransactionOut
         script: create_out_script multisig

@@ -8,8 +8,8 @@ label Your keys
   .help-block
     :markdown
       This field accepts either a public key or a private key.
-      For improved security, you can replace it with a [locally generated public key](security.html#keys)
-      and sign your transactions/messages locally.
+      For improved security, you can [replace it with a public key](security.html#keys)
+      and sign your transactions/messages using the standard Bitcoin client.
 
   input.input-block-level(type='text', name='bob', value=bob_priv, placeholder='Public key (hex) or private key (base58)',
         required, pattern='[a-f0-9]{130}|[a-f0-9]{66}|[59cKL][123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{50,51}',

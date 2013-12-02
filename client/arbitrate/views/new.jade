@@ -61,9 +61,6 @@
         For improved security, you can replace it with a [locally generated public key](security.html#keys)
         and sign your transactions/messages locally.
 
-        Please note that the key is stored in the URL, and as such is saved to your browsing history.
-        To avoid that, switch to incognito/private browsing mode.
-
     input.input-block-level(type='text', name='key', value=privkey, placeholder='Public key (hex) or private key (base58)',
               required, pattern='^([a-f0-9]{130}|[a-f0-9]{66}|[59cKL][123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{50,51})$',
               autocomplete='off')
@@ -108,6 +105,12 @@
       - Twitter: https://twitter.com/trent
       - Facebook: http://www.facebook.com/trent
       - Reddit: http://www.reddit.com/user/trent
+
+    .help-block
+      :markdown
+        <i class="icon-exclamation-sign"></i>
+        Please note that sensitive information is going to be saved in the URL, and as such to your browsing history.
+        To avoid that, switch to incognito/private browsing mode (Chrome: Ctrl-Shift-N, Firefox: Ctrl-Shift-P).
 
     button.btn.btn-large.btn-primary.has-spinner(type='submit')
       span.spinner: i.icon-refresh.icon-spin.icon-white

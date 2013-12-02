@@ -37,6 +37,8 @@ form.tx-dialog.modal.hide.fade
         li: a(href='#provide-private', data-toggle='tab') Enter private key 
       div.tab-content
         .tab-pane.active#sign-locally
+          p Add the multisig address:
+          pre bitcoind addmultisigaddress 2 '#{JSON.stringify(pubkeys)}'
           p Sign the transaction (you can verify it with "decoderawtransaction" first):
           pre bitcoind signrawtransaction #{rawtx}
           p Paste the output here:

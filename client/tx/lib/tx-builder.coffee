@@ -10,7 +10,7 @@
 SPIN_MIN = 1000
 
 # Initialize the transaction builder interface
-tx_builder = (el, { key, trent, multisig, script, channel }, cb) ->
+tx_builder = (el, { key, trent, multisig, script, pubkeys, channel }, cb) ->
   display_error = error_displayer el
   unspent = balance = null
   addresses = el.find('.addresses')
@@ -73,7 +73,7 @@ tx_builder = (el, { key, trent, multisig, script, channel }, cb) ->
   show_dialog = (tx, initiator) ->
     try
       tx.total_in ?= calc_total_in tx, unspent
-      tx_dialog { key, script, multisig, tx, el, initiator },
+      tx_dialog { key, script, multisig, pubkeys, tx, el, initiator },
                 iferr display_error, cb_success
     catch err then display_error err
 
@@ -149,7 +149,7 @@ tx_builder = (el, { key, trent, multisig, script, channel }, cb) ->
 
 # Display the transaction dialog
 tx_dialog = do (view=require '../views/dialogs/confirm-tx.jade') ->
-  ({ key, tx, script, initiator, multisig }, cb) ->
+  ({ key, tx, script, initiator, multisig, pubkeys }, cb) ->
     unless tx.ins.length
       return cb new Error 'No inputs provided'
     unless tx.outs.length
@@ -161,7 +161,7 @@ tx_dialog = do (view=require '../views/dialogs/confirm-tx.jade') ->
                            it might not be confirmed yet.
                            You can refresh the balance to check for new payments.'
 
-    dialog = $ view {
+    dialog = $ view
       outs: for { script: out_script, value } in tx.outs
         address: out_address = get_script_address out_script
         value: formatValue value
@@ -171,9 +171,8 @@ tx_dialog = do (view=require '../views/dialogs/confirm-tx.jade') ->
       total_in: formatValue tx.total_in
       fees: formatValue tx.total_in - total_out
       rawtx: bytesToHex tx.serialize()
-      initiator
       final: initiator is 'other'
-    }
+      pubkeys: pubkeys.map bytesToHex
 
     display_error = error_displayer dialog.find('.modal-body .errors')
 

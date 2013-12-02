@@ -13,36 +13,20 @@
         provided his public key, the arbitrator public key and the terms of agreement.
 
         Clicking "I accept" will sign the terms with your key, send the signature
-        and your public key to the other party, and start the arbitrated transaction.
+        and your public key to the other party and start the arbitrated transaction.
 
         First time here? [Click here](faq.html) to learn more about how this works.
 
-      label Arbitrator public key
+      label Arbitrator
       .help-block
         :markdown
-           The arbitrator was choosen by the other party.
-           Make sure his choice is acceptable,
-           and verify the public key against a reliable source.
+           The arbitrator was chosen by the other party.
+           Make sure his choice is acceptable and verify the public key is correct.
       pre.trent-pubkey= trent
       include ./includes/arbitrator-info
 
-      label Your public/private key
-      .help-block
-        :markdown
-          This random private key was created for you and **should be kept secret**.
-          For improved security, you can replace it with a [locally generated public key](security.html#keys)
-          and sign your transactions/messages locally.
+      include ./includes/your-keys
 
-          Please note that the key is stored in the URL, and as such is saved to your browsing history.
-          To avoid that, switch to incognito/private browsing mode.
-      input.input-block-level(type='text', name='bob', value=bob_priv, placeholder='Public key (hex) or private key (base58)',
-              required, pattern='^([a-f0-9]{130}|[a-f0-9]{66}|[59cKL][123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{50,51})$',
-              autocomplete='off')
-      .muted
-        :markdown
-          <i class="icon-lock"></i>
-          **Private keys are never processed by our servers.**
-          See our [security policy](/security.html) for more information.
       label Terms of agreement
       .help-block
         :markdown
@@ -53,12 +37,18 @@
           Bitcoin addresses, description of the transaction, the conditions upon which
           the transaction is valid, and any other agreed upon terms.
       pre.terms= terms
-    p.badge.badge-success.pull-right.signed(data-toggle='popover', data-html, data-content=proof_popover)
-      | <i class="icon-ok-sign icon-white"></i> Signed by other party 
+      p.badge.badge-success.pull-right.signed(data-toggle='popover', data-html, data-content=proof_popover)
+        | <i class="icon-ok-sign icon-white"></i> Signed by other party
+
+    .help-block
+      :markdown
+        <i class="icon-exclamation-sign"></i>
+        Please note that sensitive information is going to be saved in the URL, and as such to your browsing history.
+        To avoid that, switch to incognito/private browsing mode (Chrome: Ctrl-Shift-N, Firefox: Ctrl-Shift-P).
 
     button.btn.btn-large.btn-primary.has-spinner(type='submit')
       span.spinner: i.icon-refresh.icon-spin.icon-white
       |  I accept
   .muted
     :markdown
-      By using this service, you agree to [Bitrated terms of services](/terms.html).
+      By using this service, you agree to [Bitrated terms of service](/terms.html).

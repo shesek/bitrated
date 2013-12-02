@@ -1,14 +1,20 @@
 .modal.hide.fade
-  .modal-body
+  .modal-header
     h3 Awaiting other party...
+  
+  .modal-body
     :markdown
-      Provide the following URL to the other party.
-      It allows him to send you his public key and signature.
-      This page will be updated automatically when it arrives.
+      Please provide the following URL to the other party for confirmation of the terms.
+      This page will be updated automatically when the other party agrees to proceed.
+
+      Closing this page will cancel the transaction.
+
     pre.url= alice_url
-    :markdown
-      This URL contains your *public* key, the arbitrator public key, the terms and your digital
-      signature of the terms.
+
+    .muted
+      :markdown
+        This URL contains your *public* key, the arbitrator public key, the terms and your digital
+        signature of the terms.
 
   .modal-footer
     button.btn(data-dismiss='modal') Cancel transaction

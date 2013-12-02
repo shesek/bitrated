@@ -2,14 +2,17 @@
   .modal-header
     h3 Heads up!
   .modal-body
-    p.
-      Make sure to keep a safe copy of all three public keys, your private key,
-      the terms and the signature. They're required for releasing the funds or
-      starting a dispute, and <strong>cannot be recovered by any means</strong>.
-    p All this information
-      if !has_priv
-        | , <strong>except the private key which you should have saved elsewhere</strong>,
-      |  is embedded in the current page URL. You can bookmark the page, or copy the URL below:
+    :markdown
+      Make sure to keep a safe copy of the current page URL.
+      It contains all the information required for releasing the funds or
+      starting a dispute, and **cannot be recovered by any means**.
+    
+    if !has_priv
+      :markdown
+        You provided us with your public key only.
+        **You should have a safe copy of the private key, in addition to the URL**.
+
+    p You can simply bookmark this page (Ctrl-D), or copy the URL below:
     pre.url= bob_url 
     if has_priv
       p: strong This URL includes your private key and should be kept secret.

@@ -1,0 +1,21 @@
+label Your keys
+.help-block
+  :markdown
+    A unique pair of keys for the arbitrated transaction was created for you.
+    If you wish to modify your keys, click [show advanced options](#advanced).
+      
+.keys-advanced
+  .help-block
+    :markdown
+      This field accepts either a public key or a private key.
+      For improved security, you can replace it with a [locally generated public key](security.html#keys)
+      and sign your transactions/messages locally.
+
+  input.input-block-level(type='text', name='bob', value=bob_priv, placeholder='Public key (hex) or private key (base58)',
+        required, pattern='[a-f0-9]{130}|[a-f0-9]{66}|[59cKL][123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{50,51}',
+        autocomplete='off')
+.muted
+  :markdown
+    <i class="icon-lock"></i>
+    **Private keys never touch our servers.**
+    See our [secuity policy](/security.html) for more information.

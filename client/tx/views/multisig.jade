@@ -6,7 +6,7 @@ include ../../views/mixin/copy.jade
 - proof_popover += '</div>'
 
 .row-fluid
-  .span5.tx-details
+  .span5.tx-details.advanced-off
     h3 Transaction details
     //label Terms of agreement:
     pre.terms= terms
@@ -16,38 +16,39 @@ include ../../views/mixin/copy.jade
       p.badge.badge-success.pull-right.signed(data-toggle='popover', data-html, data-content=proof_popover)
         | <i class="icon-ok-sign icon-white"></i> Signed by #{is_dispute ? 'Party B' : 'other party'}
 
-    .pubkeys
-      mixin pubkey(key, address)
-        pre= key
-        p.help-block Address: #{address}
-      ul.nav.nav-tabs
-        li: label Public keys:
-        li.active: a(href='#pubkey-bob', data-toggle='tab')= is_dispute ? 'Party A' : 'Yours'
-        li: a(href='#pubkey-alice', data-toggle='tab')= is_dispute ? 'Party B' : 'Other party'
-        li: a(href='#pubkey-trent', data-toggle='tab') Arbitrator
-      div.tab-content
-        .tab-pane.active#pubkey-bob: +pubkey(bob, bob_address)
-        .tab-pane#pubkey-alice: +pubkey(alice, alice_address)
-        .tab-pane#pubkey-trent: +pubkey(trent, trent_address)
+    .advanced
+      .pubkeys
+        mixin pubkey(key, address)
+          pre= key
+          p.help-block Address: #{address}
+        ul.nav.nav-tabs
+          li: label Public keys:
+          li.active: a(href='#pubkey-bob', data-toggle='tab')= is_dispute ? 'Party A' : 'Yours'
+          li: a(href='#pubkey-alice', data-toggle='tab')= is_dispute ? 'Party B' : 'Other party'
+          li: a(href='#pubkey-trent', data-toggle='tab') Arbitrator
+        div.tab-content
+          .tab-pane.active#pubkey-bob: +pubkey(bob, bob_address)
+          .tab-pane#pubkey-alice: +pubkey(alice, alice_address)
+          .tab-pane#pubkey-trent: +pubkey(trent, trent_address)
 
-    label Multisig bitcoin address:
-    pre= multisig
+      if bob_priv
+        label Your private key:
+        pre.blurry= bob_priv
+        p.muted The private key allows you to control the funds, and <strong>should be kept secret</strong>.
 
-    if bob_priv
-      label Your private key:
-      pre.blurry= bob_priv
-      p.muted The private key allows you to control the funds, and <strong>should be kept secret</strong>.
-
-    if bob_priv
-      label Import multisig address and private key to bitcoin-qt/bitcoind wallet:
-      pre bitcoind importprivkey <span class="blurry">#{bob_priv}</span> && bitcoind addmultisigaddress 2 '#{JSON.stringify(pubkeys)}'
-    else 
-      label Import multisig address to bitcoind wallet:
-      pre bitcoind addmultisigaddress 2 '#{JSON.stringify(pubkeys)}'
-      if !is_dispute
-        p You're using a private key that was not generated with the website. Make sure you have a
-          | safe copy of it. When you'll want to release the funds, you'll be requested to provide it
-          | or to sign the transaction locally.
+      if bob_priv
+        label Import multisig address and private key to bitcoin-qt/bitcoind wallet:
+        pre bitcoind importprivkey <span class="blurry">#{bob_priv}</span> && bitcoind addmultisigaddress 2 '#{JSON.stringify(pubkeys)}'
+      else
+        label Import multisig address to bitcoind wallet:
+        pre bitcoind addmultisigaddress 2 '#{JSON.stringify(pubkeys)}'
+        if !is_dispute
+          p You're using a private key that was not generated with the website. Make sure you have a
+            | safe copy of it. When you'll want to release the funds, you'll be requested to provide it
+            | or to sign the transaction locally.
+    label.checkbox
+      input.show-advanced(type='checkbox')
+      | Advanced mode
 
   .span7
     if !is_dispute

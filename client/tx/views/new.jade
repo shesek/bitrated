@@ -1,45 +1,26 @@
 .container-page
-  // form is processed client-side, should never be submitted anywhere
+  //- the form is processed client-side, should never be submitted anywhere
   form(action='http://')
     fieldset
       legend Start new arbitrated transaction 
 
       :markdown
-        This page allows you to setup a new arbitrated transaction.
-
-        You'll first need to prepare the terms with the other party
-        and find an arbitrator that is acceptable with both of you.
+        Before starting the transaction, prepare the terms with the other party
+        and agree on an arbitrator that is acceptable with both of you.
         After that, you can use this page to setup your keys and prepare
         the multisig address.
 
         First time here? [click here](faq.html) to learn more about how this works.
 
-      label Arbitrator public key
+      label Arbitrator
       .help-block
         :markdown
-          **Required.** The owner of this public key will be given power to arbitrate the transaction.
-          You can browse the list of available arbitrators [here](/u), or use any other public key.
-      input.input-block-level(type='text', name='trent', placeholder='Public key (hex)', value=trent,
-                              required, pattern='^([a-f0-9]{130}|[a-f0-9]{66})$')
+          **Required.** You can browse the list of available arbitrators [here](/u), or use any other public key.
+      input.input-block-level(type='text', name='trent', placeholder='Username or public key (hex)', value=trent,
+                              required, pattern='[a-zA-Z0-9]{3,15}|[a-f0-9]{130}|[a-f0-9]{66}$')
       include ./includes/arbitrator-info
 
-      label Your public/private key
-      .help-block
-        :markdown
-          This random private key was created for you and **should be kept secret**.
-          For improved security, you can replace it with a [locally generated public key](security.html#keys)
-          and sign your transactions/messages locally.
-
-          Please note that the key is stored in the URL, and as such is saved to your browsing history.
-          To avoid that, switch to incognito/private browsing mode.
-      input.input-block-level(type='text', name='bob', value=bob_priv, placeholder='Public key (hex) or private key (base58)',
-            required, pattern='^([a-f0-9]{130}|[a-f0-9]{66}|[59cKL][123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{50,51})$',
-            autocomplete='off')
-      .muted
-        :markdown
-          <i class="icon-lock"></i>
-          **Private keys are never processed by our servers.**
-          See our [secuity policy](/security.html) for more information.
+      include ./includes/your-keys
 
       label Terms of agreement
       .help-block
@@ -48,9 +29,8 @@
           Bitcoin addresses, description of the transaction, the conditions upon which
           the transaction is valid and any other agreed upon terms.
 
-          The terms are signed with both parties private key, and the signatures
-          are exchanged. In case of dispute, this allows you to prove the other
-          party agreed to those terms.
+          You'll recieve a signature that proves the other party accepted to those terms,
+          and provide your own signature to the other party.
       ul.nav.nav-tabs
         li.active: a(href='#text', data-toggle='tab') Text
         li: a(href='#file', data-toggle='tab') File
@@ -91,7 +71,13 @@
           p.help-block You can hash the terms locally and input the hash here:
           input.input-block-level(type='text', name='terms_hash')
 
+    .help-block
+      :markdown
+        <i class="icon-exclamation-sign"></i>
+        Please note that sensitive information is going to be saved in the URL, and as such to your browsing history.
+        To avoid that, switch to incognito/private browsing mode (Chrome: Ctrl-Shift-N, Firefox: Ctrl-Shift-P).
+
     button.btn.btn-large.btn-primary(type='submit') Start transaction 
   .muted
     :markdown
-      By using this service, you agree to [Bitrated terms of services](/terms.html).
+      By using this service, you agree to [Bitrated terms of service](/terms.html).

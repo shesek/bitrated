@@ -71,6 +71,10 @@ if _is_new then do ->
   dialog.on 'hidden', -> dialog.remove()
   dialog.modal backdrop: 'static', keyboard: false
 
+# Advanced mode
+el.find('.show-advanced').change ->
+ el.find('.tx-details').toggleClass 'advanced-off advanced-on'
+
 # Initialize the transaction builder
 tx_builder el.find('.tx-builder'), {
   multisig, script, channel

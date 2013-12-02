@@ -36,23 +36,45 @@ arb_info.find('button').click ->
       arb_info.addClass('loaded').find('.username').html "<a href='/u/#{user.username}'>#{user.username}</a>"
     else arb_info.addClass('not-found')
 
-el.find('input[name=trent]').on 'keyup change', ->
-  arb_info.removeClass('loaded not-found')
+el.find('input[name=trent]').on('keyup change', ->
+  arb_info
+    .removeClass('loaded not-found')
+    # Strings shorter than 15 (maximum username length) are considered usernames,
+    # in which case the button shouldn't be displayed.
+    .css('display', if @value.length<=15 then 'none' else 'block')
+).change() # trigger it once to decide if the button should be displayed initially
 
 # Handle form submission
 form = el.find('form').submit (e) ->
   e.preventDefault()
   try
     bob = Key.from_string el.find('input[name=bob]').val()
-    trent = Key.from_pubkey el.find('input[name=trent]').val()
-    get_terms form, iferr display_error, (terms) ->
-      exchange { bob, trent, terms }
+    get_trent_pubkey iferr display_error, (trent) ->
+      get_terms form, iferr display_error, (terms) ->
+        exchange { bob, trent, terms }
   catch err then display_error err
+
+# Advanced options
+el.find('a[href="#advanced"]').click (e) ->
+  e.preventDefault()
+  el.find('.keys-advanced').toggle 'slow'
+
+# Get the arbitrator public key
+get_trent_pubkey = (cb) ->
+  trent_str = el.find('input[name=trent]').val()
+  # Strings longer than 15 (maximum username length) are considered public keys
+  if trent_str.length > 15
+    try cb null, Key.from_pubkey trent_str
+    catch err then cb err
+  else
+    load_user trent_str, iferr cb, (user) ->
+      return cb new Error 'Arbitrator not found.' unless user?
+      cb null, Key.from_pubkey user.pubkey
 
 # Get the provided terms from text, file or hash
 get_terms = (form, cb) ->
   switch
-    when val = el.find('textarea:visible[name=terms]').val()?.trim()
+    when val = form.find('textarea:visible[name=terms]').val()?.trim()
       cb null, UTF8.stringToBytes val
     when file = form.find('input:visible[name=terms_file]')[0]?.files[0]
       reader = new FileReader

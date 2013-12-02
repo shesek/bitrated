@@ -80,3 +80,8 @@ el.find('form').submit (e) ->
       clearTimeout ack_timer
       return display_error err if err?
       navto 'tx.html', build_tx_args { bob, alice, trent, terms, proof, _is_new: true }, true
+
+# Advanced options
+el.find('a[href="#advanced"]').click (e) ->
+  e.preventDefault()
+  el.find('.keys-advanced').toggle 'slow'

@@ -1,5 +1,11 @@
 @import spinner
 
+transition()
+  transition arguments
+  -webkit-transition arguments
+  -moz-transition arguments
+  -o-transition arguments
+
 .tx-details
   label
     font-weight normal
@@ -20,6 +26,25 @@
       overflow visible
     .nav-tabs>.active>a, .nav-tabs>.active>a:hover, .nav-tabs>.active>a:focus
       background-color whiteSmoke
+  .terms
+    transition height 0.5s, max-height 0.5s  
+  .advanced
+    overflow hidden
+    transition height 0.5s, opacity 0.5s
+
+  &.advanced-off
+    .terms
+      height 52em
+      max-height 52em
+    .advanced
+      height 0
+      opacity 0
+  &.advanced-on
+    .terms
+      height 25em
+      max-height 25em
+    .advanced
+      opacity 1
       
 .pay
   .multisig-address
@@ -75,6 +100,9 @@
 
     &:hover
       text-decoration underline
+
+.keys-advanced
+  display none
 
 .arbitrator-info
   .loaded-data, .not-found-msg

@@ -30,10 +30,6 @@ tx_builder = (el, { key, trent, multisig, script, channel }, cb) ->
     $(this).closest('.address').remove()
     do update_change
 
-  # Address dropdown items
-  el.on 'click', '[data-address]', ->
-    $(this).closest('.address').find('input[name=address]').val $(this).data('address')
-
   # Pay remaining, minus fees
   el.on 'click', '.pay-remaining', ->
     val_el = $(this).closest('.address').find('[name=value]')

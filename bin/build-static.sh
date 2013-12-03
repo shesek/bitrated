@@ -6,7 +6,7 @@
 echo "Preparing target..."
 rm -r $TARGET
 mkdir $TARGET
-mkdir $TARGET/{tx,arbitrate}
+mkdir $TARGET/{tx,arbitrate,help}
 
 echo "Copying static files..."
 cp -r public/{lib,img,lato} $TARGET
@@ -30,4 +30,5 @@ read -d '' LOCALS <<JSON
   }
 JSON
 jade pages/*.jade -o $TARGET --obj "$LOCALS"
+jade pages/help/*.jade -o $TARGET/help --obj "$LOCALS"
 

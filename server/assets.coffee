@@ -20,4 +20,4 @@ module.exports = ->
   @get '/arbitrate/manage.js', browserify '../client/arbitrate/manage.coffee'
 
   @get '/', (req, res) -> res.render join pages_dir, 'index'
-  @get '/*.html', (req, res) -> res.render join pages_dir, basename req.url, '.html'
+  @get '/*.html', (req, res) -> res.render join pages_dir, req.url.replace /\.html$/, ''

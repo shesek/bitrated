@@ -1,0 +1,36 @@
+extend ../../views/layout
+
+prepend title
+  | Help - Transaction terms | 
+
+block content
+  .container-page
+    :markdown
+      ## Help - Transaction terms
+
+      The transaction terms should provide the arbitrator will all the information he needs in order to resolve possible disputes.
+
+      Each party is provided with a digital signature of terms signed by the other party, which is then sent to the arbitrator in case of dispute
+      and allows to prove that both parties agreed to the terms.
+
+      Deciding what should be included in the terms is up to the parties involved in the transaction,
+      but here are some common things you should consider including:
+
+      - Identifying information for both parties.
+      - Contact information (phone numbers, email/bitmessage addresses, etc).
+      - Payment address for the seller (where the funds should be sent in case of a succesful transaction).
+      - Refund address for the buyer (where the funds should be returned to).
+      - Information about the product/service beind sold.
+      - Known defects with the product that the buyer was made aware of.
+      - The agreed upon delivery method.
+      - How to handle cases where one party isn't responsive
+        (e.g. if one party does not respond to the arbitrator inquiries within 2 weeks, the funds should be sent to the other party).
+      - If the arbitrator offers multiple tiers of service, which one was chosen for the transaction.
+      - How are fees (both Bitcoin transaction fees and the arbitrator fees in case of dispute)
+        are split between the buyer and the seller.
+      - If there are any relevant files (e.g. pictures of the product), you can create a zip file with them
+        and a text file containing the terms, and use that zip with the "File" tab.
+        In this case, both parties should have a safe and exact local copy of the zip file to send the arbitrator
+        in case of dispute. Any changes made to any of the files in the zip would invalidate it.
+      - Any other agreed upon terms or conditions you feel would make it easier for the arbitrator
+        to rule in case of dispute.

@@ -1,0 +1,43 @@
+extend ../../views/layout
+
+prepend title
+  | Help - Arbitrator terms | 
+
+block content
+  .container-page
+    :markdown
+      ## Help - Arbitrator terms
+
+      The arbitrator terms should provide your customers will all the information required in order to use your services.
+
+      When you publish your terms using this website, you will also be publishing a digital signature that proves the terms
+      were written by you.
+
+      Deciding what should be included in the terms is up to you,
+      but here are some common things you should consider including:
+
+      - Identifying information.
+        To verify your identity, you can also publish your public key in other profiles you own
+        (like Reddit, Twitter, Facebook, bitcointalk, bitcoin-otc, etc) and include links
+        to those messages in the terms.
+      - Contact information (phone number, email/bitmessage address, etc).
+      - Your fees:
+        - This could be either a fixed amount, or as a percentage or the transaction.
+        - You can choose to charge for all transactions (usually a smaller fee),
+          only for disputed transactions (usually an higher fee), or a combination of both.
+        - When and how you're expecting to be paid:
+          - If you're charging fees for all transactions, you should be paid in advance
+            when the transaction begins and ask the parties to contact you for the payment
+            arrangments prior to starting the transaction.
+          - If you're charging fees for disputed transactions only, you can be paid
+            from the multisig balance when you're first contacted about the dispute.
+            The party approaching you could sign a transaction paying you your fees,
+            and return the rest of the funds to the multisig as change.
+            Make sure not to investigate the case or give your ruling prior to being paid.
+      - Whether you should be contacted prior to making a transaction with you as the arbitrator.
+      - Expected response time.
+      - How do you handle cases where one party isn't responsive
+        (e.g. if one party does not respond to your inquiries within 2 weeks, the funds would be sent to the other party).
+      - If you're offering multiple tiers of service, describe each of them and provide names for the tiers,
+        so that the parties could easily mention that in their terms.
+      - Any other information about your dispute resolution process.

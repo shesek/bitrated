@@ -25,9 +25,9 @@
       label Terms of agreement
       .help-block
         :markdown
-          **Required.** The terms should include contact information for both parties,
-          Bitcoin addresses, description of the transaction, the conditions upon which
-          the transaction is valid and any other agreed upon terms.
+          **Required.** The terms should include all the information required for the arbitrator
+          to resolve disputes.
+          See our [list of common things to include](help/tx-terms.html) for more information.
 
           You'll receive a signature that proves the other party accepted those terms,
           and provide your own signature to the other party.
@@ -39,26 +39,7 @@
         .tab-pane.active#text
           p.help-block The terms will be embedded into the page URL, to make it easy to store and share them. 
                      | Limited to 5,000 characters.
-          textarea.input-block-level(name='terms', rows=8, cols=90, maxlength=5000).
-            Example (replace with your own):
-             
-            Bob - the seller
-              Email: bob@gmail.com
-              Phone: 573-265-3743 (GMT +6)
-              Payment address: 18K25Djgv58gKFgxBd9sbjXuh3yamf1mUh
-
-            Alice - the buyer
-              Email: alice@gmail.com
-              Bitmessage: BM-orkCbppXWSqPpAxnz6jnfTZ2djb5pJKDb
-              Refund address: 1Nn8QKSG75zj2jyCKRc9LkYofToFNUwQms
-            
-            Bob is selling a used iPhone 4 to Alice for 10 BTC. Alice is aware that it has a small scratch on the back panel.
-
-            After Alice deposits 10 BTC to the multisig address, the device will be sent via registered mail to 233 Five Points, Easton, MD 21601.
-
-            Once Alice gets it, she'll release the 10 BTC (minus transaction fees) to Bob.
-
-            If one of the parties isn't responsive for over 2 weeks, the funds shall be transferred to the other party.
+          textarea.input-block-level(name='terms', rows=8, cols=90, maxlength=5000)
           p.muted The terms are private and are never uploaded to the server. They're stored in the hash portion of the URL,
                 | and only available to you and people you share URLs with.
         .tab-pane#file

@@ -69,38 +69,15 @@
     label Your terms of service
     .help-block
       :markdown
-        Your terms of service describes your handling of disputes. This should include the fees
-        you're charging, information regarding your dispute resolution process, contact information
-        and identifying information. If you reference external files, make sure to include their hash.
+        Your terms should include your dispute resolution process, the fees you're charging
+        and any other relevant information your customers should know.
+        See our [list of common things to include](help/arbitrator-terms.html) for more information.
 
-        The terms will be signed with your private key in the next page. You should publish
-        your terms along with the signature, to show you're the public key owner.
-        
-    textarea.input-block-level(name='terms', rows=8, required).
-      Example (replace with your own):
 
-      - Name: Trent Arbitr
-      - Fees: 2%, minimum of 0.05 BTC. Should be paid for every transaction, along with the initial payment
-        to the multisig address.
-      - Contact:
-        - Email: trent@gmail.com
-        - Phone: 412-123-4567 (9AM to 6PM, GMT +7)
-        - Bitmessage: BM-orkCbppXWSqPpAxnz6jnfTZ2djb5pJKDb
-      - Response times: up to 3 business days.
+        The terms will be signed with your private key, and the digital signature would be published
+        along with them.
 
-      #### Dispute resolution process
-      I will try to contact both parties to gather information and evidence, and do
-      my best to make rightful judgement.
-
-      Unless specified otherwise in the transaction details, if one of the parties
-      isn't responsive for 1 month, I will transfer all the funds to the other party.
-
-      #### Identity verification
-      To verify my identity, my public key will be posted on:
-
-      - Twitter: https://twitter.com/trent
-      - Facebook: http://www.facebook.com/trent
-      - Reddit: http://www.reddit.com/user/trent
+    textarea.input-block-level(name='terms', rows=8, required, placeholder='Markdown supported', maxlength=10000)
 
     .help-block
       :markdown

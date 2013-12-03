@@ -7,14 +7,10 @@ block content
   .container-page
     :markdown
       ## Security policy
-      We take security very seriously, and desgined the service architecture with security
-      in mind from the ground up. 
 
-      Those are the security measures we take:
-      
       #### SSL encryption
-      To prevent MITM attacks, all data communitation is encrypted with 256-bit SSL.
-      This is the industry standard for encrypting communication.
+      To prevent MITM attacks, all data communication is encrypted with 256-bit SSL.
+      This is the industry standard for encrypting communications.
 
       #### Client-side app
 
@@ -22,18 +18,18 @@ block content
       with the server by managing most of the arbitration process in your browser using
       client-side technology. In particular:
 
-      - Private keys are created and used in your browser, and are **never sent to or proccessed by our servers**.
+      - Private keys are created and used in your browser, and are **never sent to or processed by our servers**.
       - The transaction terms are stored in the hash portion of the URL, and are never sent to our servers.
       - The transaction construction and signing are done locally.
 
       Some data is sent to the server in order to enable communication between users, using the server
       as a proxy to pass messages around.
-      The data is sent to the other parties and discarded immediately, and no permenent copy is ever saved.
+      The data is sent to the other parties and discarded immediately, and no permanent copy is ever saved.
       This is kept to the absolute required minimum, and the data is not of sensitive nature.
 
       The data that is sent to the server is:
 
-      - During the initial keys/signature exhchange, the party that joins the arbitration
+      - During the initial keys/signature exchange, the party that joins the arbitration
         sends his ***public* key**, his **signature** and the **triple-SHA256 of the multisig
         script** (to verify both parties ended up with the same script)
         to the other party via the server.
@@ -117,7 +113,7 @@ block content
       To get sensitive information, he would have to modify the client-side code
       to send back more data to the server.
 
-      For an attacker to succesfully mount such an attack against someone with the
+      For an attacker to successfully mount such an attack against someone with the
       browser extension, he would have to:
 
       1. Gain access to the web server.
@@ -153,7 +149,7 @@ block content
       We don't use any CDNs, never load data with JSONP (which allows executing
       arbitrary code), or even use an analytics service.
 
-      This prevents third party domains from serving mailicious code
+      This prevents third party domains from serving malicious code
       and have it executed under the context of the domain, possibly
       giving them access to sensitive information.
 

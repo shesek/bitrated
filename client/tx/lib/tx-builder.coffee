@@ -50,7 +50,7 @@ tx_builder = (el, { key, trent, multisig, script, pubkeys, channel }, cb) ->
     do update_change
 
   # Update balance
-  el.find('.update-balance').click update_balance = ->
+  update_balance = (cb) ->
     refresh_icon = $(this).find('i').addClass 'icon-spin'
     stop_spin = -> refresh_icon.removeClass 'icon-spin'
     spin_start = Date.now()
@@ -60,18 +60,24 @@ tx_builder = (el, { key, trent, multisig, script, pubkeys, channel }, cb) ->
       if Date.now() - spin_start >= SPIN_MIN then do stop_spin
       else setTimeout stop_spin, SPIN_MIN - (Date.now() - spin_start)
 
-      return display_error err if err?
+      return (cb ? display_error) err if err?
       unspent = _unspent
       balance = sum_inputs unspent
       $('.balance').text (formatValue balance)+' BTC'
       do update_change
+      cb? null
+
+  el.find('.update-balance').click -> update_balance()
   do update_balance
   
   cb_success = cb.bind null, null
 
-  # Helper for displaying the transaction dialog with
-  # all the common options
-  show_dialog = (tx, initiator) ->
+  # Helper for displaying the transaction dialog with all the common options
+  show_dialog = (tx, initiator, updated_unspent=false) ->
+    # For incoming requests, update the unspent input prior to handling the tx request
+    if initiator is 'other' and not updated_unspent
+      return update_balance iferr display_error, ->
+        show_dialog tx, initiator, true
     try
       tx.total_in ?= calc_total_in tx, unspent
       tx_dialog { key, script, multisig, pubkeys, tx, el, initiator },
@@ -106,7 +112,7 @@ tx_builder = (el, { key, trent, multisig, script, pubkeys, channel }, cb) ->
     txid = bytesToHex tx.getHash()
     $(document.createElement 'li')
       .text("#{ txid }")
-      .click(show_dialog.bind null, tx, 'other')
+      .click(-> show_dialog tx, 'other')
       .appendTo($requests.find 'ul')
     $requests.addClass 'has-requests'
 

@@ -111,7 +111,7 @@ tx_builder = (el, { key, trent, multisig, script, pubkeys, channel }, cb) ->
   add_tx_request = do ($requests = $ '.tx-requests') -> (tx) ->
     txid = bytesToHex tx.getHash()
     $(document.createElement 'li')
-      .text("#{ txid }")
+      .html("<span>#{ txid }</span>")
       .click(-> show_dialog tx, 'other')
       .appendTo($requests.find 'ul')
     $requests.addClass 'has-requests'

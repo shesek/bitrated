@@ -5,6 +5,7 @@ and uses the [Crypto-JS](https://code.google.com/p/crypto-js/)
 and [bitcoinjs](http://bitcoinjs.org/) (based on [vbuterin's fork](https://github.com/vbuterin/bitcoinjs-lib))
 libraries, among many others.
 
+Development fund: 1KDZMzoahiAHtAbp8VuVvNahm5SaN3PFXc
 
 ### License
 MIT License -- except for the terms of service (pages/terms.jade),

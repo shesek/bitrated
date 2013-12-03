@@ -39,7 +39,7 @@
         .tab-pane.active#text
           p.help-block The terms will be embedded into the page URL, to make it easy to store and share them. 
                      | Limited to 5,000 characters.
-          textarea.input-block-level(name='terms', rows=8, cols=90, maxlength=5000)
+          textarea.input-block-level(name='terms', rows=8, cols=90, maxlength=5000, required)
           p.muted The terms are private and are never uploaded to the server. They're stored in the hash portion of the URL,
                 | and only available to you and people you share URLs with.
         .tab-pane#file

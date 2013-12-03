@@ -9,7 +9,7 @@ tx_broadcast = (tx, cb) ->
 
 # Load unspent inputs (from blockchain.info)
 load_unspent = (address, cb) ->
-  xhr = $.get "http://blockchain.info/unspent?active=#{address}&cors=true"
+  xhr = $.get "https://blockchain.info/unspent?active=#{address}&cors=true"
   xhr.done (res) ->
     if res.unspent_outputs
       unspent = for { tx_hash, tx_output_n, value, script, confirmations } in res.unspent_outputs when confirmations > 0

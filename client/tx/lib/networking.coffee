@@ -2,12 +2,23 @@
 { triple_sha256, verify_sig, create_multisig, TESTNET } = require '../../../lib/bitcoin/index.coffee'
 { decode_raw_tx } = require '../../../lib/bitcoin/tx.coffee'
 Key = require '../../../lib/bitcoin/key.coffee'
+io = require 'socket.io-client'
 
 { tx_broadcast, load_unspent } = if TESTNET then require './blockchain/testnet.coffee' \
                                             else require './blockchain/bci.coffee'
 
+get_socket = do (socket=null) -> -> socket ||= io.connect '/'
 
-get_socket = do (socket=null) -> -> socket ||= require('socket.io-client').connect '/'
+# Join a channel and re-join if the connection is lost
+#
+# The returned function leaves the channel and stops persisting
+persist_join = (channel) ->
+  socket = get_socket()
+  do join = -> socket.emit 'join', channel
+  socket.on 'reconnect', join
+  leave = ->
+    socket.emit 'part', channel
+    socket.removeListener 'reconnect', join
 
 # Create a deterministic channel name based on the public keys and terms
 get_channel = ({ bob, alice, trent, terms }) ->
@@ -21,7 +32,8 @@ get_channel = ({ bob, alice, trent, terms }) ->
 handshake_listen = (channel, { bob, trent, terms }, cb) ->
   channel = bytesToBase64 channel
   socket = get_socket()
-  socket.emit 'join', channel
+  leave = persist_join channel
+
   socket.once channel, hs_cb = ({ pub: alice, proof, script_hash }, ack_id) ->
     # Sends errors to callback and to the other party (via the server)
     error_cb = (err) ->
@@ -43,8 +55,8 @@ handshake_listen = (channel, { bob, trent, terms }, cb) ->
       socket.emit ack_id, null, ->
         cb null, { alice, proof }
   unlisten = ->
-    socket.emit 'part', channel
     socket.removeListener channel, hs_cb
+    do leave
 
 # Send handshake reply
 handshake_reply = (channel, { pub, proof, script }, cb) ->
@@ -59,13 +71,12 @@ handshake_reply = (channel, { pub, proof, script }, cb) ->
 tx_listen = (channel, cb) ->
   channel = bytesToBase64 channel
   socket = get_socket()
-  socket.emit 'join', channel
+  leave = persist_join channel
   socket.on channel, tx_cb = (base64tx) ->
-    # TODO load total inputs balance
     cb decode_raw_tx base64ToBytes base64tx
   unlisten = ->
-    socket.emit 'part', channel
-    socket.removeListener 'tx:'+channel, tx_cb
+    socket.removeListener channel, tx_cb
+    do leave
 
 # Send transaction request
 tx_request = (channel, tx, cb) ->

@@ -51,7 +51,7 @@ tx_builder = (el, { key, trent, multisig, script, pubkeys, channel }, cb) ->
 
   # Update balance
   update_balance = (cb) ->
-    refresh_icon = $(this).find('i').addClass 'icon-spin'
+    refresh_icon = el.find('.update-balance i').addClass 'icon-spin'
     stop_spin = -> refresh_icon.removeClass 'icon-spin'
     spin_start = Date.now()
     load_unspent multisig, (err, _unspent) ->

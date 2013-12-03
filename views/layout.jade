@@ -63,9 +63,11 @@ html
         [MIT License](https://github.com/shesek/bitrated/blob/master/LICENSE).
         Contributions are welcome.
 
-        &copy; 2013 Bitrated.
-        <span class="text-error">**Beta release** - use with caution.</span>
-      if testnet
-        :markdown
-          <strong class="text-info">Running on Testnet</strong>
-          [<i class="icon-question-sign"></i>](https://en.bitcoin.it/wiki/Testnet)
+      p
+        | &copy; 2013 Bitrated. 
+        strong.text-error Beta release - use with caution. 
+        if testnet
+          span.text-info Running on Testnet
+        else
+          a(href='http://testnet.bitrated.com/') Switch to Testnet
+        a(href='https://en.bitcoin.it/wiki/Testnet'): i.icon-question-sign

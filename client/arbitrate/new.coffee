@@ -38,9 +38,11 @@ form.submit (e) ->
   sign_message key, terms, iferr display_error, (sig) ->
     user = { username, pubkey: key.pub, content: terms, sig }
     signup user, iferr display_error, (res) ->
-      # Add some random data so that the key won't be visible in the URL bar
-      args = _: (randomBytes 160), _is_new: true
-      if key.priv? then args.key_priv = key.priv
+      args = _is_new: true
+      if key.priv?
+        # Add some random data so that the key won't be visible in the URL bar
+        args._ = randomBytes 160
+        args.key_priv = key.priv
       else args.key = key.pub
       navto 'arbitrator.html', args
 

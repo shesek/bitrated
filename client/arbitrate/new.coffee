@@ -27,15 +27,15 @@ form.submit (e) ->
     username = form.find('input[name=username]').val() or throw new Error 'Username is required'
     key = Key.from_string form.find('input[name=key]').val()
     terms = form.find('textarea[name=terms]').val() or throw new Error 'Terms are required'
-    terms_ba = UTF8.stringToBytes terms
 
-    unless username.match /^[a-zA-Z0-9]+$/
-      throw new Error 'Invalid username. Can only contain alphanumeric characters (a-z, A-Z, 0-9)'
+    unless username.match /^[a-zA-Z0-9]{3,15}$/
+      throw new Error 'Invalid username. Can only contain alphanumeric characters (a-z, A-Z, 0-9) 
+                       and be between 3 and 15 characters long.'
   catch err then return display_error err
 
   do start_spinner
 
-  sign_message key, terms_ba, iferr display_error, (sig) ->
+  sign_message key, terms, iferr display_error, (sig) ->
     user = { username, pubkey: key.pub, content: terms, sig }
     signup user, iferr display_error, (res) ->
       # Add some random data so that the key won't be visible in the URL bar

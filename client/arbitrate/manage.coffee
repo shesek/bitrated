@@ -1,8 +1,9 @@
 { render, iferr, error_displayer, parse_query, format_url } = require '../lib/util.coffee'
-{ parse_key_bytes, get_address, ADDR_PRIV } = require '../../lib/bitcoin/index.coffee'
+{ parse_key_bytes, get_address, ADDR_PRIV, ADDR_PUB } = require '../../lib/bitcoin/index.coffee'
 Key = require '../../lib/bitcoin/key.coffee'
-{ load_user } = require '../lib/user.coffee'
+{ load_user, update_user } = require '../lib/user.coffee'
 { Crypto: { util: { randomBytes } } } = require 'bitcoinjs-lib'
+sign_message = require '../sign-message.coffee'
 view = require './views/manage.jade'
 headsup_view = require './views/dialogs/heads-up.jade'
 
@@ -30,8 +31,19 @@ if _is_new then do ->
 
 load_user key.pub, iferr display_error, (user) ->
   return display_error 'User cannot be found' unless user?
-  render $ view {
+  render el = $ view {
     user
+    address: get_address key.pub, ADDR_PUB
     priv: (key.priv? and get_address key.priv, ADDR_PRIV)
   }
 
+  el.find('.update-terms').submit (e) ->
+    e.preventDefault()
+    $this = $ this
+    saved_message = $this.find('.saved-success').hide()
+    sign_message key, terms, iferr display_error, (sig) ->
+      button = $this.find('button').addClass('active').attr('disabled', true)
+      update_user user.username, terms, sig, (err) ->
+        button.removeClass('active').attr('disabled', false)
+        return display_error err if err?
+        saved_message.show()

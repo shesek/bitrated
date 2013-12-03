@@ -9,6 +9,7 @@ view = require './views/sign-message-dialog.jade'
 #
 # If a public key is given, popup a dialog instructing the user to sign offline
 sign_message_any = (key, message, cb) ->
+  message = UTF8.stringToBytes message if typeof message is 'string'
 
   try
     if key.priv?     then cb null, key.sign_message message

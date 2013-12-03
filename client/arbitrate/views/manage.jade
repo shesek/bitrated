@@ -1,8 +1,10 @@
 .container-page
   h3 Private user info
 
-  p This page contains private account information and should be kept secret.
-    | Your public URL can be found below. 
+  :markdown
+    This page contains private account information and **should be kept secret**.
+    Your public URL can be found below. 
+
   label Username:
   p= user.username
 
@@ -16,11 +18,17 @@
 
   label Public key:
   pre= user.pubkey
-  p.muted To allow you to arbitrate a transaction, the payments will be
+  p.muted To allow you to arbitrate transactions, the payments will be
         | made to a multisig address with this public key.
 
   label Terms:
-  pre.terms= user.content
+  form.update-terms(action='http://')
+    textarea.input-block-level(name='terms', rows=8, required, placeholder='Markdown supported', maxlength=10000)= user.content
+    button.btn.has-spinner(type='submit')
+      span.spinner: i.icon-refresh.icon-spin.icon-white
+      |  Update terms
+    = ' '
+    span.text-info.saved-success Saved!
 
   label Signature:
   pre= user.sig

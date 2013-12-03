@@ -42,7 +42,7 @@ module.exports = ({ models, locals }) -> express().configure ->
         else if ~err.message.indexOf 'E11000 duplicate key error index'
           res.send 422, message: 'Username or public key is already used'
         else next err
-      else res.redirect 303, user._id
+      else res.send 201
 
   # Profile
   @get '/:user', (req, res, next) ->
@@ -57,9 +57,9 @@ module.exports = ({ models, locals }) -> express().configure ->
                            #{user.content}"""
 
   # Update profile
-  @patch '/:user', (req, res, next) ->
-    req.user.set content: req.body.content, sig: body.sig
-    user.save iferr next, -> res.redirect user._id
+  @post '/:user', (req, res, next) ->
+    req.user.set content: req.body.content, sig: req.body.sig
+    req.user.save iferr next, -> res.send 204
 
   # User list
   user_list = (req, res, next) ->

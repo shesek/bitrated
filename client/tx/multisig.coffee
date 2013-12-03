@@ -1,5 +1,5 @@
 { Util, convert: { bytesToHex } } = require 'bitcoinjs-lib'
-{ get_address, create_multisig, verify_sig, ADDR_PUB } = require '../../lib/bitcoin/index.coffee'
+{ get_address, create_multisig, verify_sig, ADDR_PUB, TESTNET } = require '../../lib/bitcoin/index.coffee'
 Key = require '../../lib/bitcoin/key.coffee'
 { iferr, error_displayer, success, parse_query, format_url, render } = require '../lib/util.coffee'
 { format_locals, build_tx_args } = require './lib/util.coffee'
@@ -57,6 +57,7 @@ render el = $ view format_locals {
   trent_url: format_url 'tx.html', build_tx_args { bob, alice, trent, terms, proof, is_dispute: true }
 
   default_fee: Util.formatValue DEFAULT_FEE
+  testnet: TESTNET
 }
 
 # When loaded for the first time, display the headsup message

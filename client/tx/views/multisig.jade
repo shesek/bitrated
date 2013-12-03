@@ -62,15 +62,18 @@ include ../../views/mixin/copy.jade
         .pay-link
           a.btn.btn-primary(href="bitcoin:#{multisig}") Pay with Bitcoin
           p.help-block (or scan the QR code to the right)
-        //p.muted Multisig transactions are still new, and not supported by all miners. It might take awhile
-          | for the payment to be confirmed.
         .text-error
-          :markdown
-            This is an early alpha release meant for testing and is currently running on the
-            [Bitcoin TestNet](https://en.bitcoin.it/wiki/Testnet).
-            You can get some TestNet coins sent to the multisig address
-            [here](http://testnet.mojocoin.com/)
-            (please return it to the faucet when you're done).
+          if testnet
+            :markdown
+              You're currently using a version running on the
+              [Bitcoin Testnet](https://en.bitcoin.it/wiki/Testnet).
+              You can get some testnet coins sent to the multisig address
+              [here](http://testnet.mojocoin.com/)
+              (please return them to the faucet when you're done).
+          else
+            :markdown
+              This is an early beta release meant for public testing and is not ready for general use.
+              **Do not deposit significant amounts** of bitcoins that you cannot afford to lose.
 
     include ./includes/tx-builder
 

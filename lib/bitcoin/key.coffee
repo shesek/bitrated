@@ -31,7 +31,7 @@ module.exports = class Key
   # Verify the message signature matches the public key
   verify_sig: (message, sig) ->
     sig = ecdsa.parseSigCompact sig
-    hash = Message.getHash UTF8.bytesToString message
+    hash = Message.getHash if Array.isArray message then UTF8.bytesToString message else message
     compressed = !!(sig.i & 4)
     actual_pub = ecdsa.recoverPubKey(sig.r, sig.s, hash, sig.i).getPubPoint().getEncoded(compressed)
     (bytesToHex actual_pub) is (bytesToHex @pub)

@@ -2,14 +2,15 @@
 timestamp = require 'mongoose-time'
 crypto = require 'crypto'
 require 'mongoose-pagination'
+Key = require '../lib/bitcoin/key'
+{ PUBKEY_LEN, PUBKEY_C_LEN } = require '../lib/bitcoin'
+
+TX_EXPIRY = '24h'
 
 to_buff = (val) -> if val instanceof Buffer then val else new Buffer val, 'base64'
 buff_getter = (key, encoding) -> -> this[key].toString encoding
 sha256 = (data) -> crypto.createHash('sha256').update(data).digest()
-
 triple_sha256 = (bytes) -> sha256 sha256 sha256 bytes
-
-TX_EXPIRY = '24h'
 
 module.exports = (db) ->
   #
@@ -26,29 +27,46 @@ module.exports = (db) ->
   userSchema.virtual('address').get -> get_address [ @pubkey... ], ADDR_PUB
   userSchema.virtual('pubkey_str').get buff_getter 'pubkey', 'hex'
   userSchema.virtual('sig_str').get buff_getter 'sig', 'base64'
+
   userSchema.pre 'save', (next) ->
+    # Keep a triple-sha256 version of the pubkey for lookups
+    # (allows to search for public keys on the index, without
+    # revealing the public key when its not in the index)
     if @isModified 'pubkey'
-      @pubkey_hash = new Buffer triple_sha256 @pubkey[..]
-    #unless verify_message_sig (hexToBytes @pubkey), user.content, (hexToBytes @sig)
-    #  return next new Error 'Invalid signature provided'
+      @pubkey_hash = new Buffer triple_sha256 @pubkey
+
+    # Verify the signature matches
+    if (@isModified 'content') or (@isModified 'sig')
+      key = new Key 'pub', (Array.apply null, @pubkey)
+      try unless key.verify_sig @content, (Array.apply null, @sig)
+        return next new Error 'Invalid signature provided'
+      catch err then return next err
+
     next null
+
+  # Verify public key length
+  userSchema.path('pubkey').validate ((value) ->
+    value.length in [ PUBKEY_LEN, PUBKEY_C_LEN ]
+  ), 'Invalid public key'
+
+  { User }
 
   #
   # Rating model
   #
-  Rating = db.model 'Rating', ratingSchema = Schema
-    _user:   type: String, required: true, ref: 'User'
-    _rater:  type: String, required: true, ref: 'User'
-    rating:  type: Number, required: true, min: 0, max: 1
-    content: type: String, required: true
-  ratingSchema.plugin timestamp
+  #Rating = db.model 'Rating', ratingSchema = Schema
+  #  _user:   type: String, required: true, ref: 'User'
+  #  _rater:  type: String, required: true, ref: 'User'
+  #  rating:  type: Number, required: true, min: 0, max: 1
+  #  content: type: String, required: true
+  #ratingSchema.plugin timestamp
 
   #
   # Transaction model
   #
-  Transaction = db.model 'Transaction', transactionSchema = Schema
-    channel:    type: Buffer, required: true, set: to_buff
-    rawtx:      type: Buffer, required: true, set: to_buff
-    created_at: type: Date, default: Date.now, expires: TX_EXPIRY
+  #Transaction = db.model 'Transaction', transactionSchema = Schema
+  #  channel:    type: Buffer, required: true, set: to_buff
+  #  rawtx:      type: Buffer, required: true, set: to_buff
+  #  created_at: type: Date, default: Date.now, expires: TX_EXPIRY
 
-  { User, Rating, Transaction }
+  #{ User, Rating, Transaction }

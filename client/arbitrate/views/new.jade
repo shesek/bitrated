@@ -64,12 +64,8 @@
     input.input-block-level(type='text', name='key', value=privkey, placeholder='Public key (hex) or private key (base58)',
               required, pattern='^([a-f0-9]{130}|[a-f0-9]{66}|[59cKL][123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{50,51})$',
               autocomplete='off')
-    .muted
-      :markdown
-        <i class="icon-lock"></i>
-        **Private keys are never processed by our servers.**
-        See our [security policy](/security.html) for more information.
-      
+    include ../../views/includes/local-keys
+
     label Your terms of service
     .help-block
       :markdown

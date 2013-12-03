@@ -45,10 +45,13 @@ module.exports = (db) ->
 
     next null
 
-  # Verify public key length
   userSchema.path('pubkey').validate ((value) ->
     value.length in [ PUBKEY_LEN, PUBKEY_C_LEN ]
   ), 'Invalid public key'
+
+  userSchema.path('content').validate ((value) ->
+    value.length <= 10000
+  ), 'Terms are limited to 10,000 characters.'
 
   { User }
 

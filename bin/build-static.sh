@@ -23,7 +23,6 @@ stylus --compress public/*.styl -o $TARGET
 echo "Compiling jade..."
 read -d '' LOCALS <<JSON
   {
-    "pubkey_address": "${PUBKEY_ADDRESS}",
     "url": "${URL}",
     "testnet": "${TESTNET}",
     "testnet_api": "${TESTNET_API}"

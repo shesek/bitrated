@@ -14,7 +14,6 @@ module.exports = express().configure ->
 
   @locals
     url: @settings.url
-    pubkey_address: process.env.PUBKEY_ADDRESS
     testnet: !!process.env.TESTNET
     testnet_api: process.env.TESTNET_API
     pretty: @settings.env is 'development'

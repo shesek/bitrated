@@ -12,6 +12,10 @@ block content
       To prevent MITM attacks, all data communication is encrypted with 256-bit SSL.
       This is the industry standard for encrypting communications.
 
+      We also employ [perfect forward secrecy](http://en.wikipedia.org/wiki/Forward_secrecy)
+      to ensure that even if our keys compromised in the future, our past communications are still secured.
+      You can see our SSL Labs test score [here](https://www.ssllabs.com/ssltest/analyze.html?d=bitrated.com).
+
       #### Client-side app
 
       For improved security and privacy, we try to minimize the data that has to be shared
@@ -20,7 +24,7 @@ block content
 
       - Private keys are created and used in your browser, and are **never sent to or processed by our servers**.
       - The transaction terms are stored in the hash portion of the URL, and are never sent to our servers.
-      - The transaction construction and signing are done locally.
+      - Transactions are constructed and signed locally.
 
       Some data is sent to the server in order to enable communication between users, using the server
       as a proxy to pass messages around.
@@ -128,17 +132,17 @@ block content
 
     //-
       #### Public key verification
-      To prevent an attacker from modifying our published Bitcoin public key,
+      To prevent an attacker from modifying our published Bitcoin public key used for signing the files,
       its permanently embedded into Bitcoin blockchain in a way that is
       [nearly impossible](https://en.bitcoin.it/wiki/Weaknesses#Attacker_has_a_lot_of_computing_power)
-      to modify (and becomes exponentially more difficult as time goes by).
+      to modify, and becomes exponentially more difficult as time goes by.
 
       The public key can be verified by taking the following procedure:
 
       1. Take the SHA256 of the domain name ("bitrated.com")
-      2. Create a Bitcoin address using that hash as the private key
-      3. Find the **first** transaction with that address as its *output address*
-      4. The *input address* of that transaction is our public key
+      2. Create a Bitcoin address using that hash as the private key (both compressed or uncomprssed)
+      3. Find the **first** transaction with that address as its *input address*
+      4. The *output address* of that transaction is our public key
 
       If its ever required to change the public key, the announcement
       will be signed with the old public key.

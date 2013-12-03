@@ -19,7 +19,7 @@
   label Public key:
   pre= user.pubkey
   p.muted To allow you to arbitrate transactions, the payments will be
-        | made to a multisig address with this public key.
+        | made to a multisig address containing this public key.
 
   label Terms:
   form.update-terms(action='http://')
@@ -31,7 +31,7 @@
     span.text-info.saved-success Saved!
 
   label Signature:
-  pre= user.sig
+  pre.sig= user.sig
   p.muted This digital signature confirms that you are the owner of the public key, and that
         | you agree with the terms.
         | Whenever you publish your terms, you should include your signature along with it.
@@ -43,3 +43,7 @@
 
     label Import private key to bitcoind:
     pre bitcoind importprivkey <span class="blurry">#{priv}</span>
+  else
+    p You're using a local private key and provided us with your public key only.
+      | Make sure you have a safe local copy of your private key, as it will be
+      | required for releasing funds.

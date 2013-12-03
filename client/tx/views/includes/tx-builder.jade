@@ -2,7 +2,6 @@ h3 Release funds
 p.
   To release the funds, create the transaction below and authorize it. This will sign the transaction with
   your private key and request approval from the other key holders.
-p Once its approved and signed by one of them, the transaction will be broadcasted to the Bitcoin network.
 
 form.tx-builder(action='http://')
   p
@@ -41,7 +40,8 @@ form.tx-builder(action='http://')
       span.change-amount n/a
       = ' '
       i.icon-question-sign(data-toggle='tooltip', title='Change is paid back to the multisig address, and can be released in the future.')
-
+  :markdown
+    **Note:** The other parties must be connected in order to receive transaction requests.
 .tx-requests
   h3 Transaction requests
   p The other parties has requested you to approve the following transactions.

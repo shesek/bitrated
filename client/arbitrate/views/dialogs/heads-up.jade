@@ -2,17 +2,27 @@
   .modal-header
     h3 Heads up!
   .modal-body
-    p.
-      Make sure to keep a safe copy your private key. Its required for the arbitration
-      process, and <strong>cannot be recovered by any means</strong>.
+    :markdown
+      Make sure to keep a safe copy of the current page URL.
 
     if has_priv
-      p Your private key is embedded in the page URL. You can bookmark this page,
-        | or copy the url below:
-      pre.url= url 
+      :markdown
+        It contains your private key which is required for releasing funds,
+        and allows you to login to your account and update your profile.
+        **it cannot be recovered by any means**.
+    else
+      :markdown
+        It allows you to login into your account and update your profile.
+
+        You provided us with your public key only.
+        **You should have a safe copy of the private key, in addition to the URL**.
+
+    p You can bookmark this page (Ctrl-D), or copy the URL below:
+    pre.url= url
+    if has_priv
       p: strong This URL includes your private key and should be kept secret.
 
-    p If this website ever becomes unavailable, your private key can be
+    p.muted If this website ever becomes unavailable, your private key can be
      | extracted from the URL alone and be used to release funds using the standard
      | Bitcoin client.  
   .modal-footer

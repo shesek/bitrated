@@ -15,7 +15,8 @@ block content
     for user in users
       .user
         h4: a(href=user.profile_url)= user.username
-        .well!= marked(user.content.substr(0, 500) + '...')
+        more_dots = user.content.length>500 ? '...' : ''
+        .well!= marked(user.content.substr(0, 500) + more_dots)
         a.btn.btn-primary(href=user.profile_url) Full profile 
         | 
         a.btn(href=user.tx_url) Start transaction

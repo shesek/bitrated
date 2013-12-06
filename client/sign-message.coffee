@@ -39,6 +39,6 @@ sign_message_dialog = (key, message, cb) ->
     catch err then display_error err
 
   dialog.on 'hidden', -> do dialog.remove
-  dialog.modal()
+  dialog.modal backdrop: 'static'
 
 module.exports = sign_message_any

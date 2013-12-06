@@ -43,7 +43,7 @@ arb_info.find('button').click ->
     check_button.removeClass('active').attr('disabled', false)
     return display_error err if err?
     if user?
-      arb_info.addClass('loaded').find('.username').html "<a href='/u/#{user.username}'>#{user.username}</a>"
+      arb_info.addClass('loaded').find('.username').html "<a href='#{user.profile_url}'>#{user.username}</a>"
     else arb_info.addClass('not-found')
 
 # Spinner helpers

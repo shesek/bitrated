@@ -22,6 +22,10 @@
         | made to a multisig address containing this public key.
 
   label Terms:
+  .help-block
+    :markdown
+      Not sure what to write here?
+      See our [list of common things to include](help/arbitrator-terms.html) for more information.
   form.update-terms(action='http://')
     textarea.input-block-level(name='terms', rows=8, required, placeholder='Markdown supported', maxlength=10000)= user.content
     button.btn.has-spinner(type='submit')

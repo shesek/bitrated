@@ -12,9 +12,6 @@
         You received an invitation to join an arbitrated transaction. The other party
         provided his public key, the arbitrator public key and the terms of agreement.
 
-        Clicking "I accept" will sign the terms with your key, send the signature
-        and your public key to the other party and start the arbitrated transaction.
-
         First time here? [Click here](faq.html) to learn more about how this works.
 
       label Arbitrator
@@ -32,10 +29,12 @@
         :markdown
           Those are the terms provided by the other party. Please read them and make
           sure you fully agree with them.
-          
-          The terms should include all the information required for the arbitrator
-          to resolve disputes.
-          See our [list of common things to include](help/tx-terms.html) for more information.
+
+          The terms are provided to the arbitrator in case of dispute
+          and should provide him with the information required to contact the parties
+          and make his ruling.
+          See our [list of common things to include](help/tx-terms.html) for more details.
+
       pre.terms= terms
       p.badge.badge-success.pull-right.signed(data-toggle='popover', data-html, data-content=proof_popover)
         | <i class="icon-ok-sign icon-white"></i> Signed by other party

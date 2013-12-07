@@ -19,3 +19,11 @@ script (window.crypto && window.crypto.getRandomValues) || document.write('!{uns
       This is required for generating secure private keys and signing transactions.
     - The Internet Explorer browser is not supported due to limitations imposed on the URL length.
       The hash portion of the URL is used to store the transaction data.
+
+noscript: .container: .alert.alert-error.alert-block
+  :markdown
+    ### JavaScript is required
+
+    Your browser does not appear to support JavaScript, or its been turned off.
+    This website heavily relies on JavaScript to manage the arbitration process,
+    and cannot be used without it.

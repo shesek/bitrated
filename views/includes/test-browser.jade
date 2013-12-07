@@ -6,9 +6,16 @@ script (window.crypto && window.crypto.getRandomValues) || document.write('!{uns
 
 .container.unsupported-browser.hidden: .alert.alert-error.alert-block
   :markdown
-    #### Unsupported browser
+    ### Unsupported browser
 
     Your browser is not supported.
     We recommend using this website with a recent version of
     [Firefox](https://www.mozilla.org/en-US/firefox/new/)
     or [Chrome](https://www.google.com/chrome/).
+
+    **Why is my browser not supported?**
+
+    - Browsers without a cryptographically secure pseudo-random number generator (CSPRNG) are not supported.
+      This is required for generating secure private keys and signing transactions.
+    - The Internet Explorer browser is not supported due to limitations imposed on the URL length.
+      The hash portion of the URL is used to store the transaction data.

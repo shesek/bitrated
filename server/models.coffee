@@ -37,7 +37,6 @@ module.exports = (db) ->
 
     # Verify the signature matches
     if (@isModified 'content') or (@isModified 'sig')
-      console.log 'verify', pub: @pubkey, content: @content, sig: @sig
       key = new Key 'pub', (Array.apply null, @pubkey)
       try unless key.verify_sig @content, (Array.apply null, @sig)
         return next new Error 'Invalid signature provided'

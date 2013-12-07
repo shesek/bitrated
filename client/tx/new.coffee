@@ -1,7 +1,7 @@
 { Crypto, convert: { bytesToHex } } = require 'bitcoinjs-lib'
 { util: { randomBytes }, charenc: { UTF8 } } = Crypto
 { sha256, triple_sha256 } = require '../../lib/bitcoin/index.coffee'
-{ navto, format_url, render, parse_query, iferr, error_displayer } = require '../lib/util.coffee'
+{ navto, format_url, render, parse_query, iferr, error_displayer, click_to_select } = require '../lib/util.coffee'
 { format_locals, build_tx_args } = require './lib/util.coffee'
 { handshake_listen } = require './lib/networking.coffee'
 { load_user } = require '../lib/user.coffee'
@@ -110,6 +110,7 @@ exchange = ({ bob, trent, terms }) ->
     # Display the dialog instructing the user to share the URL with
     # the other party
     dialog = $ invite_view { alice_url }
+    click_to_select dialog.find '.url'
     dialog.on 'hidden', ->
       unlisten()
       dialog.remove()

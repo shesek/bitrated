@@ -1,7 +1,7 @@
 { Util, convert: { bytesToHex } } = require 'bitcoinjs-lib'
 { get_address, create_multisig, verify_sig, ADDR_PUB, TESTNET } = require '../../lib/bitcoin/index.coffee'
 Key = require '../../lib/bitcoin/key.coffee'
-{ iferr, error_displayer, success, parse_query, format_url, render } = require '../lib/util.coffee'
+{ iferr, error_displayer, success, parse_query, format_url, render, click_to_select } = require '../lib/util.coffee'
 { format_locals, build_tx_args } = require './lib/util.coffee'
 { is_final_tx } = require '../../lib/bitcoin/tx.coffee'
 { get_channel, tx_request, tx_broadcast } = require './lib/networking.coffee'
@@ -59,6 +59,7 @@ render el = $ view format_locals {
   default_fee: Util.formatValue DEFAULT_FEE
   testnet: TESTNET
 }
+click_to_select el.find '.url'
 
 # When loaded for the first time, display the headsup message
 # and remove the _is_new flag from the URL

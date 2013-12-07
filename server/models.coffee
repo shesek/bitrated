@@ -16,14 +16,14 @@ module.exports = (db) ->
   #
   # User model
   #
-  User = db.model 'User', userSchema = Schema
+  userSchema = Schema
     _id:     type: String, required: true, match: /^[A-Za-z0-9\-]{3,15}$/
     pubkey:  type: Buffer, required: true, unique: true, set: to_buff
     content: type: String, required: true
     sig:     type: Buffer, required: true, set: to_buff
     pubkey_hash: type: Buffer, index: true
 
-  userSchema.plugin timestamp
+  userSchema.plugin timestamp()
   userSchema.virtual('address').get -> get_address [ @pubkey... ], ADDR_PUB
   userSchema.virtual('pubkey_str').get buff_getter 'pubkey', 'hex'
   userSchema.virtual('sig_str').get buff_getter 'sig', 'base64'
@@ -51,6 +51,8 @@ module.exports = (db) ->
   userSchema.path('content').validate ((value) ->
     value.length <= 10000
   ), 'Terms are limited to 10,000 characters.'
+
+  User = db.model 'User', userSchema
 
   { User }
 

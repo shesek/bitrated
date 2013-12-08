@@ -2,10 +2,37 @@
 
 # Send transaction to Bitcoin network using blockchain.info's pushtx
 tx_broadcast = (tx, cb) ->
-  tx = bytesToHex tx.serialize()
-  ($.post 'https://blockchain.info/pushtx?cors=true', { tx })
-    .fail((xhr, status, err) -> cb "Error from blockchain.info pushtx: #{ xhr.responseText or err }")
-    .done((data) -> cb null, data)
+  rawtx = bytesToHex tx.serialize()
+
+  # Temporarily switch to coinb.in, bc.i's pushtx is buggy
+  #$.post('https://blockchain.info/pushtx?cors=true', tx: rawtx)
+  #  .fail((xhr, status, err) -> cb new Error "Error from blockchain.info pushtx: #{ xhr.responseText or err }")
+  #  .done((data) -> cb null, data)
+
+  xhr = $.post 'https://coinb.in/api/', {
+    uid: 1
+    key: '12345678901234567890123456789012'
+    setmodule: 'bitcoin'
+    request: 'sendrawtransaction'
+    rawtx
+  }, 'xml'
+  xhr.fail (xhr, status, err) ->
+    cb new Error "Error from coinbin pushtx: #{ xhr.responseText or err }"
+  xhr.done (data) ->
+    if data.querySelector('result')?.textContent is '1'
+      cb null
+    else
+      err = decodeURIComponent data.querySelector('response')?.textContent.replace /\+/g, ' '
+      if err is 'unexpected error, try again in a moment'
+        # Coinbin seems to return that error for multisig transactions,
+        # even though they are sent correctly to the network.
+        # As a temporary and extremly hacky solution, until bc.i is working
+        # again or until I'll setup a pushtx service on bitrated's servers
+        # (which I really prefer to avoid), treat that error as a success.
+        # Yes, this is an extremely horrific solution, but its better than
+        # bitrated not working at all and its just temporary.
+        cb null
+      else cb "Error from coinbin pushtx: #{err ? 'Unknown error from coinbin pushtx'}"
 
 # Load unspent inputs (from blockchain.info)
 load_unspent = (address, cb) ->

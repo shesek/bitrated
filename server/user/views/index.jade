@@ -10,8 +10,11 @@ append css
   link(rel='stylesheet', type='text/css', href='/user.css')
 
 block content
-  .page-header: h2 Bitrated arbitrators directory
-  .row: .span7
+  .container-page
+    .page-header: h2 Bitrated's arbitrators directory
+    :markdown
+      **The arbitrators below were not vetted by Bitrated.**
+      Be careful when choosing an arbitrator.
     for user in users
       .user
         h4: a(href=user.profile_url)= user.username

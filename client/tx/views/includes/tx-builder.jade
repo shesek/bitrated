@@ -8,10 +8,11 @@ form.tx-builder(action='http://')
     | <strong>Balance:</strong> <span class="balance">unknown</span> 
     button.btn.btn-mini.update-balance(type='button', data-toggle='tooltip', title='Only includes confirmed transactions.')
       i.icon-refresh
-    = ' '
-    span.muted.
-      (loaded from blockchain.info,
-      see <a href="https://blockchain.info/address/#{multisig}/"><i class="icon-share"></i> full transaction history</a>)
+    if !testnet
+      = ' '
+      span.muted.
+        (loaded from blockchain.info,
+        see <a href="https://blockchain.info/address/#{multisig}/"><i class="icon-share"></i> full transaction history</a>)
   .addresses
     .address.form-inline
       button.btn.add-address(type='button', tabindex=-1): i.icon-plus

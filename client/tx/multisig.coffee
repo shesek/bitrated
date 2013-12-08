@@ -79,7 +79,7 @@ el.find('.show-advanced').change ->
 
 # Initialize the transaction builder
 tx_builder el.find('.tx-builder'), {
-  multisig, script, pubkeys, channel
+  multisig, script, pubkeys, channel, is_dispute
   key: if is_dispute then trent else bob
 }, iferr display_error, (signed_tx) ->
   # If its a final transaction (with two signatures), broadcast it to the

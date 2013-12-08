@@ -10,7 +10,7 @@
 SPIN_MIN = 1000
 
 # Initialize the transaction builder interface
-tx_builder = (el, { key, trent, multisig, script, pubkeys, channel }, cb) ->
+tx_builder = (el, { key, trent, multisig, script, pubkeys, channel, is_dispute }, cb) ->
   display_error = error_displayer el
   balance = null
   unspent = []
@@ -80,7 +80,7 @@ tx_builder = (el, { key, trent, multisig, script, pubkeys, channel }, cb) ->
         show_dialog tx, initiator, true
     try
       tx.total_in ?= calc_total_in tx, unspent
-      tx_dialog { key, script, multisig, pubkeys, tx, el, initiator },
+      tx_dialog { key, script, multisig, pubkeys, tx, el, initiator, is_dispute },
                 iferr display_error, cb_success
     catch err then display_error err
 
@@ -166,7 +166,7 @@ tx_builder = (el, { key, trent, multisig, script, pubkeys, channel }, cb) ->
 
 # Display the transaction dialog
 tx_dialog = do (view=require '../views/dialogs/confirm-tx.jade') ->
-  ({ key, tx, script, initiator, multisig, pubkeys }, cb) ->
+  ({ key, tx, script, initiator, multisig, pubkeys, is_dispute }, cb) ->
     unless tx.ins.length
       return cb new Error 'No inputs provided'
     unless tx.outs.length
@@ -190,6 +190,7 @@ tx_dialog = do (view=require '../views/dialogs/confirm-tx.jade') ->
       rawtx: bytesToHex tx.serialize()
       final: initiator is 'other'
       pubkeys: pubkeys.map bytesToHex
+      is_dispute: is_dispute
       testnet: TESTNET
 
     display_error = error_displayer dialog.find('.modal-body .errors')

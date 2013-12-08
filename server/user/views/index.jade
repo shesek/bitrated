@@ -11,10 +11,12 @@ append css
 
 block content
   .container-page
-    .page-header: h2 Bitrated's arbitrators directory
-    :markdown
-      **The arbitrators below were not vetted by Bitrated.**
-      Be careful when choosing an arbitrator.
+    .page-header
+      :markdown
+        ## Bitrated's arbitrators directory
+
+        **The arbitrators below were not vetted by Bitrated.**
+        Be careful when choosing an arbitrator.
     for user in users
       .user
         h4: a(href=user.profile_url)= user.username

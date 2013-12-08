@@ -2,6 +2,7 @@ express = require 'express'
 marked = require 'marked'
 ValidationError = require 'mongoose/lib/error/validation'
 { iferr, only } = require '../../lib/util'
+{ get_address, ADDR_PUB } = require '../../lib/bitcoin'
 { join } = require 'path'
 
 PUBKEY_LEN = 65
@@ -79,6 +80,7 @@ module.exports = ({ models, locals }) -> express().configure ->
   format_user = ({ _id, pubkey, content, sig }) =>
     username: _id
     pubkey: pubkey.toString 'hex'
+    pubkey_address: get_address pubkey, ADDR_PUB
     content: content
     sig: sig.toString 'base64'
     profile_url: @settings.url + "u/#{_id}"

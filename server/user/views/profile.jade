@@ -11,14 +11,16 @@ block content
     dl
       dt Public key:
       dd.break #{user.pubkey}
+      dt Public key address:
+      dd.break #{user.pubkey_address}
 
     .clearfix
       .well
         != marked(user.content)
-      a.btn.btn-primary.btn-large(href=user.tx_url) Start transaction
       proof_popover = '<div class="proof-popover"><pre>'+user.sig+'</pre></div>'
       p.badge.badge-success.pull-right.signed(data-toggle='popover', data-html='data-html', data-placement='left', data-content=proof_popover)
         | <i class="icon-ok-sign icon-white"></i> Signed by #{user.username}
+      a.btn.btn-primary.btn-large(href=user.tx_url) Start transaction
 
 
     .muted(style='margin-top: 4em')

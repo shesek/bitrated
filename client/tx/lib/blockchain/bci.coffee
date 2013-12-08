@@ -13,7 +13,7 @@ load_unspent = (address, cb) ->
   xhr.done (res) ->
     if res.unspent_outputs
       unspent = for { tx_hash, tx_output_n, value, script, confirmations } in res.unspent_outputs when confirmations > 0
-        hash: tx_hash
+        hash: bytesToHex (hexToBytes tx_hash).reverse()
         index: tx_output_n
         value: value
         script: script

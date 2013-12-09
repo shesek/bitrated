@@ -23,16 +23,7 @@ tx_broadcast = (tx, cb) ->
       cb null
     else
       err = decodeURIComponent data.querySelector('response')?.textContent.replace /\+/g, ' '
-      if err is 'unexpected error, try again in a moment'
-        # Coinbin seems to return that error for multisig transactions,
-        # even though they are sent correctly to the network.
-        # As a temporary and extremly hacky solution, until bc.i is working
-        # again or until I'll setup a pushtx service on bitrated's servers
-        # (which I really prefer to avoid), treat that error as a success.
-        # Yes, this is an extremely horrific solution, but its better than
-        # bitrated not working at all and its just temporary.
-        cb null
-      else cb "Error from coinbin pushtx: #{err ? 'Unknown error from coinbin pushtx'}"
+      cb "Error from coinbin pushtx: #{err ? 'Unknown error from coinbin pushtx'}"
 
 # Load unspent inputs (from blockchain.info)
 load_unspent = (address, cb) ->

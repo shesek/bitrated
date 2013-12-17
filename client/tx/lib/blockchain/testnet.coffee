@@ -2,14 +2,14 @@
 
 TESTNET_API = $('meta[name=testnet-api]').attr('content')
 
-# Send transaction to Bitcoin network using blockchain.info's pushtx
+# Send transaction to Bitcoin testnet network
 tx_broadcast = (tx, cb) ->
   tx = bytesToHex tx.serialize()
   $.post(TESTNET_API + 'pushtx', { tx })
     .fail((xhr, status, err) -> new Error cb "Cannot pushtx: #{ xhr.responseText or err }")
     .done((data) -> cb null, data)
 
-# Load unspent inputs (from blockchain.info)
+# Load unspent inputs
 load_unspent = (address, cb) ->
   xhr = $.get TESTNET_API + "unspent/#{address}"
   xhr.done (res) ->

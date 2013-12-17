@@ -23,7 +23,7 @@ tx_broadcast = (tx, cb) ->
       cb null
     else
       err = decodeURIComponent data.querySelector('response')?.textContent.replace /\+/g, ' '
-      cb "Error from coinbin pushtx: #{err ? 'Unknown error from coinbin pushtx'}"
+      cb new Error "Error from coinbin pushtx: #{err ? 'unknown error'}"
 
 # Load unspent inputs (from blockchain.info)
 load_unspent = (address, cb) ->

@@ -50,7 +50,7 @@ tx_builder = (el, { key, trent, multisig, script, pubkeys, channel, is_dispute }
     do update_change
 
   # Update balance
-  update_balance = (cb) ->
+  update_balance = ->
     refresh_icon = el.find('.update-balance i').addClass 'icon-spin'
     stop_spin = -> refresh_icon.removeClass 'icon-spin'
     spin_start = Date.now()
@@ -60,12 +60,11 @@ tx_builder = (el, { key, trent, multisig, script, pubkeys, channel, is_dispute }
       if Date.now() - spin_start >= SPIN_MIN then do stop_spin
       else setTimeout stop_spin, SPIN_MIN - (Date.now() - spin_start)
 
-      return (cb ? display_error) err if err?
+      return display_error err if err?
       unspent = _unspent
       balance = sum_inputs unspent
       $('.balance').text (formatValue balance)+' BTC'
       do update_change
-      cb? null
 
   el.find('.update-balance').click -> update_balance()
   do update_balance
@@ -73,11 +72,7 @@ tx_builder = (el, { key, trent, multisig, script, pubkeys, channel, is_dispute }
   cb_success = cb.bind null, null
 
   # Helper for displaying the transaction dialog with all the common options
-  show_dialog = (tx, initiator, updated_unspent=false) ->
-    # For incoming requests, update the unspent input prior to handling the tx request
-    if initiator is 'other' and not updated_unspent
-      return update_balance iferr display_error, ->
-        show_dialog tx, initiator, true
+  show_dialog = (tx, initiator) ->
     try
       tx.total_in ?= calc_total_in tx, unspent
       tx_dialog { key, script, multisig, pubkeys, tx, el, initiator, is_dispute },
@@ -88,7 +83,7 @@ tx_builder = (el, { key, trent, multisig, script, pubkeys, channel, is_dispute }
   el.submit (e) ->
     e.preventDefault()
     try show_dialog build_tx(), 'self'
-    catch e then display_error e
+    catch err then display_error err
 
   # Input raw transaction
   el.find('.input-rawtx').click ->
@@ -98,7 +93,7 @@ tx_builder = (el, { key, trent, multisig, script, pubkeys, channel, is_dispute }
   # Get raw transaction
   el.find('.show-rawtx').click ->
     try show_rawtx_dialog build_tx()
-    catch e then display_error e
+    catch err then display_error err
 
   # Auto-update the change amount
   el.on 'change keyup', '.address input[name=value], input[name=fees]', update_change = ->
@@ -115,6 +110,8 @@ tx_builder = (el, { key, trent, multisig, script, pubkeys, channel, is_dispute }
       .click(-> show_dialog tx, 'other')
       .appendTo($requests.find 'ul')
     $requests.addClass 'has-requests'
+    # Update unspent inputs, the request might be using newer inputs
+    do update_balance
 
   # Subscribe to transaction requests
   tx_unlisten = tx_listen channel, add_tx_request
@@ -210,7 +207,7 @@ tx_dialog = do (view=require '../views/dialogs/confirm-tx.jade') ->
           rawtx = JSON.parse(rawtx).hex if ~rawtx.indexOf '{'
           rawtx = hexToBytes rawtx
           signed_tx = decode_raw_tx rawtx
-        catch e then throw new Error 'Invalid raw transaction format'
+        catch err then throw new Error 'Invalid raw transaction format'
         throw new Error 'Invalid signature provided' unless verify_tx_sig key.pub, signed_tx, script
         signed_tx
       else
@@ -245,7 +242,7 @@ input_rawtx_dialog = do (view = require '../views/dialogs/input-rawtx.jade') -> 
     try
       cb null, decode_raw_tx hexToBytes dialog.find('[name=rawtx]').val()
       dialog.modal 'hide'
-    catch e then display_error e
+    catch err then display_error err
 
   dialog.on 'hidden', -> do dialog.remove
   dialog.modal()

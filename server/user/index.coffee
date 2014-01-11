@@ -51,11 +51,7 @@ module.exports = ({ models, locals }) -> express().configure ->
     res.format
       json: -> res.json user
       html: -> res.render 'profile', { user }
-      text: -> res.send """Username: #{user.username}
-                           Pubkey: #{user.pubkey}
-                           Signature: #{user.sig}
-                           \n---------------------\n
-                           #{user.content}"""
+      text: -> res.send format_text user
 
   # Update profile
   @post '/:user', (req, res, next) ->
@@ -86,6 +82,19 @@ module.exports = ({ models, locals }) -> express().configure ->
     profile_url: @settings.url + "u/#{_id}"
     tx_url: @settings.url + "new.html#trent=#{encodeURIComponent pubkey.toString 'base64'}"
 
+  format_text = ({ username, pubkey, pubkey_address, content, sig, profile_url }) -> """
+    Username: #{username}
+    Public key: #{pubkey}
+    Public key address: #{pubkey_address}
+    URL: #{profile_url}
+
+    -----BEGIN BITCOIN SIGNED MESSAGE-----
+    #{content}
+    -----BEGIN SIGNATURE-----
+    #{pubkey_address}
+    #{sig}
+    -----END BITCOIN SIGNED MESSAGE-----
+  """
   ###
   # Rate
   @get '/u/:user/rate', identify, (req, res) -> res.render 'rate', user: req.user

@@ -19,18 +19,17 @@
         :markdown
            The arbitrator was chosen by the other party.
            Make sure his choice is acceptable and verify the public key is correct.
-
-           Please read the arbitrator's terms of service carefully before starting a transaction.
-           Some of them might require contacting them for approval prior to using their services.
       pre.trent-pubkey= trent
       include ./includes/arbitrator-info
-
-      include ./includes/your-keys
+      .muted
+        :markdown
+           Please read the arbitrator's terms of service carefully before starting a transaction.
+           Some of them might require contacting them for approval prior to using their services.
 
       label Terms of agreement
       .help-block
         :markdown
-          Those are the terms provided by the other party. Please read them and make
+          These are the terms provided by the other party. Please read them and make
           sure you fully agree with them.
 
           The terms are provided to the arbitrator in case of dispute
@@ -38,19 +37,20 @@
           and make his ruling.
           See our [list of common things to include](help/tx-terms.html) for more details.
 
-      pre.terms= terms
-      p.badge.badge-success.pull-right.signed(data-toggle='popover', data-html, data-content=proof_popover)
-        | <i class="icon-ok-sign icon-white"></i> Signed by other party
+      .clearfix
+        pre.terms= terms
+        p.badge.badge-success.pull-right.signed(data-toggle='popover', data-html, data-content=proof_popover)
+          | <i class="icon-ok-sign icon-white"></i> Signed by other party
 
-    .help-block
-      :markdown
-        <i class="icon-exclamation-sign"></i>
-        Please note that sensitive information is going to be saved in the URL, and as such to your browsing history.
-        To avoid that, switch to incognito/private browsing mode (Chrome: Ctrl-Shift-N, Firefox: Ctrl-Shift-P).
+      include ./includes/your-keys
 
     button.btn.btn-large.btn-primary.has-spinner(type='submit')
       span.spinner: i.icon-refresh.icon-spin.icon-white
       |  I accept
   .muted
     :markdown
+      <i class="icon-exclamation-sign"></i>
+      Please note that sensitive information is going to be saved in the URL, and as such to your browsing history.
+      To avoid that, switch to incognito/private browsing mode (Chrome: Ctrl-Shift-N, Firefox: Ctrl-Shift-P).
+
       By using this service, you agree to [Bitrated terms of service](/terms.html).

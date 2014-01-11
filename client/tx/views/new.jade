@@ -16,14 +16,13 @@
       .help-block
         :markdown
           **Required.** You can browse the list of available arbitrators [here](/u), or use any other public key.
-
-           Please read the arbitrator's terms of service carefully before starting a transaction.
-           Some of them might require contacting them for approval prior to using their services.
       input.input-block-level(type='text', name='trent', placeholder='Username or public key (hex)', value=trent,
                               required, pattern='[a-zA-Z0-9]{3,15}|[a-f0-9]{130}|[a-f0-9]{66}$')
       include ./includes/arbitrator-info
-
-      include ./includes/your-keys
+      .muted
+        :markdown
+           Please read the arbitrator's terms of service carefully before starting a transaction.
+           Some of them might require contacting them for approval prior to using their services.
 
       label Terms of agreement
       .help-block
@@ -31,35 +30,36 @@
           **Required.** The terms are provided to the arbitrator in case of dispute
           and should provide him with the information required to contact the parties
           and make his ruling.
-          See our [list of common things to include](help/tx-terms.html) for more details.
-      ul.nav.nav-tabs
-        li.active: a(href='#text', data-toggle='tab') Text
-        li: a(href='#file', data-toggle='tab') File
-        li: a(href='#hash', data-toggle='tab') Hash
-      div.tab-content
-        .tab-pane.active#text
-          p.help-block The terms will be embedded into the page URL, to make it easy to store and share them. 
-                     | Limited to 5,000 characters.
-          textarea.input-block-level(name='terms', rows=8, cols=90, maxlength=5000, required)
-          p.muted The terms are private and are never uploaded to the server. They're stored in the hash portion of the URL,
-                | and only available to you and people you share URLs with.
-        .tab-pane#file
-          .help-block
-            p Only the file's hash will be embedded to the URL. Both parties should have a safe local copy of the file.
-          p Select file: 
-            input(type='file', name='terms_file')
-          p.muted The file is hashed and signed locally, and is never uploaded to the server.
-        .tab-pane#hash
-          p.help-block You can hash the terms locally and input the hash here:
-          input.input-block-level(type='text', name='terms_hash')
+          See our [list of common things to include](help/tx-terms.html) for more information.
+      .tabbable
+        ul.nav.nav-tabs
+          li.active: a(href='#text', data-toggle='tab') Text
+          li: a(href='#file', data-toggle='tab') File
+          li: a(href='#hash', data-toggle='tab') Hash
+        div.tab-content
+          .tab-pane.active#text
+            //-p.help-block The terms will be embedded into the page URL, to make it easy to store and share them. 
+                       | Limited to 5,000 characters.
+            textarea.input-block-level(name='terms', rows=8, cols=90, maxlength=5000, required)
+            p.muted The terms are private and are never uploaded to the server. They're stored in the hash portion of the URL,
+                  | and only available to you and people you share URLs with.
+          .tab-pane#file
+            .help-block
+              p Only the file's hash will be embedded to the URL. Both parties should have a safe local copy of the file.
+            p Select file: 
+              input(type='file', name='terms_file')
+            p.muted The file is hashed and signed locally, and is never uploaded to the server.
+          .tab-pane#hash
+            p.help-block You can hash the terms locally and input the hash here:
+            input.input-block-level(type='text', name='terms_hash')
 
-    .help-block
-      :markdown
-        <i class="icon-exclamation-sign"></i>
-        Please note that sensitive information is going to be saved in the URL, and as such to your browsing history.
-        To avoid that, switch to incognito/private browsing mode (Chrome: Ctrl-Shift-N, Firefox: Ctrl-Shift-P).
+      include ./includes/your-keys
 
     button.btn.btn-large.btn-primary(type='submit') Start transaction 
   .muted
     :markdown
+      <i class="icon-exclamation-sign"></i>
+      Please note that sensitive information is going to be saved in the URL, and as such to your browsing history.
+      To avoid that, switch to incognito/private browsing mode (Chrome: Ctrl-Shift-N, Firefox: Ctrl-Shift-P).
+
       By using this service, you agree to [Bitrated terms of service](/terms.html).

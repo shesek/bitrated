@@ -61,7 +61,7 @@ module.exports = ({ models, locals }) -> express().configure ->
   # User list
   user_list = (req, res, next) ->
     page = +req.params.page or 1
-    User.find().paginate page, USERS_PER_PAGE, iferr next, (users, total) ->
+    User.find().sort('-order').paginate page, USERS_PER_PAGE, iferr next, (users, total) ->
       is_html = req.accepts('html, json, text') is 'html'
       users = users.map format_user
       pages = Math.ceil total / USERS_PER_PAGE

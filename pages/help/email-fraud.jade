@@ -1,0 +1,35 @@
+extend ../../views/layout
+
+prepend title
+  | Email fraud | 
+
+block content
+  .container-page
+    :markdown
+      ## Email fraud - beware!
+
+      It was brought to our attention that spoofed emails that claim to originate from Bitrated are being sent
+      in an attempt to abuse the Bitrated brand to facilitate frauds and make them appear more legitimate.
+
+      Those emails claim that an arbitrated transaction was created and provides a Bitcoin payment address
+      as the multi-signature address.
+
+      **Bitrated never sends payment addresses in emails. Do NOT pay to those addresses.**
+
+      The process of using Bitrated should look like that:
+
+      - Both parties must use the interface on Bitrated.com. No part of the process is managed with emails.
+      - The process of starting or joining a transaction automatically creates a secure pair of keys
+        that protects the funds. You cannot be a party to a multi-signature transaction without that.
+      - During the process, Both parties must agree to the terms.
+        One party initiates the transaction and provides the terms,
+        and the joining party should receive a link where he accepts the terms.
+      - After both parties agree, the Bitrated interface will provide the multisig address.
+        **This is the only multisig address you should ever make payments to.**
+      - Again, payment addresses are NEVER sent in emails
+        (in fact, Bitrated currently never sends any emails at all).
+        Emails are not a secure way to communicate and are easily spoofed -
+        do not trust anything you recieve by email, and do not provide sensitive information
+        in reply to emails.
+
+      Be careful out there - scammers are getting more and more creative. 

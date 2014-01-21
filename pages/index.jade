@@ -5,6 +5,11 @@ append template-vars
 
 append css
   link(rel='stylesheet', href='home.css')
+  link(rel='stylesheet', href='lib/pnotify/jquery.pnotify.default.css')
+
+append scripts
+  script(src='lib/pnotify/jquery.pnotify.min.js')
+  script(src='home.js')
 
 block content
   .container-home

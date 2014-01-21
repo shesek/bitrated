@@ -12,6 +12,8 @@ module.exports = ->
   @use stylus.middleware src: @settings.public
   @use express.static @settings.public, maxAge: 86400000 # one day
 
+  @get '/home.js', browserify '../client/home.coffee'
+
   @get '/tx/new.js', browserify '../client/tx/new.coffee'
   @get '/tx/join.js', browserify '../client/tx/join.coffee'
   @get '/tx/multisig.js', browserify '../client/tx/multisig.coffee'

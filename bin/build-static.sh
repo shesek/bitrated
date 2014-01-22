@@ -12,7 +12,7 @@ echo "Copying static files..."
 cp -r public/{lib,img,lato} $TARGET
 
 echo "Browserifying..."
-for file in home tx/new tx/join tx/multisig arbitrate/new arbitrate/manage; do
+for file in global tx/new tx/join tx/multisig arbitrate/new arbitrate/manage; do
   echo "  - $file"
   browserify -e client/$file.coffee -t coffeeify -t jadeify2 | uglifyjs -m -c > $TARGET/$file.js
 done

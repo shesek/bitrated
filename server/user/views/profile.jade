@@ -11,7 +11,13 @@ block content
     .span8.clearfix
       .well
         != marked(user.content)
-      proof_popover = '<div class="proof-popover"><pre>'+user.sig+'</pre></div>'
+      - proof_popover = '<div class="proof-popover">'
+      - proof_popover += 'This digital signature signs the terms:'
+      - proof_popover += '<pre>'+user.sig+'</pre>'
+      - proof_popover += 'A textual version is available '
+      - proof_popover += '<a href="'+user.profile_url+'.txt">here</a>.'
+      - proof_popover += '</div>'
+
       p.badge.badge-success.pull-right.signed(data-toggle='popover', data-html='data-html', data-placement='left', data-content=proof_popover)
         | <i class="icon-ok-sign icon-white"></i> Signed by #{user.username}
       a.btn.btn-primary.btn-large(href=user.tx_url) Start transaction

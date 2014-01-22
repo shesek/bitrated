@@ -11,37 +11,33 @@ block content
     :markdown
       ## FAQ
 
-      #### What is an arbitration service?
+      #### How does arbitration works?
       Arbitration is a dispute resolution mechanism where the arbitrator,
       an independent trusted third party, resolves disputes between two transacting parties,
       typically a buyer and a seller.
 
       The arbitrator is chosen ahead of time, and is to be agreed upon by both the buyer and the seller.
-      In case of a dispute, the parties can ask the arbitrator to give his ruling and decide what to do with the money.
+      In case of a dispute, the parties can ask the arbitrator to intervene, mediate the dispute
+      and give his ruling.
 
       #### How does Bitcoin arbitration work?
-      Bitcoin allows using m-of-n (or multi signature) transactions.
-      With m-of-n transactions, funds can be paid to a special Bitcoin address
-      that contains n public keys and requires m of them to sign a transaction in order to release the funds.
+      Bitcoin multi signature transactions allows to make payments into a deposit that requires
+      the approval of m-of-n parties in order to release it.
 
-      For the case of arbitration, an 2-of-3 multisig address is created with the buyer, seller and arbitrator public keys.
-      The buyer deposits his payment to that address, and releasing it requires the approval of two parties.
+      For arbitration, a 2-of-3 multisig address is created with the buyer, seller and arbitrator.
+      The buyer deposits the payment to that address, and releasing it requires the approval of two of these parties.
 
-      If the transaction ends well and the buyer and seller are in agreement, they can sign a transaction themselves that
-      releases the money from the multisig address to the seller.
-      In case of a dispute, the parties can contact the arbitrator and ask him to approve a transaction that releases the
-      funds in the manner they find fair.
+      When the transaction ends well and the buyer is satisified, the buyer and the seller can sign a transaction
+      together that releases the payment from the multisig address to the seller.
+
+      In case of a dispute, both parties can contact the arbitrator, explain their side of the story
+      and ask him to approve a transaction that releases the payment in the manner they find fair.
 
       The arbitrator can only approve a transaction that is signed by either the buyer or the seller,
       and cannot control the funds otherwise.
 
       #### What is this website?
-      This website provides an interface for using m-of-n transaction and a marketplace for Bitcoin arbitration services.
-
-      The transaction themselves are managed using standard Bitcoin technology -
-      we merely help manage the technical aspects of using m-of-n transactions
-      and have a [directory of available arbitrators](/u).
-
+      Birated provides a platform for using multi-signature transaction and a marketplace for Bitcoin arbitration services.
       We do not offer arbitration services ourselves, nor we are a party to any of the transactions
       conducted using our service.
 
@@ -49,36 +45,37 @@ block content
 
       The transaction process has five main steps:
 
-      1. The buyer and seller agree on the terms and pick an arbitrator that's acceptable with both of them.
-      2. One party starts the transaction by choosing the arbitrator and entering the terms.
-         He gets a link to share with the other party.
-      3. When the other party enters that link, he's requested to accept the terms.
-         This sends his (automatically generated) public key to the other party, and opens the multisig transaction page.
-      4. The buyer deposits the funds into the multisig address (which can be found in the transaction page).
-         The funds are locked in that address, until two of the parties (buyer, seller and arbitrator) agree to release them.
+      1. The buyer and seller agree on the terms for the transaction and pick an arbitrator they both trust.
+      2. One party [starts the transaction](new.html) by choosing the arbitrator and entering the terms.
+         He gets a URL to share with the other party.
+      3. When the other party opens that URL, he's requested to confirm the terms and the arbitrator.
+         Once confirmed, both parties are presented with the multi-signature transaction page.
+      4. The buyer deposits his payment into the multisig address displayed in the transaction page.
+         The payment is locked in that address until two of the parties (buyer, seller and arbitrator)
+         agree to release them.
       5. Depending on how the transaction ends,
-         - If it ended well, one of the parties creates a transaction that releases the funds to the seller,
+         - If it ended well, one of the parties creates a transaction that releases the payment to the seller,
            which sends an approval request to the other party. Once approved, the transaction is broadcasted
-           to the Bitcoin network and the funds are released.
+           to the Bitcoin network and the payment is released.
          - In case of dispute, the parties can contact the arbitrator by providing him with the arbitrator
            link (which can be found on the transaction page) and request him to approve a transaction that releases
-           the funds in the manner they find fair.
+           the payment in the manner they find fair.
 
       #### Is this an escrow?
       No. Escrow services requires the parties to deposit the funds into an escrow,
       where the service provider has full control over them.
-      Because of that, escrows are strictly government regulated in the US and most parts of the world,
-      making it difficult to obtain an escrow license and raises the costs associated with operating such services.
+      Because of that, escrows are strictly government regulated and requires licensing,
+      which raises the costs associated with operating an escrow.
 
-      With Bitcoin's m-of-n transactions, the service provider never has full control over the funds.
-      What he provides is dispute resolution and arbitration services,
+      With Bitcoin's multi-signature transactions, the service provider never has full control over the funds.
+      He provides dispute resolution and arbitration services,
       which fundamentally provides the same value to the end-users
       but does not require adhering to such strict regulations -
-      making it easier to operate the service and lowers the costs for both the arbitrator and the end-users.
+      making it easier to operate such services and lowers the costs for the arbitrator and the end-users.
 
       #### Which Bitcoin clients support paying to multi-signature?
       At the time of writing, the following clients are known to support paying to multi-signature
-      (more precisely, p2sh) addresses:
+      (p2sh) addresses:
 
       - [Bitcoin-qt](http://bitcoin.org/en/download)
       - [Electrum](https://electrum.org/)
@@ -100,18 +97,6 @@ block content
       If you know of other clients that should be added to the list, please [contact us](mailto:hey@bitrated.com)
       and we'll add them to the list.
 
-
-      #### Do you charge fees?
-      No. This service is completely free (both free to use and free "as in speech" software),
-      and will always remain so.
-      However, the arbitrator you're using might charge fees, as specified by his terms of service.
-
-      In the future, we plan to charge optional fees for verified accounts and verified ratings,
-      both as a way to deter fraud by making it harder and costlier to switch accounts and post fake ratings,
-      and as our revenue model.
-
-      Opening non-verfied accounts and posting non-verified ratings will remain free of charge.
-
       #### Help, I lost my private key! Can you recover it for me?
       No. The private key only exists in your browser as part of the URL and in-memory while the service is used,
       and is never uploaded to our servers.
@@ -119,6 +104,13 @@ block content
 
       That being said, you might be able to recover the URL from your browsing history,
       unless you used the incognito or private browsing mode.
+
+      #### Do you charge fees?
+      No. We do not and will not charge fees for using the multi-signature payment system.
+      However, the arbitrator you're using might charge fees, as specified by his terms of service.
+
+      In the future, we may charge fees for additional services - but everything that's free now
+      will remain so.
 
       #### What about a rating system?
       We're working on it. Stay tuned!

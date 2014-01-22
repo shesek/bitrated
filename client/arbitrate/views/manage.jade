@@ -28,6 +28,10 @@
       See our [list of common things to include](help/arbitrator-terms.html) for more information.
   form.update-terms(action='http://')
     textarea.input-block-level(name='terms', rows=8, required, placeholder='Markdown supported', maxlength=10000)= user.content
+    .muted
+      :markdown
+        This field supports Markdown fromatting.
+        See [How to Markdown](http://howtomarkdown.com/) for more information.
     button.btn.has-spinner(type='submit')
       span.spinner: i.icon-refresh.icon-spin.icon-white
       |  Update terms

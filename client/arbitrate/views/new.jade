@@ -73,21 +73,16 @@
         and details regarding your dispute resolution process.
         See our [list of common things to include](help/arbitrator-terms.html) for more information.
 
-        The terms will be signed with your private key, and the digital signature would be published
-        along with them.
-
     textarea.input-block-level(name='terms', rows=8, required, placeholder='Markdown supported', maxlength=10000)
-
-    .help-block
-      :markdown
-        <i class="icon-exclamation-sign"></i>
-        Please note that sensitive information is going to be saved in the URL, and as such to your browsing history.
-        To avoid that, switch to incognito/private browsing mode (Chrome: Ctrl-Shift-N, Firefox: Ctrl-Shift-P).
 
     button.btn.btn-large.btn-primary.has-spinner(type='submit')
       span.spinner: i.icon-refresh.icon-spin.icon-white
       |  Continue
   .muted
     :markdown
+      <i class="icon-exclamation-sign"></i>
+      Please note that sensitive information is going to be saved in the URL, and as such to your browsing history.
+      To avoid that, switch to incognito/private browsing mode (Chrome: Ctrl-Shift-N, Firefox: Ctrl-Shift-P).
+
       By using this service, you agree to [Bitrated terms of services](/terms.html).
 

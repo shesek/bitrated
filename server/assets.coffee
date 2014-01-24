@@ -5,6 +5,7 @@ browserify = do (browserify = require 'browserify-middleware') ->
   (path) -> browserify path, transform: [ 'coffeeify', 'jadeify2' ]
 
 pages_dir = join __dirname, '..', 'pages'
+scripts = [ 'global', 'tx/new', 'tx/join', 'tx/multisig', 'arbitrate/new', 'arbitrate/manage' ]
 
 module.exports = ->
   @set 'public', join __dirname, '..', 'public'
@@ -12,14 +13,8 @@ module.exports = ->
   @use stylus.middleware src: @settings.public
   @use express.static @settings.public, maxAge: 86400000 # one day
 
-  @get '/global.js', browserify '../client/global.coffee'
-
-  @get '/tx/new.js', browserify '../client/tx/new.coffee'
-  @get '/tx/join.js', browserify '../client/tx/join.coffee'
-  @get '/tx/multisig.js', browserify '../client/tx/multisig.coffee'
-
-  @get '/arbitrate/new.js', browserify '../client/arbitrate/new.coffee'
-  @get '/arbitrate/manage.js', browserify '../client/arbitrate/manage.coffee'
+  for script in scripts
+    @get "/#{script}.js", browserify "../client/#{script}.coffee"
 
   @get '/', (req, res) -> res.render join pages_dir, 'index'
   @get '/*.html', (req, res) -> res.render join pages_dir, req.url.replace /\.html$/, ''

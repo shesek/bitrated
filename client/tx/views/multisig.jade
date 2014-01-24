@@ -59,17 +59,14 @@
         .pay-link
           a.btn.btn-primary(href="bitcoin:#{multisig}") Pay with Bitcoin
           p.help-block (or scan the QR code to the right)
-        .text-error
-          if testnet
+        if testnet
+          .text-error
             :markdown
               You're currently using a version running on the
               [Bitcoin Testnet](https://en.bitcoin.it/wiki/Testnet).
               You can get some testnet coins sent to the multisig address
               [here](http://faucet.xeno-genesis.com/)
               (please return them to the faucet when you're done).
-          else
-            :markdown
-              This is a beta release meant for public testing, please use with caution.
 
     include ./includes/tx-builder
 

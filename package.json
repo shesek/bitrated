@@ -1,6 +1,6 @@
 {
   "name": "bitrated",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Source code for Bitrated.com - bitcoin arbitration marketplace",
   "scripts": {
     "start": "./bin/start.sh",
@@ -17,7 +17,7 @@
     "socket.io": "~0.9.16",
     "socket.io-client": "~0.9.16",
     "bitcoinjs-lib": "git://github.com/shesek/bitcoinjs-lib",
-    "qruri": "~0.0.1",
+    "qruri": "0.0.2",
     "mongoose-time": "~0.1.0",
     "mongoose-pagination": "~1.0.0",
     "connect-ext-type": "0.0.1",

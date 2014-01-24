@@ -48,7 +48,7 @@ render el = $ view format_locals {
   is_dispute
 
   pubkeys: pubkeys.map bytesToHex
-  multisig, multisig_qr: qr 'bitcoin:'+multisig
+  multisig, multisig_qr: qr 'bitcoin:'+multisig, margin: 0
 
   bob_address:   get_address bob.pub, ADDR_PUB
   alice_address: get_address alice.pub, ADDR_PUB

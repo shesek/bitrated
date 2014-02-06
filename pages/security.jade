@@ -9,12 +9,13 @@ block content
       ## Security policy
 
       #### SSL encryption
-      To prevent MITM attacks, all data communication is encrypted with 256-bit SSL.
-      This is the industry standard for encrypting communications.
+      To prevent MITM attacks, all data communication is encrypted with 256-bit SSL,
+      and the Strict-Transport-Security header is used to instruct browsers to always
+      communicate with Bitrated over SSL.
 
       We also employ [perfect forward secrecy](http://en.wikipedia.org/wiki/Forward_secrecy)
       to ensure that even if our keys compromised in the future, our past communications are still secured.
-      You can see our SSL Labs test score [here](https://www.ssllabs.com/ssltest/analyze.html?d=bitrated.com).
+      You can view our SSL Labs test score [here](https://www.ssllabs.com/ssltest/analyze.html?d=bitrated.com).
 
       #### Client-side app
 

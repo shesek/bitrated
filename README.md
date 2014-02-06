@@ -6,5 +6,5 @@ and [bitcoinjs](http://bitcoinjs.org/) (based on [vbuterin's fork](https://githu
 libraries, among many others.
 
 ### License
-MIT License -- except for the terms of service (pages/terms.jade),
+AGPLv3 -- except for the terms of service (pages/terms.jade),
 which should be removed from any public websites running this code.

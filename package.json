@@ -7,7 +7,7 @@
     "build-static": "./bin/build-static.sh"
   },
   "author": "Nadav Ivgi",
-  "license": "MIT",
+  "license": "AGPLv3",
   "dependencies": {
     "coffee-script": "~1.6.3",
     "express": "~3.4.4",

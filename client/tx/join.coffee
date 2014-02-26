@@ -1,6 +1,6 @@
 { create_multisig } = require '../../lib/bitcoin/index.coffee'
 { iferr, error_displayer, parse_query, navto, render } = require '../lib/util.coffee'
-{ format_locals, build_tx_args } = require './lib/util.coffee'
+{ format_locals, build_tx_args, get_trent_pubkey } = require './lib/util.coffee'
 { handshake_reply } = require './lib/networking.coffee'
 { load_user } = require '../lib/user.coffee'
 { triple_sha256 } = require '../../lib/bitcoin/index.coffee'
@@ -20,7 +20,7 @@ try
     throw new Error "Missing argument: #{ key }"
 
   alice = Key.from_pubkey alice
-  trent = Key.from_pubkey trent
+  trent = Key.from_pubkey trent if Array.isArray trent
 
   unless alice.verify_sig terms, proof
     throw new Error 'Invalid signature provided by other party'
@@ -32,19 +32,6 @@ render el = $ view format_locals {
   alice, trent, terms, proof
   bob: Key.random()
 }
-
-# Display arbitrator info on request
-arb_info = el.find('.arbitrator-info')
-arb_info.find('button').click ->
-  trent = Key.from_pubkey el.find('.trent-pubkey').text()
-  check_button = $(this).addClass('active').attr('disabled', true)
-  pubkey_hash = triple_sha256 trent.pub
-  load_user pubkey_hash, (err, user) ->
-    check_button.removeClass('active').attr('disabled', false)
-    return display_error err if err?
-    if user?
-      arb_info.addClass('loaded').find('.username').html "<a href='#{user.profile_url}'>#{user.username}</a>"
-    else arb_info.addClass('not-found')
 
 # Spinner helpers
 button = el.find 'form button[type=submit]'
@@ -68,18 +55,19 @@ el.find('form').submit (e) ->
     el.find('input[name=bob]').focus()
     return display_error err
 
-  { script } = create_multisig [ bob.pub, alice.pub, trent.pub ]
+  get_trent_pubkey trent, iferr display_error, (trent) ->
+    { script } = create_multisig [ bob.pub, alice.pub, trent.pub ]
 
-  # Sign message (with known private key, or with dialog asking user to do this
-  # locally)
-  sign_message bob, terms, iferr display_error, (sig) ->
-    ack_timer = setTimeout (->
-      display_error 'Handshake verification response timed out. The other party might have closed the page.'
-    ), ACK_TIMEOUT
-    handshake_reply channel, { pub: bob.pub, proof: sig, script }, (err) ->
-      clearTimeout ack_timer
-      return display_error err if err?
-      navto 'tx.html', build_tx_args { bob, alice, trent, terms, proof, _is_new: true }, true
+    # Sign message (with known private key, or with dialog asking user to do this
+    # locally)
+    sign_message bob, terms, iferr display_error, (sig) ->
+      ack_timer = setTimeout (->
+        display_error 'Handshake verification response timed out. The other party might have closed the page.'
+      ), ACK_TIMEOUT
+      handshake_reply channel, { pub: bob.pub, proof: sig, script }, (err) ->
+        clearTimeout ack_timer
+        return display_error err if err?
+        navto 'tx.html', build_tx_args { bob, alice, trent, terms, proof, _is_new: true }, true
 
 # Advanced options
 el.find('a[href="#advanced"]').click (e) ->

@@ -80,7 +80,7 @@ module.exports = ({ models, locals }) -> express().configure ->
     content: content
     sig: sig.toString 'base64'
     profile_url: @settings.url + "u/#{_id}"
-    tx_url: @settings.url + "new.html#trent=#{encodeURIComponent pubkey.toString 'base64'}"
+    tx_url: @settings.url + "new.html#trent=#{encodeURIComponent _id}"
 
   format_text = ({ username, pubkey, pubkey_address, content, sig, profile_url }) -> """
     Username: #{username}

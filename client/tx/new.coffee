@@ -2,9 +2,8 @@
 { util: { randomBytes }, charenc: { UTF8 } } = Crypto
 { sha256, triple_sha256 } = require '../../lib/bitcoin/index.coffee'
 { navto, format_url, render, parse_query, iferr, error_displayer, click_to_select } = require '../lib/util.coffee'
-{ format_locals, build_tx_args } = require './lib/util.coffee'
+{ format_locals, build_tx_args, get_trent_pubkey } = require './lib/util.coffee'
 { handshake_listen } = require './lib/networking.coffee'
-{ load_user } = require '../lib/user.coffee'
 Key = require '../../lib/bitcoin/key.coffee'
 sign_message = require '../sign-message.coffee'
 new_view = require './views/new.jade'
@@ -12,64 +11,33 @@ invite_view = require './views/dialogs/invite.jade'
 
 BASE = $('base').attr('href') + 'tx.html#'
 
-# Read and validate query params 
+# Read and parse query params
 { trent } = parse_query()
-trent = Key.from_pubkey trent if trent?
+# Trent is either pubkey or username
+trent = Key.from_pubkey trent if Array.isArray trent
 
 # Render view
 render el = $ new_view format_locals bob: Key.random(), trent: trent
 
 display_error = error_displayer el
 
-# Display arbitrator info on request
-arb_info = el.find('.arbitrator-info')
-arb_info.find('button').click ->
-  try trent = Key.from_pubkey el.find('input[name=trent]').val()
-  catch err then return display_error err
-
-  check_button = $(this).addClass('active').attr('disabled', true)
-  pubkey_hash = triple_sha256 trent.pub
-  load_user pubkey_hash, (err, user) ->
-    check_button.removeClass('active').attr('disabled', false)
-    return display_error err if err?
-    if user?
-      arb_info.addClass('loaded').find('.username').html "<a href='#{user.profile_url}'>#{user.username}</a>"
-    else arb_info.addClass('not-found')
-
-el.find('input[name=trent]').on('keyup change', ->
-  arb_info
-    .removeClass('loaded not-found')
-    # Strings shorter than 15 (maximum username length) are considered usernames,
-    # in which case the button shouldn't be displayed.
-    .css('display', if @value.length<=15 then 'none' else 'block')
-).change() # trigger it once to decide if the button should be displayed initially
-
 # Handle form submission
 form = el.find('form').submit (e) ->
   e.preventDefault()
   try
     bob = Key.from_string el.find('input[name=bob]').val()
-    get_trent_pubkey iferr display_error, (trent) ->
+    trent_str = el.find('input[name=trent]').val()
+    get_trent_pubkey trent_str, iferr display_error, (trent) ->
       get_terms form, iferr display_error, (terms) ->
-        exchange { bob, trent, terms }
+        # Pass username when inputted as a username and not as a pubkey
+        trent_user = (trent_str if trent_str.length <= 15)
+        exchange { bob, trent, trent_user, terms }
   catch err then display_error err
 
 # Advanced options
 el.find('a[href="#advanced"]').click (e) ->
   e.preventDefault()
   el.find('.keys-advanced').toggle 'slow'
-
-# Get the arbitrator public key
-get_trent_pubkey = (cb) ->
-  trent_str = el.find('input[name=trent]').val()
-  # Strings longer than 15 (maximum username length) are considered public keys
-  if trent_str.length > 15
-    try cb null, Key.from_pubkey trent_str
-    catch err then cb err
-  else
-    load_user trent_str, iferr cb, (user) ->
-      return cb new Error 'Arbitrator not found.' unless user?
-      cb null, Key.from_pubkey user.pubkey
 
 # Get the provided terms from text, file or hash
 get_terms = (form, cb) ->
@@ -93,7 +61,7 @@ format_hash_terms = (hash) -> UTF8.stringToBytes """
 """
 
 # Exchange keys with other party
-exchange = ({ bob, trent, terms }) ->
+exchange = ({ bob, trent, trent_user, terms }) ->
   # The initial channel to send the pubkey/signature is just a random string
   # that's sent along with the URL
   channel = randomBytes 15
@@ -105,7 +73,7 @@ exchange = ({ bob, trent, terms }) ->
     # Construct the invitation URL with the public keys, terms, signature and
     # random channel name. Bob and Alice are reversed here, as the current
     # party is the other party for the receiver.
-    alice_url = format_url 'join.html', build_tx_args { alice: bob, trent, terms, proof: sig, channel }
+    alice_url = format_url 'join.html', build_tx_args { alice: bob, trent: (trent_user ? trent), terms, proof: sig, channel }
 
     # Display the dialog instructing the user to share the URL with
     # the other party

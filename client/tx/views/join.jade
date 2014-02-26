@@ -17,10 +17,13 @@
       label Arbitrator
       .help-block
         :markdown
-           The arbitrator was chosen by the other party.
-           Make sure his choice is acceptable and verify the public key is correct.
-      pre.trent-pubkey= trent
-      include ./includes/arbitrator-info
+           The arbitrator was chosen by the other party,
+           please make sure his choice is acceptable.
+      if trent.length > 15
+        pre.trent-pubkey= trent
+      else
+        p User: 
+          a(href="/u/#{trent}")= trent
       .muted
         :markdown
            Please read the arbitrator's terms of service carefully before starting a transaction.

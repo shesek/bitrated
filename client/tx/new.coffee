@@ -18,6 +18,7 @@ trent = Key.from_pubkey trent if Array.isArray trent
 
 # Render view
 render el = $ new_view format_locals bob: Key.random(), trent: trent
+do click_to_select
 
 display_error = error_displayer el
 
@@ -76,7 +77,6 @@ exchange = ({ bob, trent, trent_user, terms }) ->
     # Display the dialog instructing the user to share the URL with
     # the other party
     dialog = $ invite_view { alice_url }
-    click_to_select dialog.find '.url'
     dialog.on 'hidden', ->
       unlisten()
       dialog.remove()

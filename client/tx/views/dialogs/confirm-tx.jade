@@ -42,9 +42,9 @@ form.tx-dialog.modal.hide.fade
           input.input-block-level(type='text', name='priv', placeholder='Base58-check encoded private key')
         .tab-pane#sign-locally
           p Add the multisig address:
-          pre bitcoind addmultisigaddress 2 '#{JSON.stringify(pubkeys)}'
+          pre.click-to-select bitcoind addmultisigaddress 2 '#{JSON.stringify(pubkeys)}'
           p Sign the transaction (you can verify it with "decoderawtransaction" first):
-          pre bitcoind signrawtransaction #{rawtx}
+          pre.click-to-select bitcoind signrawtransaction #{rawtx}
           p Paste the output here:
           textarea.signedtx.input-block-level(name='signed-raw-tx', placeholder='Input signed raw transaction in hex format')
     

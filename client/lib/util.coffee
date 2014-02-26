@@ -66,13 +66,13 @@ render = do ($root = $ '.content') -> (el) ->
   el.find('[data-toggle=tooltip]').tooltip()
   el.find('[data-toggle=popover]').popover()
 
-# Attach "click-to-select" behavior to elements that are to be copied
-click_to_select = (el) ->
+# Enable .click-to-select behavior
+click_to_select = ->
   # This wouldn't work in IE, which isn't supported anyway.
   # If IE support is added some day, this could be done with createTextRange.
   return unless window.getSelection?
 
-  $(document.body).on 'click', '.click-to-copy', ->
+  $(document.body).on 'click', '.click-to-select', ->
     range = document.createRange()
     range.selectNodeContents this
     window.getSelection().addRange range

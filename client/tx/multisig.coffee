@@ -59,7 +59,7 @@ render el = $ view format_locals {
   default_fee: Util.formatValue DEFAULT_FEE
   testnet: TESTNET
 }
-click_to_select el.find '.url'
+do click_to_select
 
 # When loaded for the first time, display the headsup message
 # and remove the _is_new flag from the URL

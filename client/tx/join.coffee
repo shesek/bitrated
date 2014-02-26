@@ -1,5 +1,5 @@
 { create_multisig } = require '../../lib/bitcoin/index.coffee'
-{ iferr, error_displayer, parse_query, navto, render } = require '../lib/util.coffee'
+{ iferr, error_displayer, parse_query, navto, render, click_to_select } = require '../lib/util.coffee'
 { format_locals, build_tx_args, get_trent_pubkey } = require './lib/util.coffee'
 { handshake_reply } = require './lib/networking.coffee'
 { load_user } = require '../lib/user.coffee'
@@ -32,6 +32,7 @@ render el = $ view format_locals {
   alice, trent, terms, proof
   bob: Key.random()
 }
+do click_to_select
 
 # Spinner helpers
 button = el.find 'form button[type=submit]'

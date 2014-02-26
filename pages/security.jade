@@ -90,6 +90,17 @@ block content
       multisig address to your local wallet (the command is available on the multisig
       page).
 
+      #### Cross-site scripting
+      Cross-site scripting attacks could be used to gain access to sensitive information stored client-side.
+      To mitigate this, we:
+
+      - Properly sanitize all user input prior to displaying it.
+      - Don't store sensitive information globally (using cookies or local storage).
+        Private keys only exists in-memory while the transaction page is opened,
+        meaning that a cross-site scripting attack would have to happen within the transaction
+        page (which is a static page that loads static resources) - an attack vector on other
+        pages won't provide access to sensitive information.
+
       #### Browser extension
 
       **Note:** The browser extension is still work in progress, and not ready for use yet.

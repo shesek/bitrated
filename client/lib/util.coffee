@@ -65,7 +65,8 @@ click_to_select = (el) ->
   # This wouldn't work in IE, which isn't supported anyway.
   # If IE support is added some day, this could be done with createTextRange.
   return unless window.getSelection?
-  $(el).click ->
+
+  $(document.body).on 'click', '.click-to-copy', ->
     range = document.createRange()
     range.selectNodeContents this
     window.getSelection().addRange range

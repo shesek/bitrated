@@ -39,7 +39,7 @@ el.find('a[href="#advanced"]').click (e) ->
   e.preventDefault()
   el.find('.keys-advanced').toggle 'slow'
 
-# Get the provided terms from text, file or hash
+# Get the provided terms from text or file
 get_terms = (form, cb) ->
   switch
     when val = form.find('textarea:visible[name=terms]').val()?.trim()
@@ -50,8 +50,6 @@ get_terms = (form, cb) ->
         hash = bytesToHex sha256 Array.apply null, reader.result
         cb null, format_hash_terms hash
       reader.readAsArrayBuffer file
-    when hash = form.find('input:visible[name=terms_hash]').val()?.trim()
-      cb null, format_hash_terms hash
     else
       throw new Error 'Missing terms'
 

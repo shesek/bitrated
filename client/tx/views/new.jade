@@ -34,7 +34,6 @@
         ul.nav.nav-tabs
           li.active: a(href='#text', data-toggle='tab') Text
           li: a(href='#file', data-toggle='tab') File
-          li: a(href='#hash', data-toggle='tab') Hash
         div.tab-content
           .tab-pane.active#text
             //-p.help-block The terms will be embedded into the page URL, to make it easy to store and share them. 
@@ -48,10 +47,6 @@
             p Select file: 
               input(type='file', name='terms_file')
             p.muted The file is hashed and signed locally, and is never uploaded to the server.
-          .tab-pane#hash
-            p.help-block You can hash the terms locally and input the hash here:
-            input.input-block-level(type='text', name='terms_hash')
-
       include ./includes/your-keys
 
     button.btn.btn-large.btn-primary(type='submit') Start transaction 

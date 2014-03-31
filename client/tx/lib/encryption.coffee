@@ -1,5 +1,5 @@
 triplesec = require 'triplesec'
-{ convert: { bytesToBase64, base64ToBytes } } = require 'bitcoinjs-lib'
+{ convert: { bytesToBase64, base64ToBytes, hexToBytes } } = require 'bitcoinjs-lib'
 { iferr } = require '../../../lib/util.coffee'
 { Scrypt } = require 'triplesec/lib/scrypt'
 { prng, HMAC_SHA256 } = triplesec
@@ -64,7 +64,7 @@ decrypt_jsonba = (secret, enc, cb) ->
 gen_key = (cb) ->
   prng.generate 32, (key) ->
     # Convert from WordArray to a regular byte array
-    cb null, [ key.to_buffer()... ]
+    cb null, hexToBytes key.to_hex()
 
 module.exports = {
   encrypt, decrypt

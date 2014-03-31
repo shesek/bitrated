@@ -57,7 +57,7 @@ render el = $ view format_locals {
   alice_address: get_address alice.pub, ADDR_PUB
   trent_address: get_address trent.pub, ADDR_PUB
 
-  trent_url: format_url 'tx.html', build_tx_args { bob, alice, trent, terms, proof, is_dispute: true }
+  trent_url: format_url 'tx.html', build_tx_args { bob, alice, trent, terms, proof, secret, is_dispute: true }
 
   default_fee: Util.formatValue DEFAULT_FEE
   testnet: TESTNET

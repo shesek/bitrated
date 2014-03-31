@@ -17,7 +17,7 @@ $root = $ '.content'
 display_error = error_displayer $root
 
 # Read and validate query params
-{ bob, bob_priv, alice, trent, terms, proof, is_dispute, _is_new } = query_args = parse_query()
+{ bob, bob_priv, alice, trent, terms, proof, is_dispute, secret, _is_new } = query_args = parse_query()
 
 try
   if bob_priv? then bob = Key.from_privkey bob_priv
@@ -37,7 +37,10 @@ try
 catch err then return display_error err
 
 { address: multisig, pubkeys, script } = create_multisig [ bob.pub, alice.pub, trent.pub ]
-channel = get_channel { bob, alice, trent, terms }
+
+# Backward comptabillity - use the generated channel as the secret when no
+# secret is provided
+secret ?= get_channel { bob, alice, trent, terms }
 
 document.title = "#{multisig} | Bitrated"
 
@@ -79,7 +82,7 @@ el.find('.show-advanced').change ->
 
 # Initialize the transaction builder
 tx_builder el.find('.tx-builder'), {
-  multisig, script, pubkeys, channel, is_dispute
+  multisig, script, pubkeys, secret, is_dispute
   key: if is_dispute then trent else bob
 }, iferr display_error, (signed_tx) ->
   # If its a final transaction (with two signatures), broadcast it to the
@@ -90,6 +93,6 @@ tx_builder el.find('.tx-builder'), {
                             success "<p>Transaction successfully broadcasted to the Bitcoin network.</p>
                                      <p><small><strong>Transaction id</strong>: #{txid}</small></p>"
   # Otherwise, submit an approval request
-  else tx_request channel, signed_tx, iferr display_error,
-                                      success '''<p>Transaction approval request was sent to the other parties.</p>
+  else tx_request secret, signed_tx, iferr display_error,
+                                     success '''<p>Transaction approval request was sent to the other parties.</p>
                                                  <p>Once its approved and signed by one of them, the transaction will be broadcasted to the Bitcoin network.</p>'''

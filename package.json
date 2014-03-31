@@ -22,7 +22,8 @@
     "mongoose-pagination": "~1.0.0",
     "connect-ext-type": "0.0.1",
     "uglify-js": "~2.4.3",
-    "lazy-prop": "~0.1.0"
+    "lazy-prop": "~0.1.0",
+    "triplesec": "^3.0.7"
   },
   "devDependencies": {
     "browserify": "~2.25.1",

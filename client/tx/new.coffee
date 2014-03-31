@@ -4,6 +4,7 @@
 { navto, format_url, render, parse_query, iferr, error_displayer, click_to_select } = require '../lib/util.coffee'
 { format_locals, build_tx_args, get_trent_pubkey } = require './lib/util.coffee'
 { handshake_listen } = require './lib/networking.coffee'
+{ gen_key } = require './lib/encryption.coffee'
 Key = require '../../lib/bitcoin/key.coffee'
 sign_message = require '../sign-message.coffee'
 new_view = require './views/new.jade'
@@ -61,27 +62,24 @@ format_hash_terms = (hash) -> UTF8.stringToBytes """
 
 # Exchange keys with other party
 exchange = ({ bob, trent, trent_user, terms }) ->
-  # The initial channel to send the pubkey/signature is just a random string
-  # that's sent along with the URL
-  channel = randomBytes 15
-  
-  # Sign message (with known private key, or with dialog asking user to do this
-  # locally)
-  sign_message bob, terms, iferr display_error, (sig) ->
+  # Create a temporary secret for the handshake channel and key.
+  # This is later replaced with a different permenant key
+  gen_key iferr display_error, (tsecret) ->
+    # Sign message (with known private key, or with dialog asking user to do this
+    # locally)
+    sign_message bob, terms, iferr display_error, (sig) ->
+      # Construct the invitation URL with the public keys, terms, signature and secret
+      # Bob and Alice are reversed here, as the current party is the other party for the receiver.
+      alice_url = format_url 'join.html', build_tx_args { alice: bob, trent: (trent_user ? trent), terms, proof: sig, tsecret }
 
-    # Construct the invitation URL with the public keys, terms, signature and
-    # random channel name. Bob and Alice are reversed here, as the current
-    # party is the other party for the receiver.
-    alice_url = format_url 'join.html', build_tx_args { alice: bob, trent: (trent_user ? trent), terms, proof: sig, channel }
+      # Display the dialog instructing the user to share the URL with
+      # the other party
+      dialog = $ invite_view { alice_url }
+      dialog.on 'hidden', ->
+        unlisten()
+        dialog.remove()
+      dialog.modal backdrop: 'static'
 
-    # Display the dialog instructing the user to share the URL with
-    # the other party
-    dialog = $ invite_view { alice_url }
-    dialog.on 'hidden', ->
-      unlisten()
-      dialog.remove()
-    dialog.modal backdrop: 'static'
-
-    # Start listening for handshake replies on the random channel
-    unlisten = handshake_listen channel, { bob, trent, terms }, iferr display_error, ({ alice, proof }) ->
-      navto 'tx.html', build_tx_args { bob, alice, trent, terms, proof, _is_new: true }, true
+      # Start listening for handshake replies
+      unlisten = handshake_listen tsecret, { bob, trent, terms }, iferr display_error, ({ alice, proof, new_secret }) ->
+        navto 'tx.html', build_tx_args { bob, alice, trent, terms, proof, secret: new_secret, _is_new: true }, true

@@ -5,7 +5,7 @@ browserify = do (browserify = require 'browserify-middleware') ->
   (path) -> browserify path, transform: [ 'coffeeify', 'jadeify2' ]
 
 pages_dir = join __dirname, '..', 'pages'
-scripts = [ 'global', 'tx/new', 'tx/join', 'tx/multisig', 'arbitrate/new', 'arbitrate/manage' ]
+scripts = [ 'tx/new', 'tx/join', 'tx/multisig', 'arbitrate/new', 'arbitrate/manage' ]
 
 module.exports = ->
   @set 'public', join __dirname, '..', 'public'

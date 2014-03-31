@@ -10,7 +10,7 @@
 SPIN_MIN = 1000
 
 # Initialize the transaction builder interface
-tx_builder = (el, { key, trent, multisig, script, pubkeys, channel, is_dispute }, cb) ->
+tx_builder = (el, { key, trent, multisig, script, pubkeys, secret, is_dispute }, cb) ->
   display_error = error_displayer el
   balance = null
   unspent = []
@@ -114,7 +114,7 @@ tx_builder = (el, { key, trent, multisig, script, pubkeys, channel, is_dispute }
     do update_balance
 
   # Subscribe to transaction requests
-  tx_unlisten = tx_listen channel, add_tx_request
+  tx_unlisten = tx_listen secret, add_tx_request
 
   # Build transaction with the given inputs and parse outputs from <form>
   build_tx = ->

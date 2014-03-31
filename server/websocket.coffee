@@ -11,7 +11,12 @@ module.exports = (server) ->
 
   io.on 'connection', (socket) ->
     # Join rooms
-    socket.on 'join', (room) -> socket.join room
+    socket.on 'join', (room) ->
+      socket.join room
+      Message.find { room }, (err, msgs) ->
+        return socket.emit 'error', err if err?
+        socket.emit room, data for { data } in msgs
+        return
 
     # Leave rooms
     socket.on 'part', (room) -> socket.leave room
@@ -22,11 +27,11 @@ module.exports = (server) ->
       socket.broadcast.to(room).emit room, msg, ack_id
     
     # Forward and store messages
-    socket.on 'msg', (room, tx) ->
-      socket.broadcast.to(room).emit room, tx
-      #msg = new Message { room, tx }
-      #msg.save (err) ->
-      #  socket.emit 'error', iferr if err?
+    socket.on 'msg', (room, data) ->
+      socket.broadcast.to(room).emit room, data
+      msg = new Message { room, data }
+      msg.save (err) ->
+        socket.emit 'error', err if err?
   io
 
 # create a unique event name, start listening for ack responses
@@ -61,9 +66,4 @@ ack_listen = (sockets, cb) ->
 #  cb null
 
 
-# TODO
-# - Encrypt messages end-to-end (using Bitcoin key pair?)
-# - Validate identity of senders with the signature
-#   (currently relies on the room name being unique and
-#    hard to guess, unless you have access to the URL)
 

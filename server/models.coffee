@@ -5,9 +5,10 @@ require 'mongoose-pagination'
 Key = require '../lib/bitcoin/key'
 { PUBKEY_LEN, PUBKEY_C_LEN } = require '../lib/bitcoin'
 
-TX_EXPIRY = '24h'
+TX_EXPIRY = 172800 # Two days
 
 to_buff = (val) -> if val instanceof Buffer then val else new Buffer val, 'base64'
+to_base64 = (val) -> val?.toString 'base64'
 buff_getter = (key, encoding) -> -> this[key].toString encoding
 sha256 = (data) -> crypto.createHash('sha256').update(data).digest()
 triple_sha256 = (bytes) -> sha256 sha256 sha256 bytes
@@ -54,24 +55,14 @@ module.exports = (db) ->
 
   User = db.model 'User', userSchema
 
-  { User }
+  #
+  # Messages
+  #
+  msgSchema = Schema
+    room: type: String, required: true, index: true
+    data: type: Buffer, required: true, set: to_buff, get: to_base64
+    created_at: type: Date, default: Date.now, expires: TX_EXPIRY
 
-  #
-  # Rating model
-  #
-  #Rating = db.model 'Rating', ratingSchema = Schema
-  #  _user:   type: String, required: true, ref: 'User'
-  #  _rater:  type: String, required: true, ref: 'User'
-  #  rating:  type: Number, required: true, min: 0, max: 1
-  #  content: type: String, required: true
-  #ratingSchema.plugin timestamp
+  Message = db.model 'Message', msgSchema
 
-  #
-  # Transaction model
-  #
-  #Transaction = db.model 'Transaction', transactionSchema = Schema
-  #  channel:    type: Buffer, required: true, set: to_buff
-  #  rawtx:      type: Buffer, required: true, set: to_buff
-  #  created_at: type: Date, default: Date.now, expires: TX_EXPIRY
-
-  #{ User, Rating, Transaction }
+  { User, Message }

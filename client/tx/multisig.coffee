@@ -94,5 +94,5 @@ tx_builder el.find('.tx-builder'), {
                                      <p><small><strong>Transaction id</strong>: #{txid}</small></p>"
   # Otherwise, submit an approval request
   else tx_request secret, signed_tx, iferr display_error,
-                                     success '''<p>Transaction approval request was sent to the other parties.</p>
-                                                 <p>Once its approved and signed by one of them, the transaction will be broadcasted to the Bitcoin network.</p>'''
+                success '''<p>Transaction request was sent to the other parties. It will expire in two days.</p>
+                           <p>Once approved, the transaction will be broadcasted to the Bitcoin network.</p>'''

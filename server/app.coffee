@@ -14,6 +14,7 @@ module.exports = express().configure ->
 
   @locals
     url: @settings.url
+    ver: process.env.VER or ''
     testnet: !!process.env.TESTNET
     testnet_api: process.env.TESTNET_API
     pretty: @settings.env is 'development'

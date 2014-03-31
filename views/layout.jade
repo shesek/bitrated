@@ -4,6 +4,12 @@ block template-vars
 mixin menu_item(path, anchor)
   li(class=(active_page == path ? 'active': '')): a(href=path)= anchor
 
+mixin css(path)
+  link(rel='stylesheet', href=path+'?'+ver)
+
+mixin js(path)
+  script(src=path+'?'+ver)
+
 doctype 5
 html
   head
@@ -16,9 +22,9 @@ html
       meta(name='testnet', content=1)
 
     block css
-      link(rel='stylesheet', href='lib/bootstrap/css/flatly.min.css')
-      link(rel='stylesheet', href='lib/bootstrap/css/bootstrap-responsive.min.css')
-      link(rel='stylesheet', href='common.css')
+      +css('lib/bootstrap/css/flatly.min.css')
+      +css('lib/bootstrap/css/bootstrap-responsive.min.css')
+      +css('common.css')
     block head
   body
     .navbar.navbar-fixed-top: .navbar-inner: .container
@@ -45,8 +51,8 @@ html
     block scripts
       //- load scripts before footer, to avoid the footer flashing
       //- before scripts are done loading
-      script(src='lib/jquery.min.js')
-      script(src='lib/bootstrap/bootstrap.min.js')
+      +js('lib/jquery.min.js')
+      +js('lib/bootstrap/bootstrap.min.js')
 
 
     footer.muted.container

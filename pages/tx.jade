@@ -8,9 +8,9 @@ append head
     meta(name='testnet-api', content=testnet_api)
 
 append css
-  link(rel='stylesheet', href='tx.css')
+  +css('tx.css')
 
 append scripts
-  script(src='tx/multisig.js')
+  +js('tx/multisig.js')
 
 // Content is loaded with JS

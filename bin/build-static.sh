@@ -25,7 +25,8 @@ read -d '' LOCALS <<JSON
   {
     "url": "${URL}",
     "testnet": "${TESTNET}",
-    "testnet_api": "${TESTNET_API}"
+    "testnet_api": "${TESTNET_API}",
+    "ver": "${VER}"
   }
 JSON
 jade pages/*.jade -o $TARGET --obj "$LOCALS"

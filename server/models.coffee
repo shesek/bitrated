@@ -5,7 +5,7 @@ require 'mongoose-pagination'
 Key = require '../lib/bitcoin/key'
 { PUBKEY_LEN, PUBKEY_C_LEN } = require '../lib/bitcoin'
 
-TX_EXPIRY = 172800 # Two days
+TX_EXPIRY = '2 days'
 
 to_buff = (val) -> if val instanceof Buffer then val else new Buffer val, 'base64'
 to_base64 = (val) -> val?.toString 'base64'

@@ -20,6 +20,7 @@ module.exports = express().configure ->
     pretty: @settings.env is 'development'
 
   @db = mongoose.connect process.env.MONGO_URI or 'mongodb://localhost/'
+  @db.set 'debug', true if @settings.env is 'development'
   @models = require('./models')(@db)
 
   @use express.favicon()

@@ -33,6 +33,7 @@ module.exports = express().configure ->
   server = createServer this
   require('./websocket').call(this, server)
   require('./assets').call(this) if (@settings.env is 'development') or process.env.SERVE_ASSETS
+  @use express.static process.env.STATIC_PATH if process.env.STATIC_PATH
   # assets are pre-compiled and served by nginx on production
 
   @use '/u', require('./user')(this)

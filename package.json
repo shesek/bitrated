@@ -13,7 +13,7 @@
     "express": "~3.4.4",
     "jade": "~0.35.0",
     "mongoose": "~3.8.1",
-    "marked": "~0.2.10",
+    "marked": "^0.3.2",
     "socket.io": "~0.9.16",
     "socket.io-client": "~0.9.16",
     "bitcoinjs-lib": "git://github.com/shesek/bitcoinjs-lib",

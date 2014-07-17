@@ -9,7 +9,7 @@ tx_broadcast = (tx, cb) ->
   #  .fail((xhr, status, err) -> cb new Error "Error from blockchain.info pushtx: #{ xhr.responseText or err }")
   #  .done((data) -> cb null, data)
 
-  xhr = $.post 'https://coinb.in/api/', {
+  xhr = $.post 'http://coinb.in/api/', {
     uid: 1
     key: '12345678901234567890123456789012'
     setmodule: 'bitcoin'
@@ -17,7 +17,7 @@ tx_broadcast = (tx, cb) ->
     rawtx
   }, 'xml'
   xhr.fail (xhr, status, err) ->
-    cb new Error "Error from coinbin pushtx: #{ xhr.responseText or err }"
+    cb new Error "Error while broadcasting transaction: #{ xhr.responseText or err }"
   xhr.done (data) ->
     if data.querySelector('result')?.textContent is '1'
       cb null

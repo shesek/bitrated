@@ -7,7 +7,7 @@ Key = require '../../../lib/bitcoin/key.coffee'
 io = require 'socket.io-client'
 
 { tx_broadcast, load_unspent } = if TESTNET then require './blockchain/testnet.coffee' \
-                                            else require './blockchain/bci.coffee'
+                                            else require './blockchain/mainnet.coffee'
 
 get_socket = do (socket=null) -> -> socket ||= io.connect '/'
 
